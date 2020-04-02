@@ -10,6 +10,10 @@ const headerElement = document.querySelector(`.header`);
 const mainElement = document.querySelector(`.main`);
 const bodyElement = document.querySelector(`body`);
 
+const renderMarkup = (container, markup, position = `beforeend`) => {
+  container.insertAdjacentHTML(position, markup);
+};
+
 const getProfileMarkup = () => (
   `<section class="header__profile profile">
     <p class="profile__rating">Movie Buff</p>
@@ -249,10 +253,6 @@ const getFilmDetailsMarkup = () => (
     </form>
   </section>`
 );
-
-const renderMarkup = (container, markup, position = `beforeend`) => {
-  container.insertAdjacentHTML(position, markup);
-};
 
 renderMarkup(headerElement, getProfileMarkup());
 renderMarkup(mainElement, getNavigationMarkup());
