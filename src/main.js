@@ -20,9 +20,9 @@ const renderMarkup = (container, markup, position = `beforeend`) => {
   container.insertAdjacentHTML(position, markup);
 };
 
-const renderCards = (container, num, markup = getCardMarkup()) => {
+const renderCards = (container, num) => {
   for (let i = 0; i < num; i++) {
-    renderMarkup(container, markup);
+    renderMarkup(container, getCardMarkup());
   }
 };
 
