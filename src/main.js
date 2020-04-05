@@ -20,6 +20,12 @@ const renderMarkup = (container, markup, position = `beforeend`) => {
   container.insertAdjacentHTML(position, markup);
 };
 
+const renderCards = (container, num, markup = getCardMarkup()) => {
+  for (let i = 0; i < num; i++) {
+    renderMarkup(container, markup);
+  }
+};
+
 renderMarkup(headerElement, getProfileMarkup());
 renderMarkup(mainElement, getNavigationMarkup());
 renderMarkup(mainElement, getSortMarkup());
@@ -34,14 +40,6 @@ const filmsListCommentedElement = document.querySelector(`#filmsListCommented`);
 
 renderMarkup(filmsListWrapperElement, getButtonMarkup());
 
-for (let i = 0; i < CardsNum.LIST; i++) {
-  renderMarkup(filmsListElement, getCardMarkup());
-}
-
-for (let i = 0; i < CardsNum.TOP; i++) {
-  renderMarkup(filmsListTopElement, getCardMarkup());
-}
-
-for (let i = 0; i < CardsNum.COMMENTED; i++) {
-  renderMarkup(filmsListCommentedElement, getCardMarkup());
-}
+renderCards(filmsListElement, CardsNum.LIST);
+renderCards(filmsListTopElement, CardsNum.TOP);
+renderCards(filmsListCommentedElement, CardsNum.COMMENTED);
