@@ -1,5 +1,9 @@
 import {POSTERS_PATH} from "../config.js";
 
+const cutText = (text, maxLength = 140, symbol = `…`) => {
+  return text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text;
+};
+
 export const getCardMarkup = (filmData) => {
   const {title, rating, date, duration, genres, poster, description, comments} = filmData;
 
@@ -12,7 +16,7 @@ export const getCardMarkup = (filmData) => {
       <span class="film-card__genre">${genres[0]}</span>
     </p>
     <img src="${POSTERS_PATH + poster}" alt="" class="film-card__poster">
-    <p class="film-card__description">${description}</p>
+    <p class="film-card__description">${cutText(description)}</p>
     <a class="film-card__comments">${comments.length} comments</a>
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>

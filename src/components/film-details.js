@@ -44,7 +44,7 @@ export const getFilmDetailsMarkup = (filmDetailsData) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${date.getDate()} ${util.getMonthName(date.getMonth())} ${date.getFullYear()}</td>
+                <td class="film-details__cell">${util.addZeroBefore(date.getDate())} ${util.getMonthName(date.getMonth())} ${date.getFullYear()}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
@@ -55,7 +55,7 @@ export const getFilmDetailsMarkup = (filmDetailsData) => {
                 <td class="film-details__cell">${country}</td>
               </tr>
               <tr class="film-details__row">
-                <td class="film-details__term">Genres</td>
+                <td class="film-details__term">Genre${genres.length > 1 ? `s` : ``}</td>
                 <td class="film-details__cell">
                   <span class="film-details__genre">${genres.join(`</span><span class="film-details__genre">`)}</span>
                 </td>
