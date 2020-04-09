@@ -59,16 +59,16 @@ renderMarkup(mainElement, getNavigationMarkup(filtersData));
 renderMarkup(mainElement, getSortMarkup());
 renderMarkup(mainElement, getFilmsMarkup());
 renderMarkup(footerStatisticsElement, getFooterStatisticsMarkup(footerStatisticsData));
-// renderMarkup(bodyElement, getFilmDetailsMarkup(filmsData[0]));
+renderMarkup(bodyElement, getFilmDetailsMarkup(filmsData[0]));
 
 
 const filmsListWrapperElement = document.querySelector(`.films-list`);
 const filmsListElement = document.querySelector(`#filmsList`);
 const filmsListTopElement = document.querySelector(`#filmsListTop`);
 const filmsListCommentedElement = document.querySelector(`#filmsListCommented`);
-// const filmCommentsList = document.querySelector(`.film-details__comments-list`);
+const filmCommentsList = document.querySelector(`.film-details__comments-list`);
 
-// renderMarkup(filmCommentsList, getFilmCommentsMarkup(filmsData[0].comments));
+renderMarkup(filmCommentsList, getFilmCommentsMarkup(filmsData[0].comments));
 
 
 renderCardsMain(filmsListElement, 0, CardsNum.START);
