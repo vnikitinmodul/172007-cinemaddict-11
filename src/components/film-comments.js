@@ -1,7 +1,9 @@
-import {util} from "../util.js";
+import * as util from "../util.js";
 
-const getCommentMarkup = (emoji, author, day, text) => (
-  `<li class="film-details__comment">
+const getCommentMarkup = (item) => {
+  const {emoji, author, day, text} = item;
+
+  return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">
     </span>
@@ -13,12 +15,10 @@ const getCommentMarkup = (emoji, author, day, text) => (
         <button class="film-details__comment-delete">Delete</button>
       </p>
     </div>
-  </li>`
-);
-
-export const getFilmCommentsMarkup = (commentsData) => {
-  return commentsData
-    .map(
-        (item) => getCommentMarkup(item.emoji, item.author, item.day, item.text)
-    ).join(``);
+  </li>`;
 };
+
+export const getFilmCommentsMarkup = (commentsData) => (
+  commentsData
+    .map(getCommentMarkup).join(``)
+);

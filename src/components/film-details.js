@@ -1,5 +1,5 @@
 import {POSTERS_PATH} from "../config.js";
-import {util} from "../util.js";
+import * as util from "../util.js";
 
 export const getFilmDetailsMarkup = (filmDetailsData) => {
   const {title, rating, duration, director, writers, actors, date, genres, country, poster, description, comments, age, titleOriginal} = filmDetailsData;

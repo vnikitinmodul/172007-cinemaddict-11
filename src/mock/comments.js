@@ -1,4 +1,4 @@
-import {util} from "../util.js";
+import * as util from "../util.js";
 
 const COMMENT_AUTHORS = [
   `John Doe`,
@@ -27,22 +27,13 @@ const CommentsRangeNum = {
 };
 
 
-const generateComment = () => {
-  return {
+const generateComment = () => (
+  {
     emoji: util.getRandomFromArray(COMMENT_EMOJIES),
     author: util.getRandomFromArray(COMMENT_AUTHORS),
     day: util.getRandomDate(),
     text: util.getRandomFromArray(COMMENT_TEXTS),
-  };
-};
-
-export const generateComments = () => {
-  const commentsNum = util.getRandomNum(CommentsRangeNum.MIN, CommentsRangeNum.MAX);
-  let comments = [];
-
-  for (let j = 0; j < commentsNum; j++) {
-    comments.push(generateComment());
   }
+);
 
-  return comments;
-};
+export const generateComments = () => util.generateArrayData(CommentsRangeNum.MIN, CommentsRangeNum.MAX, generateComment);

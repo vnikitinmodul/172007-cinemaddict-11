@@ -1,4 +1,4 @@
-import {util} from "../util.js";
+import * as util from "../util.js";
 
 const FILTER_NAMES = [
   `All movies`,
@@ -12,14 +12,13 @@ const FilterSum = {
   MAX: 20
 };
 
-const filters = FILTER_NAMES
-  .map((name, i) => {
+export const generateFilters = () => (
+  FILTER_NAMES.map((name, i) => {
     return {
       name,
       sum: util.getRandomNum(FilterSum.MIN, FilterSum.MAX),
       isChecked: i === 0,
       isSumOff: i === 0,
     };
-  });
-
-export const generateFilters = () => filters;
+  })
+);

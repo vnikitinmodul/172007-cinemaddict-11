@@ -1,8 +1,8 @@
 import {POSTERS_PATH} from "../config.js";
 
-const cutText = (text, maxLength = 140, symbol = `…`) => {
-  return text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text;
-};
+const cutText = (text, maxLength = 140, symbol = `…`) => (
+  text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text
+);
 
 export const getCardMarkup = (filmData) => {
   const {title, rating, date, duration, genres, poster, description, comments} = filmData;

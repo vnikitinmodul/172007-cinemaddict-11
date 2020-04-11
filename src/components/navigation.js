@@ -8,9 +8,7 @@ const getFiltersMarkup = (item) => {
 
 export const getNavigationMarkup = (filters) => {
   const filtersMarkup = filters
-    .map((item) => {
-      return getFiltersMarkup(item);
-    }).join(``);
+    .map(getFiltersMarkup).join(``);
 
   return `<nav class="main-navigation">
     <div class="main-navigation__items">

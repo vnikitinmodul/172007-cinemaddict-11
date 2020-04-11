@@ -1,4 +1,4 @@
-import {util} from "./util.js";
+import * as util from "./util.js";
 
 import {generateFilms} from "./mock/films.js";
 import {generateFilters} from "./mock/filters.js";

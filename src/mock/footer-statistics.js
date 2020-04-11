@@ -1,4 +1,4 @@
-import {util} from "../util.js";
+import * as util from "../util.js";
 
 const DatabaseNum = {
   MIN: 10,

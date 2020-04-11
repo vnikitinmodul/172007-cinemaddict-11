@@ -1,4 +1,4 @@
-import {util} from "../util.js";
+import * as util from "../util.js";
 
 const RATING_NAMES = [
   `Novice`,

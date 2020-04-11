@@ -34,7 +34,7 @@ const getSomeFromArray = (array, min = 1, max = array.length) => {
   let tempArray = array.slice();
 
   for (let i = 0; i < getRandomNum(min, max); i++) {
-    const itemPos = util.getRandomNum(min, tempArray.length - 1);
+    const itemPos = getRandomNum(min, tempArray.length - 1);
     result.push(tempArray.splice(itemPos, 1));
   }
 
@@ -53,11 +53,19 @@ const addZeroBefore = (value) => {
   return value < 10 ? `0${value}` : value;
 };
 
-export const util = {
+const generateArrayData = (min, max, generator) => (
+  [...Array(getRandomNum(min, max)).keys()].reduce((accumulator) => {
+    accumulator.push(generator());
+    return accumulator;
+  }, [])
+);
+
+export {
   getRandomNum,
   getRandomFromArray,
   getSomeFromArray,
   getRandomDate,
   getMonthName,
   addZeroBefore,
+  generateArrayData,
 };

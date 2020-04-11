@@ -1,4 +1,4 @@
-import {util} from "../util.js";
+import * as util from "../util.js";
 import {generateComments} from "./comments.js";
 
 
@@ -148,12 +148,10 @@ const FilmsRangeNum = {
   MAX: 20,
 };
 
-const filmsNum = util.getRandomNum(FilmsRangeNum.MIN, FilmsRangeNum.MAX);
 
-
-const getDuration = (hours, minutes) => {
-  return `${hours ? `${hours}h` : ``} ${minutes ? `${util.addZeroBefore(minutes)}m` : ``}`;
-};
+const getDuration = (hours, minutes) => (
+  `${hours ? `${hours}h` : ``} ${minutes ? `${util.addZeroBefore(minutes)}m` : ``}`
+);
 
 
 const generateCard = () => {
@@ -177,10 +175,4 @@ const generateCard = () => {
   return result;
 };
 
-let films = [];
-
-for (let j = 0; j < filmsNum; j++) {
-  films.push(generateCard());
-}
-
-export const generateFilms = () => films;
+export const generateFilms = () => util.generateArrayData(FilmsRangeNum.MIN, FilmsRangeNum.MAX, generateCard);
