@@ -60,6 +60,12 @@ const generateArrayData = (min, max, generator) => (
   }, [])
 );
 
+const createElement = (template, isWrapped) => {
+  let element = document.createElement(`div`);
+  element.innerHTML = template;
+  return isWrapped ? element : element.firstChild;
+};
+
 export {
   getRandomNum,
   getRandomFromArray,
@@ -68,4 +74,5 @@ export {
   getMonthName,
   addZeroBefore,
   generateArrayData,
+  createElement,
 };

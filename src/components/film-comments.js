@@ -18,7 +18,30 @@ const getCommentMarkup = (item) => {
   </li>`;
 };
 
-export const getFilmCommentsMarkup = (commentsData) => (
+const getFilmCommentsMarkup = (commentsData) => (
   commentsData
     .map(getCommentMarkup).join(``)
 );
+
+export default class Comments {
+  constructor(commentsData) {
+    this._comments = commentsData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getFilmCommentsMarkup(this._comments);
+  }
+
+  getElement() {
+    if (this._element === null) {
+      this._element = util.createElement(this.getTemplate(), true);
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

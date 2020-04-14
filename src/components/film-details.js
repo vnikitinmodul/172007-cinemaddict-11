@@ -118,3 +118,26 @@ export const getFilmDetailsMarkup = (filmDetailsData) => {
     </form>
   </section>`;
 };
+
+export default class FilmDetails {
+  constructor(filmDetailsData) {
+    this._film = filmDetailsData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getFilmDetailsMarkup(this._film);
+  }
+
+  getElement() {
+    if (this._element === null) {
+      this._element = util.createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
