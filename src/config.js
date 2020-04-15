@@ -1,10 +1,10 @@
 const POSTERS_PATH = `./images/posters/`;
-const Key = {
+const KEY_CODE = {
   ESC: `Escape`,
   ENTER: `Enter`
 };
 
 export {
   POSTERS_PATH,
-  Key,
+  KEY_CODE,
 };

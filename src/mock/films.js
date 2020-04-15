@@ -154,25 +154,21 @@ const getDuration = (hours, minutes) => (
 );
 
 
-const generateCard = () => {
-  const result = {
-    title: util.getRandomFromArray(FILM_TITLES),
-    titleOriginal: util.getRandomFromArray(FILM_TITLES_ORIGINAL),
-    age: util.getRandomFromArray(AGE_VALUES),
-    country: util.getRandomFromArray(COUNTRIES),
-    director: util.getRandomFromArray(DIRECTORS),
-    writers: util.getSomeFromArray(WRITERS),
-    actors: util.getSomeFromArray(ACTORS),
-    poster: util.getRandomFromArray(FILM_POSTERS),
-    rating: (util.getRandomNum(FilmRating.MIN * FILM_RATING_PRECISION, FilmRating.MAX * FILM_RATING_PRECISION) / FILM_RATING_PRECISION).toFixed(1),
-    date: util.getRandomDate(FILM_YEAR_AGO),
-    duration: getDuration(util.getRandomNum(FilmDurationHour.MIN, FilmDurationHour.MAX), util.getRandomNum(FilmDurationMinute.MIN, FilmDurationMinute.MAX)),
-    genres: util.getSomeFromArray(FILM_GENRES),
-    description: util.getSomeFromArray(FILM_DESCRIPTION_STRINGS, FilmDescriptionLength.MIN, FilmDescriptionLength.MAX).join(` `),
-    comments: generateComments(),
-  };
-
-  return result;
-};
+const generateCard = () => ({
+  title: util.getRandomFromArray(FILM_TITLES),
+  titleOriginal: util.getRandomFromArray(FILM_TITLES_ORIGINAL),
+  age: util.getRandomFromArray(AGE_VALUES),
+  country: util.getRandomFromArray(COUNTRIES),
+  director: util.getRandomFromArray(DIRECTORS),
+  writers: util.getSomeFromArray(WRITERS),
+  actors: util.getSomeFromArray(ACTORS),
+  poster: util.getRandomFromArray(FILM_POSTERS),
+  rating: (util.getRandomNum(FilmRating.MIN * FILM_RATING_PRECISION, FilmRating.MAX * FILM_RATING_PRECISION) / FILM_RATING_PRECISION).toFixed(1),
+  date: util.getRandomDate(FILM_YEAR_AGO),
+  duration: getDuration(util.getRandomNum(FilmDurationHour.MIN, FilmDurationHour.MAX), util.getRandomNum(FilmDurationMinute.MIN, FilmDurationMinute.MAX)),
+  genres: util.getSomeFromArray(FILM_GENRES),
+  description: util.getSomeFromArray(FILM_DESCRIPTION_STRINGS, FilmDescriptionLength.MIN, FilmDescriptionLength.MAX).join(` `),
+  comments: generateComments(),
+});
 
 export const generateFilms = () => util.generateArrayData(FilmsRangeNum.MIN, FilmsRangeNum.MAX, generateCard);

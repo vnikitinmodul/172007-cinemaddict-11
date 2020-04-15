@@ -18,7 +18,7 @@ const Time = {
   HOURS_PER_DAY: 24,
   MINUTES_PER_HOUR: 60,
   SECONDS_PER_MINUTE: 60,
-  MILISECONDS_PER_SECOND: 1000,
+  MILLISECONDS_PER_SECOND: 1000,
 };
 
 const getRandomNum = (min, max) => (
@@ -42,7 +42,7 @@ const getSomeFromArray = (array, min = 1, max = array.length) => {
 };
 
 const getRandomDate = (yearsAgo = 1) => {
-  return new Date(new Date() - new Date(getRandomNum(0, yearsAgo * Time.DAYS_PER_YEAR) * Time.HOURS_PER_DAY * Time.MINUTES_PER_HOUR * Time.SECONDS_PER_MINUTE * Time.MILISECONDS_PER_SECOND));
+  return new Date(new Date() - new Date(getRandomNum(0, yearsAgo * Time.DAYS_PER_YEAR) * Time.HOURS_PER_DAY * Time.MINUTES_PER_HOUR * Time.SECONDS_PER_MINUTE * Time.MILLISECONDS_PER_SECOND));
 };
 
 const getMonthName = (num) => {

@@ -1,4 +1,4 @@
-import {Key} from "./config.js";
+import {KEY_CODE} from "./config.js";
 import * as util from "./util.js";
 
 import {generateFilms} from "./mock/films.js";
@@ -16,9 +16,15 @@ import Navigation from "./components/navigation.js";
 import Profile from "./components/profile.js";
 import Sort from "./components/sort.js";
 
-const CARD_SHOW_DETAILS_SELECTOR = `.film-card__poster, .film-card__title, .film-card__comments`;
-const BODY_HIDE_OVERFLOW_CLASS = `hide-overflow`;
-const FILM_CLOSE_BUTTON_SELECTOR = `.film-details__close-btn`;
+const SELECTOR = {
+  CARD_SHOW_DETAILS: [
+    `.film-card__poster`,
+    `.film-card__title`,
+    `.film-card__comments`,
+  ],
+  FILM_CLOSE_BUTTON: `.film-details__close-btn`,
+  BODY_HIDE_OVERFLOW_CLASS: `hide-overflow`,
+};
 
 const CardsNum = {
   START: 5,
@@ -66,7 +72,7 @@ const renderCards = (container, num) => {
 
 const renderCard = (container, data) => {
   const cardElement = new Card(data).getElement();
-  const cardShowDetailsElements = cardElement.querySelectorAll(CARD_SHOW_DETAILS_SELECTOR);
+  const cardShowDetailsElements = cardElement.querySelectorAll(SELECTOR.CARD_SHOW_DETAILS.join(`, `));
 
   renderElement(container, cardElement);
 
@@ -74,7 +80,7 @@ const renderCard = (container, data) => {
 
   cardShowDetailsElements.forEach((item) => {
     item.addEventListener(`click`, () => {
-      showFilmInfo(filmInfo, data);
+      showFilmInfo(filmInfo);
     });
   });
 };
@@ -88,7 +94,7 @@ const showFilmInfo = (filmInfo) => {
   };
 
   const onFilmInfoEscPress = (evt) => {
-    if (evt.key === Key.ESC) {
+    if (evt.key === KEY_CODE.ESC) {
       currentFilmInfo = null;
       closeFilmInfo(filmInfo);
     }
@@ -100,12 +106,12 @@ const showFilmInfo = (filmInfo) => {
 
   currentFilmInfo = filmInfo;
 
-  bodyElement.classList.add(BODY_HIDE_OVERFLOW_CLASS);
+  bodyElement.classList.add(SELECTOR.BODY_HIDE_OVERFLOW_CLASS);
 
   renderElement(bodyElement, filmInfoElement);
 
   const filmCommentsList = filmInfoElement.querySelector(`.film-details__comments-list`);
-  const filmInfoCloseElement = filmInfoElement.querySelector(FILM_CLOSE_BUTTON_SELECTOR);
+  const filmInfoCloseElement = filmInfoElement.querySelector(SELECTOR.FILM_CLOSE_BUTTON);
 
   renderElement(filmCommentsList, new Comments(filmInfo.getComments()).getElement());
 
@@ -121,8 +127,8 @@ const closeFilmInfo = (info) => {
 
   info.removeElement();
   infoElement.remove();
-  bodyElement.classList.remove(BODY_HIDE_OVERFLOW_CLASS);
-  infoElement.querySelector(FILM_CLOSE_BUTTON_SELECTOR).removeEventListener(`click`, info.onCloseElementClick);
+  bodyElement.classList.remove(SELECTOR.BODY_HIDE_OVERFLOW_CLASS);
+  infoElement.querySelector(SELECTOR.FILM_CLOSE_BUTTON).removeEventListener(`click`, info.onCloseElementClick);
   document.removeEventListener(`keydown`, info.onEscPress);
 };
 
