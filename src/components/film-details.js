@@ -1,7 +1,7 @@
 import {POSTERS_PATH} from "../config.js";
 import * as util from "../util.js";
 
-export const getFilmDetailsMarkup = (filmDetailsData) => {
+const getFilmDetailsMarkup = (filmDetailsData) => {
   const {title, rating, duration, director, writers, actors, date, genres, country, poster, description, comments, age, titleOriginal} = filmDetailsData;
 
   return `<section class="film-details">
@@ -118,3 +118,48 @@ export const getFilmDetailsMarkup = (filmDetailsData) => {
     </form>
   </section>`;
 };
+
+export default class FilmDetails {
+  constructor(filmDetailsData) {
+    this._film = filmDetailsData;
+    this._element = null;
+    this._onEscPress = null;
+    this._onCloseElementClick = null;
+  }
+
+  getTemplate() {
+    return getFilmDetailsMarkup(this._film);
+  }
+
+  getElement() {
+    if (this._element === null) {
+      this._element = util.createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+
+  getComments() {
+    return this._film.comments;
+  }
+
+  set onEscPress(handler) {
+    this._onEscPress = handler;
+  }
+
+  get onEscPress() {
+    return this._onEscPress;
+  }
+
+  set onCloseElementClick(handler) {
+    this._onCloseElementClick = handler;
+  }
+
+  get onCloseElementClick() {
+    return this._onCloseElementClick;
+  }
+}

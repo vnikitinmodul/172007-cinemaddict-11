@@ -1,10 +1,11 @@
 import {POSTERS_PATH} from "../config.js";
+import * as util from "../util.js";
 
 const cutText = (text, maxLength = 140, symbol = `…`) => (
   text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text
 );
 
-export const getCardMarkup = (filmData) => {
+const getCardMarkup = (filmData) => {
   const {title, rating, date, duration, genres, poster, description, comments} = filmData;
 
   return `<article class="film-card">
@@ -25,3 +26,26 @@ export const getCardMarkup = (filmData) => {
     </form>
   </article>`;
 };
+
+export default class Card {
+  constructor(filmData) {
+    this._film = filmData;
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getCardMarkup(this._film);
+  }
+
+  getElement() {
+    if (this._element === null) {
+      this._element = util.createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}

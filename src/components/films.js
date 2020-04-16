@@ -1,4 +1,6 @@
-export const getFilmsMarkup = () => (
+import * as util from "../util.js";
+
+const getFilmsMarkup = () => (
   `<section class="films">
     <section class="films-list">
       <h2 class="films-list__title visually-hidden">All movies. Upcoming</h2>
@@ -16,3 +18,25 @@ export const getFilmsMarkup = () => (
     </section>
   </section>`
 );
+
+export default class Films {
+  constructor() {
+    this._element = null;
+  }
+
+  getTemplate() {
+    return getFilmsMarkup();
+  }
+
+  getElement() {
+    if (this._element === null) {
+      this._element = util.createElement(this.getTemplate());
+    }
+
+    return this._element;
+  }
+
+  removeElement() {
+    this._element = null;
+  }
+}
