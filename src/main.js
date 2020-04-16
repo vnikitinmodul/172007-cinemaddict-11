@@ -103,6 +103,9 @@ const showFilmInfo = (filmInfo) => () => {
   };
 
   if (currentFilmInfo) {
+    if (currentFilmInfo === filmInfo) {
+      return;
+    }
     closeFilmInfo(currentFilmInfo);
   }
 
