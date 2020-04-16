@@ -26,6 +26,10 @@ const SELECTOR = {
   BODY_HIDE_OVERFLOW_CLASS: `hide-overflow`,
 };
 
+const TITLE_MESSAGE = {
+  NO_MOVIES: `There are no movies in our database`
+};
+
 const CardsNum = {
   START: 5,
   MORE: 5,
@@ -79,13 +83,11 @@ const renderCard = (container, data) => {
   const filmInfo = new FilmDetails(data);
 
   cardShowDetailsElements.forEach((item) => {
-    item.addEventListener(`click`, () => {
-      showFilmInfo(filmInfo);
-    });
+    item.addEventListener(`click`, showFilmInfo(filmInfo));
   });
 };
 
-const showFilmInfo = (filmInfo) => {
+const showFilmInfo = (filmInfo) => () => {
   const filmInfoElement = filmInfo.getElement();
 
   const onFilmInfoCloseElementClick = () => {
@@ -132,6 +134,11 @@ const closeFilmInfo = (info) => {
   document.removeEventListener(`keydown`, info.onEscPress);
 };
 
+const showTitle = (message) => {
+  util.showElement(filmsListTitleElement);
+  filmsListTitleElement.textContent = message;
+};
+
 renderElement(headerElement, new Profile(profileData).getElement());
 renderElement(mainElement, new Navigation(filtersData).getElement());
 renderElement(mainElement, new Sort().getElement());
@@ -143,10 +150,17 @@ const filmsListWrapperElement = document.querySelector(`.films-list`);
 const filmsListElement = document.querySelector(`#filmsList`);
 const filmsListTopElement = document.querySelector(`#filmsListTop`);
 const filmsListCommentedElement = document.querySelector(`#filmsListCommented`);
+const filmsListTitleElement = document.querySelector(`.films-list__title`);
 
-renderCardsMain(filmsListElement, 0, CardsNum.START);
-renderCards(filmsListTopElement, CardsNum.TOP);
-renderCards(filmsListCommentedElement, CardsNum.COMMENTED);
+if (filmsLength) {
+  util.hideElement(filmsListTitleElement);
+
+  renderCardsMain(filmsListElement, 0, CardsNum.START);
+  renderCards(filmsListTopElement, CardsNum.TOP);
+  renderCards(filmsListCommentedElement, CardsNum.COMMENTED);
+} else {
+  showTitle(TITLE_MESSAGE.NO_MOVIES);
+}
 
 if (filmsLength > CardsNum.START) {
   const showMoreElement = new Button().getElement();
