@@ -1,3 +1,5 @@
+const HIDDEN_CLASS = `visually-hidden`;
+
 const MONTH_NAMES = [
   `January`,
   `February`,
@@ -66,6 +68,14 @@ const createElement = (template, isWrapped) => {
   return isWrapped ? element : element.firstChild;
 };
 
+const showElement = (element) => {
+  element.classList.remove(HIDDEN_CLASS);
+};
+
+const hideElement = (element) => {
+  element.classList.add(HIDDEN_CLASS);
+};
+
 export {
   getRandomNum,
   getRandomFromArray,
@@ -75,4 +85,6 @@ export {
   addZeroBefore,
   generateArrayData,
   createElement,
+  showElement,
+  hideElement,
 };
