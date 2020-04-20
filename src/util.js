@@ -62,12 +62,6 @@ const generateArrayData = (min, max, generator) => (
   }, [])
 );
 
-const createElement = (template, isWrapped) => {
-  let element = document.createElement(`div`);
-  element.innerHTML = template;
-  return isWrapped ? element : element.firstChild;
-};
-
 const showElement = (element) => {
   element.classList.remove(HIDDEN_CLASS);
 };
@@ -84,7 +78,6 @@ export {
   getMonthName,
   addZeroBefore,
   generateArrayData,
-  createElement,
   showElement,
   hideElement,
 };

@@ -1,7 +1,12 @@
-import * as util from "../util.js";
+import AbstractComponent from "./abstract.js";
 
 const getFiltersMarkup = (item) => {
-  const {name, sum, isChecked, isSumOff} = item;
+  const {
+    name,
+    sum,
+    isChecked,
+    isSumOff,
+  } = item;
 
   return `<a href="#watchlist" class="main-navigation__item ${isChecked ? `main-navigation__item--active` : ``}">${name}
     ${!isSumOff ? `<span class="main-navigation__item-count">${sum}</span>` : ``}
@@ -20,25 +25,14 @@ const getNavigationMarkup = (filters) => {
   </nav>`;
 };
 
-export default class Navigation {
+export default class Navigation extends AbstractComponent {
   constructor(filters) {
+    super();
+
     this._filters = filters;
-    this._element = null;
   }
 
   getTemplate() {
     return getNavigationMarkup(this._filters);
-  }
-
-  getElement() {
-    if (this._element === null) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

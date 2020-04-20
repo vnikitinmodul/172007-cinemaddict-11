@@ -1,8 +1,26 @@
 import {POSTERS_PATH} from "../config.js";
 import * as util from "../util.js";
+import AbstractComponent from "./abstract.js";
+
+const FILM_CLOSE_BUTTON = `.film-details__close-btn`;
 
 const getFilmDetailsMarkup = (filmDetailsData) => {
-  const {title, rating, duration, director, writers, actors, date, genres, country, poster, description, comments, age, titleOriginal} = filmDetailsData;
+  const {
+    title,
+    rating,
+    duration,
+    director,
+    writers,
+    actors,
+    date,
+    genres,
+    country,
+    poster,
+    description,
+    comments,
+    age,
+    titleOriginal,
+  } = filmDetailsData;
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -119,32 +137,24 @@ const getFilmDetailsMarkup = (filmDetailsData) => {
   </section>`;
 };
 
-export default class FilmDetails {
+export default class FilmDetails extends AbstractComponent {
   constructor(filmDetailsData) {
+    super();
+
     this._film = filmDetailsData;
-    this._element = null;
     this._onEscPress = null;
-    this._onCloseElementClick = null;
   }
 
   getTemplate() {
     return getFilmDetailsMarkup(this._film);
   }
 
-  getElement() {
-    if (this._element === null) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
-  }
-
   getComments() {
     return this._film.comments;
+  }
+
+  setCloseButtonHandler(handler) {
+    this.getElement().querySelector(FILM_CLOSE_BUTTON).addEventListener(`click`, handler);
   }
 
   set onEscPress(handler) {
@@ -153,13 +163,5 @@ export default class FilmDetails {
 
   get onEscPress() {
     return this._onEscPress;
-  }
-
-  set onCloseElementClick(handler) {
-    this._onCloseElementClick = handler;
-  }
-
-  get onCloseElementClick() {
-    return this._onCloseElementClick;
   }
 }

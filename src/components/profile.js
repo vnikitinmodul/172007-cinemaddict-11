@@ -1,4 +1,4 @@
-import * as util from "../util.js";
+import AbstractComponent from "./abstract.js";
 
 const getProfileMarkup = (rating) => (
   `<section class="header__profile profile">
@@ -7,25 +7,14 @@ const getProfileMarkup = (rating) => (
   </section>`
 );
 
-export default class Profile {
+export default class Profile extends AbstractComponent {
   constructor(rating) {
+    super();
+
     this._rating = rating;
-    this._element = null;
   }
 
   getTemplate() {
     return getProfileMarkup(this._rating);
-  }
-
-  getElement() {
-    if (this._element === null) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

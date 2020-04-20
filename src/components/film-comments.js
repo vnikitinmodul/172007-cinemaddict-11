@@ -1,7 +1,13 @@
 import * as util from "../util.js";
+import AbstractComponent from "./abstract.js";
 
 const getCommentMarkup = (item) => {
-  const {emoji, author, day, text} = item;
+  const {
+    emoji,
+    author,
+    day,
+    text,
+  } = item;
 
   return `<li class="film-details__comment">
     <span class="film-details__comment-emoji">
@@ -23,25 +29,18 @@ const getFilmCommentsMarkup = (commentsData) => (
     .map(getCommentMarkup).join(``)
 );
 
-export default class Comments {
+export default class Comments extends AbstractComponent {
   constructor(commentsData) {
+    super();
+
     this._comments = commentsData;
-    this._element = null;
+  }
+
+  getElement() {
+    return super.getElement(true);
   }
 
   getTemplate() {
     return getFilmCommentsMarkup(this._comments);
-  }
-
-  getElement() {
-    if (this._element === null) {
-      this._element = util.createElement(this.getTemplate(), true);
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }
