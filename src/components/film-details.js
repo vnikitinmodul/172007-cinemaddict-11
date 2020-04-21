@@ -1,5 +1,5 @@
 import {POSTERS_PATH} from "../config.js";
-import * as util from "../util.js";
+import * as util from "../utils/common.js";
 import AbstractComponent from "./abstract.js";
 
 const FILM_CLOSE_BUTTON = `.film-details__close-btn`;

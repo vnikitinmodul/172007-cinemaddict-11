@@ -1,5 +1,4 @@
-import * as util from "../util.js";
-import {createElement} from "../render.js";
+import {createElement} from "../utils/render.js";
 
 export default class AbstractComponent {
   constructor() {

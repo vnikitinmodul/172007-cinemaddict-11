@@ -1,4 +1,4 @@
-import * as util from "../util.js";
+import * as util from "../utils/common.js";
 import AbstractComponent from "./abstract.js";
 
 const getCommentMarkup = (item) => {

@@ -1,4 +1,4 @@
-import {renderElement} from "./render.js";
+import {renderElement} from "./utils/render.js";
 
 import {generateFilms} from "./mock/films.js";
 import {generateFilters} from "./mock/filters.js";
@@ -10,13 +10,6 @@ import MainController from "./controllers/main-container.js";
 import Profile from "./components/profile.js";
 import FooterStatistics from "./components/footer-statistics.js";
 
-
-const CardsNum = {
-  START: 5,
-  MORE: 5,
-  TOP: 2,
-  COMMENTED: 2
-};
 
 const filmsData = generateFilms();
 const filtersData = generateFilters();
@@ -34,4 +27,4 @@ const mainContainer = new MainController(mainElement);
 renderElement(headerElement, new Profile(profileData));
 renderElement(footerStatisticsElement, new FooterStatistics(footerStatisticsData));
 
-mainContainer.render(filmsData, filtersData, CardsNum);
+mainContainer.render(filmsData, filtersData);
