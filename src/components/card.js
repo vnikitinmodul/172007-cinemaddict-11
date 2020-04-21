@@ -1,12 +1,29 @@
-import {POSTERS_PATH} from "../config.js";
-import * as util from "../util.js";
+import {POSTERS_PATH} from "../constants.js";
+import AbstractComponent from "./abstract.js";
+
+const CARD_SHOW_DETAILS = [
+  `.film-card__poster`,
+  `.film-card__title`,
+  `.film-card__comments`,
+];
+
+const getShowDetailsElements = (card) => card.getElement().querySelectorAll(CARD_SHOW_DETAILS.join(`, `));
 
 const cutText = (text, maxLength = 140, symbol = `…`) => (
   text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text
 );
 
 const getCardMarkup = (filmData) => {
-  const {title, rating, date, duration, genres, poster, description, comments} = filmData;
+  const {
+    title,
+    rating,
+    date,
+    duration,
+    genres,
+    poster,
+    description,
+    comments,
+  } = filmData;
 
   return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
@@ -27,25 +44,20 @@ const getCardMarkup = (filmData) => {
   </article>`;
 };
 
-export default class Card {
+export default class Card extends AbstractComponent {
   constructor(filmData) {
+    super();
+
     this._film = filmData;
-    this._element = null;
   }
 
   getTemplate() {
     return getCardMarkup(this._film);
   }
 
-  getElement() {
-    if (this._element === null) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
+  setClickHandler(handler) {
+    getShowDetailsElements(this).forEach((item) => {
+      item.addEventListener(`click`, handler);
+    });
   }
 }

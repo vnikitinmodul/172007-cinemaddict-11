@@ -1,4 +1,4 @@
-import * as util from "../util.js";
+import AbstractComponent from "./abstract.js";
 
 const getFilmsMarkup = () => (
   `<section class="films">
@@ -19,24 +19,8 @@ const getFilmsMarkup = () => (
   </section>`
 );
 
-export default class Films {
-  constructor() {
-    this._element = null;
-  }
-
+export default class Films extends AbstractComponent {
   getTemplate() {
     return getFilmsMarkup();
-  }
-
-  getElement() {
-    if (this._element === null) {
-      this._element = util.createElement(this.getTemplate());
-    }
-
-    return this._element;
-  }
-
-  removeElement() {
-    this._element = null;
   }
 }

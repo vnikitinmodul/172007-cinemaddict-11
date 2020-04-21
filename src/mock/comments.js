@@ -1,4 +1,4 @@
-import * as util from "../util.js";
+import * as util from "../utils/common.js";
 
 const COMMENT_AUTHORS = [
   `John Doe`,
