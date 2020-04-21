@@ -1,9 +1,5 @@
-const renderElement = (container, component, isAfterBegin) => {
-  if (isAfterBegin) {
-    container.prepend(component.getElement());
-  } else {
-    container.append(component.getElement());
-  }
+const renderElement = (container, component, method = `append`) => {
+  container[method](component.getElement());
 };
 
 const createElement = (template, isWrapped) => {

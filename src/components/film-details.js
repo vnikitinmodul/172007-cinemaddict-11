@@ -1,4 +1,4 @@
-import {POSTERS_PATH} from "../config.js";
+import {POSTERS_PATH} from "../constants.js";
 import * as util from "../utils/common.js";
 import AbstractComponent from "./abstract.js";
 

@@ -1,4 +1,3 @@
-import {KEY_CODE} from "../config.js";
 import * as util from "../utils/common.js";
 import {renderElement} from "../utils/render.js";
 
@@ -10,31 +9,20 @@ import Films from "../components/films.js";
 import Navigation from "../components/navigation.js";
 import Sort from "../components/sort.js";
 
-
-const BODY_HIDE_OVERFLOW_CLASS = `hide-overflow`;
-
-const TITLE_MESSAGE = {
-  NO_MOVIES: `There are no movies in our database`
-};
-
-const CardsNum = {
-  START: 5,
-  MORE: 5,
-  TOP: 2,
-  COMMENTED: 2
-};
-
-let currentFilmInfo;
-let filmsLoadedLength = 0;
-
-const bodyElement = document.body;
-
+import {
+  KEY_CODE,
+  BODY_HIDE_OVERFLOW_CLASS,
+  TITLE_MESSAGE,
+  CardsNum,
+} from "../constants.js";
 
 export default class MainController {
   constructor(container) {
-    this._filmsLength = 0;
     this._container = container;
-    this._filmsListElements = {};
+    this._bodyElement = document.body;
+    this._filmsLength = 0;
+    this._filmsLoadedLength = 0;
+    this._currentFilmInfo = null;
   }
 
   _renderCardsAll(elements, data) {
@@ -50,7 +38,7 @@ export default class MainController {
   _renderCardsMain(container, data, range) {
     const [start, num] = range;
 
-    filmsLoadedLength += num;
+    this._filmsLoadedLength += num;
 
     data.slice(start, start + num)
       .forEach((item) => {
@@ -80,11 +68,11 @@ export default class MainController {
     renderElement(elements.wrapper, showMore);
 
     const onShowMoreElementClick = () => {
-      if (filmsLoadedLength + CardsNum.MORE >= this._filmsLength) {
+      if (this._filmsLoadedLength + CardsNum.MORE >= this._filmsLength) {
         showMore.removeElement();
       }
 
-      const filmsRangeMore = [filmsLoadedLength, CardsNum.MORE];
+      const filmsRangeMore = [this._filmsLoadedLength, CardsNum.MORE];
 
       this._renderCardsMain(elements.main, data, filmsRangeMore);
     };
@@ -93,22 +81,26 @@ export default class MainController {
   }
 
   _renderFilmInfo(info) {
-    bodyElement.classList.add(BODY_HIDE_OVERFLOW_CLASS);
-    renderElement(bodyElement, info);
+    this._updateBodyClassList(BODY_HIDE_OVERFLOW_CLASS);
+    renderElement(this._bodyElement, info);
 
     const filmCommentsList = info.getElement().querySelector(`.film-details__comments-list`);
     renderElement(filmCommentsList, new Comments(info.getComments()));
   }
 
+  _updateBodyClassList(className, method = `add`) {
+    this._bodyElement.classList[method](className);
+  }
+
   _showFilmInfo(info) {
     return () => {
-      if (currentFilmInfo === info) {
+      if (this._currentFilmInfo === info) {
         return;
       }
 
-      this._closeFilmInfo(currentFilmInfo);
+      this._closeFilmInfo(this._currentFilmInfo);
 
-      currentFilmInfo = info;
+      this._currentFilmInfo = info;
 
       this._renderFilmInfo(info);
 
@@ -121,7 +113,7 @@ export default class MainController {
 
   _removeFilmInfo(info) {
     info.removeElement();
-    bodyElement.classList.remove(BODY_HIDE_OVERFLOW_CLASS);
+    this._updateBodyClassList(BODY_HIDE_OVERFLOW_CLASS, `remove`);
   }
 
   _closeFilmInfo(info) {
@@ -141,7 +133,7 @@ export default class MainController {
 
   _onFilmInfoCloseElementClick(info) {
     return () => {
-      currentFilmInfo = null;
+      this._currentFilmInfo = null;
       this._closeFilmInfo(info);
     };
   }
@@ -149,7 +141,7 @@ export default class MainController {
   _onFilmInfoEscPress(info) {
     return (evt) => {
       if (evt.key === KEY_CODE.ESC) {
-        currentFilmInfo = null;
+        this._currentFilmInfo = null;
         this._closeFilmInfo(info);
       }
     };
