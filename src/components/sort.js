@@ -14,11 +14,11 @@ const sortType = [
   },
   {
     name: `date`,
-    fn: (a, b) => (Date.parse(a.date) > Date.parse(b.date) ? 1 : -1),
+    fn: (a, b) => (Date.parse(a.date) - Date.parse(b.date)),
   },
   {
     name: `rating`,
-    fn: (a, b) => (parseFloat(a.rating) > parseFloat(b.rating) ? 1 : -1),
+    fn: (a, b) => (parseFloat(b.rating) - parseFloat(a.rating)),
   },
 ];
 
