@@ -14,11 +14,11 @@ const sortType = [
   },
   {
     name: `date`,
-    fn: (a, b) => (a.date > b.date ? 1 : -1),
+    fn: (a, b) => (Date.parse(a.date) > Date.parse(b.date) ? 1 : -1),
   },
   {
     name: `rating`,
-    fn: (a, b) => (a.rating > b.rating ? 1 : -1),
+    fn: (a, b) => (parseFloat(a.rating) > parseFloat(b.rating) ? 1 : -1),
   },
 ];
 
@@ -38,8 +38,8 @@ export default class Sort extends AbstractComponent {
   }
 
   _clearActiveMod() {
-    this
-      .getElement().querySelectorAll(`.${classActive}`)
+    this.getElement()
+      .querySelectorAll(`.${classActive}`)
       .forEach((item) => {
         item.classList.remove(classActive);
       });
@@ -50,8 +50,8 @@ export default class Sort extends AbstractComponent {
   }
 
   setSortHandler(handler) {
-    this
-      .getElement().querySelectorAll(`.${SORT_CLASSES.ELEMENT}`)
+    this.getElement()
+      .querySelectorAll(`.${SORT_CLASSES.ELEMENT}`)
       .forEach((item) => {
         item.addEventListener(`click`, handler);
       });
@@ -63,8 +63,8 @@ export default class Sort extends AbstractComponent {
 
   setActiveMod(type) {
     this._clearActiveMod();
-    this
-      .getElement().querySelector(`.${SORT_CLASSES.ELEMENT}[data-sort=${type}]`)
+    this.getElement()
+      .querySelector(`.${SORT_CLASSES.ELEMENT}[data-sort=${type}]`)
       .classList.add(classActive);
   }
 }
