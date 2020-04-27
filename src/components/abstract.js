@@ -7,6 +7,7 @@ export default class AbstractComponent {
     }
 
     this._element = null;
+    this._container = null;
   }
 
   getTemplate() {
@@ -26,5 +27,13 @@ export default class AbstractComponent {
       this.getElement().remove();
     }
     this._element = null;
+  }
+
+  set container(container) {
+    this._container = container;
+  }
+
+  get container() {
+    return this._container;
   }
 }

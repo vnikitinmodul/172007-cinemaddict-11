@@ -1,7 +1,6 @@
 import {renderElement} from "../utils/render.js";
 
 import Card from "../components/card.js";
-import Comments from "../components/film-comments.js";
 import FilmDetails from "../components/film-details.js";
 
 import {
@@ -13,27 +12,21 @@ const CARD_ACTION_PROPERTIES = {
   IS_ADDED_TO_WATCHLIST: `isAddedToWatchlist`,
   IS_MARKED_AS_WATCHED: `isMarkedAsWatched`,
   IS_FAVORITE: `isFavorite`,
-}
+};
 
 export default class FilmController {
-  constructor(container, onDataChange) {
+  constructor(container, onDataChange, onViewChange) {
     this._container = container;
     this._bodyElement = document.body;
     this._card = null;
     this._filmInfo = null;
-    this._currentFilmInfo = null;
     this._onDataChange = onDataChange;
+    this._onViewChange = onViewChange;
   }
 
   _showFilmInfo(info) {
     return () => {
-      if (this._currentFilmInfo === info) {
-        return;
-      }
-
-      this._closeFilmInfo(this._currentFilmInfo);
-
-      this._currentFilmInfo = info;
+      this._onViewChange();
 
       this._renderFilmInfo(info);
 
@@ -41,25 +34,16 @@ export default class FilmController {
 
       document.addEventListener(`keydown`, info.onEscPress);
       info.setCloseButtonHandler(this._onFilmInfoCloseElementClick(info));
+      this._filmInfo.setChangeAddToWatchlistHandler(this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_ADDED_TO_WATCHLIST));
+      this._filmInfo.setChangeMarkAsWatchedHandler(this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_MARKED_AS_WATCHED));
+      this._filmInfo.setChangeFavoriteHandler(this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_FAVORITE));
+      this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange.bind(this._filmInfo));
     };
   }
 
   _renderFilmInfo(info) {
     this._updateBodyClassList(BODY_HIDE_OVERFLOW_CLASS);
-    renderElement(this._bodyElement, info);
-
-    const filmCommentsList = info.getElement().querySelector(`.film-details__comments-list`);
-    renderElement(filmCommentsList, new Comments(info.getComments()));
-  }
-
-  _closeFilmInfo(info) {
-    if (!info) {
-      return;
-    }
-
-    this._removeFilmInfo(info);
-
-    document.removeEventListener(`keydown`, info.onEscPress);
+    info.render();
   }
 
   _updateBodyClassList(className, method = `add`) {
@@ -73,16 +57,14 @@ export default class FilmController {
 
   _onFilmInfoCloseElementClick(info) {
     return () => {
-      this._currentFilmInfo = null;
-      this._closeFilmInfo(info);
+      this.closeFilmInfo(info);
     };
   }
 
   _onFilmInfoEscPress(info) {
     return (evt) => {
       if (evt.key === KEY_CODE.ESC) {
-        this._currentFilmInfo = null;
-        this._closeFilmInfo(info);
+        this.closeFilmInfo(info);
       }
     };
   }
@@ -98,8 +80,41 @@ export default class FilmController {
     };
   }
 
+  _onFilmInfoActionChange(property) {
+    return () => {
+      const thisFilmInfoData = this._filmInfo.data;
+      const newFilmInfoData = Object.assign(thisFilmInfoData, {
+        [property]: !thisFilmInfoData[property]
+      });
+      this._onDataChange(thisFilmInfoData, newFilmInfoData);
+      this._filmInfo.rerender();
+    };
+  }
+
+  _onFilmInfoEmojiChange(evt) {
+    const emoji = evt.target.getAttribute(`value`);
+    this._film = Object.assign(this._film, {
+      selectedEmoji: emoji
+    });
+    this.rerender();
+  }
+
+  closeFilmInfo(info) {
+    if (!info) {
+      return;
+    }
+
+    this._removeFilmInfo(info);
+
+    document.removeEventListener(`keydown`, info.onEscPress);
+  }
+
   getCard() {
     return this._card;
+  }
+
+  getFilmInfo() {
+    return this._filmInfo;
   }
 
   render(data) {

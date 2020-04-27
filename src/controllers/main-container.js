@@ -22,7 +22,8 @@ export default class MainController {
     this._showMore = null;
     this._sortComponent = new Sort();
     this._currentSort = `default`;
-    this._cardInstancesMain = [];
+    this._filmsMain = [];
+    this._filmsOther = [];
     this._filmsListElements = {};
   }
 
@@ -61,9 +62,9 @@ export default class MainController {
 
     data.slice(start, start + num)
       .forEach((item) => {
-        const film = new FilmController(this._filmsListElements.main, this._onDataChange);
+        const film = new FilmController(this._filmsListElements.main, this._onDataChange, this._onViewChange.bind(this));
         film.render(item);
-        this._collectCardInstanceMain(film.getCard());
+        this._collectFilmsMain(film);
       });
   }
 
@@ -76,7 +77,9 @@ export default class MainController {
     const filmsDataCopy = this._filmsData.slice();
 
     for (let i = 0; i < Math.min(num, this._filmsLength); i++) {
-      new FilmController(container, this._onDataChange).render(util.getRandomFromArray(filmsDataCopy, true));
+      const film = new FilmController(container, this._onDataChange, this._onViewChange.bind(this));
+      film.render(util.getRandomFromArray(filmsDataCopy, true));
+      this._collectFilmsOther(film);
     }
   }
 
@@ -95,16 +98,20 @@ export default class MainController {
     this._showMore.setClickHandler(onShowMoreElementClick);
   }
 
-  _collectCardInstanceMain(item) {
-    this._cardInstancesMain.push(item);
+  _collectFilmsMain(item) {
+    this._filmsMain.push(item);
+  }
+
+  _collectFilmsOther(item) {
+    this._filmsOther.push(item);
   }
 
   _clearCardsMain() {
-    this._cardInstancesMain.forEach((item) => {
-      item.removeElement(true);
+    this._filmsMain.forEach((item) => {
+      item.getCard().removeElement(true);
     });
 
-    this._cardInstancesMain = [];
+    this._filmsMain = [];
   }
 
   _checkButton() {
@@ -135,6 +142,12 @@ export default class MainController {
 
   _onDataChange(oldData, newData) {
     this.render(newData);
+  }
+
+  _onViewChange() {
+    this._filmsOther.concat(this._filmsMain).forEach((item) => {
+      item.closeFilmInfo(item.getFilmInfo());
+    });
   }
 
   render(filmsData, filtersData) {
