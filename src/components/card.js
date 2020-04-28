@@ -11,10 +11,10 @@ const CARD_CONTROL_ACTIVE_CLASS = `film-card__controls-item--active`;
 
 const getShowDetailsElements = (card) => card.getElement().querySelectorAll(CARD_SHOW_DETAILS.join(`, `));
 
-const getCardActionsElements = (card) => ({
-  addToWatchlist: card.getElement().querySelector(`.film-card__controls-item--add-to-watchlist`),
-  markAsWatched: card.getElement().querySelector(`.film-card__controls-item--mark-as-watched`),
-  favorite: card.getElement().querySelector(`.film-card__controls-item--favorite`),
+const getCardActionsElements = (element) => ({
+  addToWatchlist: element.querySelector(`.film-card__controls-item--add-to-watchlist`),
+  markAsWatched: element.querySelector(`.film-card__controls-item--mark-as-watched`),
+  favorite: element.querySelector(`.film-card__controls-item--favorite`),
 });
 
 const cutText = (text, maxLength = 140, symbol = `…`) => (
@@ -56,40 +56,24 @@ const getCardMarkup = (filmData) => {
 };
 
 export default class Card extends AbstractComponent {
-  constructor(filmData) {
+  constructor(controller) {
     super();
 
-    this._film = filmData;
+    this._controller = controller;
     this._cardActionsElements = {};
   }
 
   getTemplate() {
-    return getCardMarkup(this._film);
+    return getCardMarkup(this._controller.getData());
   }
 
-  setClickAddToWatchlistHandler(handler) {
-    getCardActionsElements(this).addToWatchlist.addEventListener(`click`, handler);
-  }
-
-  setClickMarkAsWatchedHandler(handler) {
-    getCardActionsElements(this).markAsWatched.addEventListener(`click`, handler);
-  }
-
-  setClickFavoriteHandler(handler) {
-    getCardActionsElements(this).favorite.addEventListener(`click`, handler);
+  setClickCardActionHandler(handler, element) {
+    getCardActionsElements(this.getElement())[element].addEventListener(`click`, handler);
   }
 
   setClickHandler(handler) {
     getShowDetailsElements(this).forEach((item) => {
       item.addEventListener(`click`, handler);
     });
-  }
-
-  set data(data) {
-    this._film = data;
-  }
-
-  get data() {
-    return this._film;
   }
 }

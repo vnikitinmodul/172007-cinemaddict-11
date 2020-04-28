@@ -1,4 +1,8 @@
-import {POSTERS_PATH} from "../constants.js";
+import {
+  POSTERS_PATH,
+  FILM_ACTION,
+  FILM_INFO_ACTION_HANDLER,
+} from "../constants.js";
 import * as util from "../utils/common.js";
 import {renderElement} from "../utils/render.js";
 import AbstractSmartComponent from "./abstract-smart.js";
@@ -6,10 +10,10 @@ import Comments from "./film-comments.js";
 
 const FILM_CLOSE_BUTTON = `.film-details__close-btn`;
 
-const getFilmInfoActionsElements = (info) => ({
-  addToWatchlist: info.getElement().querySelector(`#watchlist`),
-  markAsWatched: info.getElement().querySelector(`#watched`),
-  favorite: info.getElement().querySelector(`#favorite`),
+const getFilmInfoActionsElements = (element) => ({
+  [FILM_ACTION.ADD_TO_WATCHLIST]: element.querySelector(`#watchlist`),
+  [FILM_ACTION.MARK_AS_WATCHED]: element.querySelector(`#watched`),
+  [FILM_ACTION.FAVORITE]: element.querySelector(`#favorite`),
 });
 
 const getSelectedEmojiTemplate = (emoji) => {
@@ -156,25 +160,25 @@ const getFilmDetailsMarkup = (filmDetailsData) => {
 };
 
 export default class FilmDetails extends AbstractSmartComponent {
-  constructor(filmDetailsData) {
+  constructor(controller) {
     super();
 
-    this._film = filmDetailsData;
+    this._controller = controller;
     this._commentsInstance = null;
     this._onEscPress = null;
     this._onCloseClick = null;
-    this._onChangeAddToWatchlist = null;
-    this._onChangeMarkAsWatched = null;
-    this._onChangeFavorite = null;
+    this[FILM_INFO_ACTION_HANDLER.ADD_TO_WATCHLIST] = null;
+    this[FILM_INFO_ACTION_HANDLER.MARK_AS_WATCHED] = null;
+    this[FILM_INFO_ACTION_HANDLER.FAVORITE] = null;
     this._onChangeEmoji = null;
   }
 
   getTemplate() {
-    return getFilmDetailsMarkup(this._film);
+    return getFilmDetailsMarkup(this._controller.getData());
   }
 
   getComments() {
-    return this._film.comments;
+    return this._controller.getData().comments;
   }
 
   setCommentsInstance(comments) {
@@ -205,19 +209,11 @@ export default class FilmDetails extends AbstractSmartComponent {
     return this._onEscPress;
   }
 
-  set data(data) {
-    this._film = data;
-  }
-
-  get data() {
-    return this._film;
-  }
-
   recoveryListeners() {
     this.setCloseButtonHandler(this._onCloseClick);
-    this.setChangeAddToWatchlistHandler(this._onChangeAddToWatchlist);
-    this.setChangeMarkAsWatchedHandler(this._onChangeMarkAsWatched);
-    this.setChangeFavoriteHandler(this._onChangeFavorite);
+    this.setChangeFilmInfoActionHandler(this[FILM_INFO_ACTION_HANDLER.ADD_TO_WATCHLIST], FILM_ACTION.ADD_TO_WATCHLIST);
+    this.setChangeFilmInfoActionHandler(this[FILM_INFO_ACTION_HANDLER.MARK_AS_WATCHED], FILM_ACTION.MARK_AS_WATCHED);
+    this.setChangeFilmInfoActionHandler(this[FILM_INFO_ACTION_HANDLER.FAVORITE], FILM_ACTION.FAVORITE);
     this.setChangeEmojiHandler(this._onChangeEmoji);
   }
 
@@ -226,19 +222,11 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.getElement().querySelector(FILM_CLOSE_BUTTON).addEventListener(`click`, handler);
   }
 
-  setChangeAddToWatchlistHandler(handler) {
-    this._onChangeAddToWatchlist = handler;
-    getFilmInfoActionsElements(this).addToWatchlist.addEventListener(`change`, handler);
-  }
-
-  setChangeMarkAsWatchedHandler(handler) {
-    this._onChangeMarkAsWatched = handler;
-    getFilmInfoActionsElements(this).markAsWatched.addEventListener(`change`, handler);
-  }
-
-  setChangeFavoriteHandler(handler) {
-    this._onChangeFavorite = handler;
-    getFilmInfoActionsElements(this).favorite.addEventListener(`change`, handler);
+  setChangeFilmInfoActionHandler(handler, element, handlerSaved) {
+    if (handlerSaved) {
+      this[handlerSaved] = handler;
+    }
+    getFilmInfoActionsElements(this.getElement())[element].addEventListener(`change`, handler);
   }
 
   setChangeEmojiHandler(handler) {

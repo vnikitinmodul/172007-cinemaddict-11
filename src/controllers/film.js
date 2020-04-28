@@ -1,3 +1,5 @@
+import cloneDeep from "clone-deep";
+
 import {renderElement} from "../utils/render.js";
 
 import Card from "../components/card.js";
@@ -6,6 +8,8 @@ import FilmDetails from "../components/film-details.js";
 import {
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
+  FILM_ACTION,
+  FILM_INFO_ACTION_HANDLER,
 } from "../constants.js";
 
 const CARD_ACTION_PROPERTIES = {
@@ -20,6 +24,7 @@ export default class FilmController {
     this._bodyElement = document.body;
     this._card = null;
     this._filmInfo = null;
+    this._data = null;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
   }
@@ -34,10 +39,22 @@ export default class FilmController {
 
       document.addEventListener(`keydown`, info.onEscPress);
       info.setCloseButtonHandler(this._onFilmInfoCloseElementClick(info));
-      this._filmInfo.setChangeAddToWatchlistHandler(this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_ADDED_TO_WATCHLIST));
-      this._filmInfo.setChangeMarkAsWatchedHandler(this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_MARKED_AS_WATCHED));
-      this._filmInfo.setChangeFavoriteHandler(this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_FAVORITE));
-      this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange.bind(this._filmInfo));
+      this._filmInfo.setChangeFilmInfoActionHandler(
+          this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_ADDED_TO_WATCHLIST),
+          FILM_ACTION.ADD_TO_WATCHLIST,
+          FILM_INFO_ACTION_HANDLER.ADD_TO_WATCHLIST
+      );
+      this._filmInfo.setChangeFilmInfoActionHandler(
+          this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_MARKED_AS_WATCHED),
+          FILM_ACTION.MARK_AS_WATCHED,
+          FILM_INFO_ACTION_HANDLER.MARK_AS_WATCHED
+      );
+      this._filmInfo.setChangeFilmInfoActionHandler(
+          this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_FAVORITE),
+          FILM_ACTION.FAVORITE,
+          FILM_INFO_ACTION_HANDLER.FAVORITE
+      );
+      this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange.bind(this));
     };
   }
 
@@ -72,31 +89,30 @@ export default class FilmController {
   _onCardActionClick(property) {
     return (evt) => {
       evt.preventDefault();
-      const thisCardData = this._card.data;
-      const newCardData = Object.assign(thisCardData, {
-        [property]: !thisCardData[property]
-      });
+      const thisCardData = this._data;
+      const newCardData = cloneDeep(thisCardData);
+      newCardData[property] = !thisCardData[property];
+      this._data = newCardData;
       this._onDataChange(thisCardData, newCardData);
     };
   }
 
   _onFilmInfoActionChange(property) {
     return () => {
-      const thisFilmInfoData = this._filmInfo.data;
-      const newFilmInfoData = Object.assign(thisFilmInfoData, {
-        [property]: !thisFilmInfoData[property]
-      });
+      const thisFilmInfoData = this._data;
+      const newFilmInfoData = cloneDeep(thisFilmInfoData);
+      newFilmInfoData[property] = !thisFilmInfoData[property];
+      this._data = newFilmInfoData;
       this._onDataChange(thisFilmInfoData, newFilmInfoData);
       this._filmInfo.rerender();
     };
   }
 
   _onFilmInfoEmojiChange(evt) {
-    const emoji = evt.target.getAttribute(`value`);
-    this._film = Object.assign(this._film, {
-      selectedEmoji: emoji
-    });
-    this.rerender();
+    const newFilmInfoData = cloneDeep(this._data);
+    newFilmInfoData.selectedEmoji = evt.target.getAttribute(`value`);
+    this._data = newFilmInfoData;
+    this._filmInfo.rerender();
   }
 
   closeFilmInfo(info) {
@@ -109,6 +125,10 @@ export default class FilmController {
     document.removeEventListener(`keydown`, info.onEscPress);
   }
 
+  getData() {
+    return this._data;
+  }
+
   getCard() {
     return this._card;
   }
@@ -118,18 +138,27 @@ export default class FilmController {
   }
 
   render(data) {
+    this._data = data;
+
     if (!this._card) {
-      this._card = new Card(data);
-      this._filmInfo = new FilmDetails(data);
-    } else {
-      this._card.data = data;
+      this._card = new Card(this);
+      this._filmInfo = new FilmDetails(this);
     }
 
     renderElement(this._container, this._card);
 
     this._card.setClickHandler(this._showFilmInfo(this._filmInfo));
-    this._card.setClickAddToWatchlistHandler(this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_ADDED_TO_WATCHLIST));
-    this._card.setClickMarkAsWatchedHandler(this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_MARKED_AS_WATCHED));
-    this._card.setClickFavoriteHandler(this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_FAVORITE));
+    this._card.setClickCardActionHandler(
+        this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_ADDED_TO_WATCHLIST),
+        FILM_ACTION.ADD_TO_WATCHLIST
+    );
+    this._card.setClickCardActionHandler(
+        this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_MARKED_AS_WATCHED),
+        FILM_ACTION.MARK_AS_WATCHED
+    );
+    this._card.setClickCardActionHandler(
+        this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_FAVORITE),
+        FILM_ACTION.FAVORITE
+    );
   }
 }
