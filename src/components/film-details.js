@@ -1,7 +1,6 @@
 import {
   POSTERS_PATH,
-  FILM_ACTION,
-  FILM_INFO_ACTION_HANDLER,
+  ACTION_PROPERTIES,
 } from "../constants.js";
 import * as util from "../utils/common.js";
 import {renderElement} from "../utils/render.js";
@@ -9,12 +8,6 @@ import AbstractSmartComponent from "./abstract-smart.js";
 import Comments from "./film-comments.js";
 
 const FILM_CLOSE_BUTTON = `.film-details__close-btn`;
-
-const getFilmInfoActionsElements = (element) => ({
-  [FILM_ACTION.ADD_TO_WATCHLIST]: element.querySelector(`#watchlist`),
-  [FILM_ACTION.MARK_AS_WATCHED]: element.querySelector(`#watched`),
-  [FILM_ACTION.FAVORITE]: element.querySelector(`#favorite`),
-});
 
 const getSelectedEmojiTemplate = (emoji) => {
   return emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">` : ``;
@@ -167,9 +160,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._commentsInstance = null;
     this._onEscPress = null;
     this._onCloseClick = null;
-    this[FILM_INFO_ACTION_HANDLER.ADD_TO_WATCHLIST] = null;
-    this[FILM_INFO_ACTION_HANDLER.MARK_AS_WATCHED] = null;
-    this[FILM_INFO_ACTION_HANDLER.FAVORITE] = null;
+    this._filmInfoActionHandlers = [];
     this._onChangeEmoji = null;
   }
 
@@ -211,9 +202,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   recoveryListeners() {
     this.setCloseButtonHandler(this._onCloseClick);
-    this.setChangeFilmInfoActionHandler(this[FILM_INFO_ACTION_HANDLER.ADD_TO_WATCHLIST], FILM_ACTION.ADD_TO_WATCHLIST);
-    this.setChangeFilmInfoActionHandler(this[FILM_INFO_ACTION_HANDLER.MARK_AS_WATCHED], FILM_ACTION.MARK_AS_WATCHED);
-    this.setChangeFilmInfoActionHandler(this[FILM_INFO_ACTION_HANDLER.FAVORITE], FILM_ACTION.FAVORITE);
+    this._filmInfoActionHandlers.forEach(this.setChangeFilmInfoActionHandler.bind(this));
     this.setChangeEmojiHandler(this._onChangeEmoji);
   }
 
@@ -222,11 +211,16 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.getElement().querySelector(FILM_CLOSE_BUTTON).addEventListener(`click`, handler);
   }
 
-  setChangeFilmInfoActionHandler(handler, element, handlerSaved) {
-    if (handlerSaved) {
-      this[handlerSaved] = handler;
+  setChangeFilmInfoActionHandler(param) {
+    const maxLength = Object.keys(ACTION_PROPERTIES).length;
+    const {id, handler} = param;
+
+    if (this._filmInfoActionHandlers.length === maxLength) {
+      this._filmInfoActionHandlers = [];
     }
-    getFilmInfoActionsElements(this.getElement())[element].addEventListener(`change`, handler);
+
+    this._filmInfoActionHandlers.push(param);
+    this.getElement().querySelector(`#${id}`).addEventListener(`change`, handler);
   }
 
   setChangeEmojiHandler(handler) {

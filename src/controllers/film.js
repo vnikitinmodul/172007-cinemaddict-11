@@ -8,15 +8,9 @@ import FilmDetails from "../components/film-details.js";
 import {
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
-  FILM_ACTION,
-  FILM_INFO_ACTION_HANDLER,
+  ACTION_PROPERTIES,
 } from "../constants.js";
 
-const CARD_ACTION_PROPERTIES = {
-  IS_ADDED_TO_WATCHLIST: `isAddedToWatchlist`,
-  IS_MARKED_AS_WATCHED: `isMarkedAsWatched`,
-  IS_FAVORITE: `isFavorite`,
-};
 
 export default class FilmController {
   constructor(container, onDataChange, onViewChange) {
@@ -29,6 +23,24 @@ export default class FilmController {
     this._onViewChange = onViewChange;
   }
 
+  _setClickCardActionHandlers() {
+    Object.keys(ACTION_PROPERTIES).forEach((key) => {
+      this._card.setClickCardActionHandler({
+        className: `film-card__controls-item--${ACTION_PROPERTIES[key].MODIFICATOR}`,
+        handler: this._onCardActionClick(ACTION_PROPERTIES[key].PROPERTY)
+      });
+    });
+  }
+
+  _setChangeFilmInfoActionHandlers() {
+    Object.keys(ACTION_PROPERTIES).forEach((key) => {
+      this._filmInfo.setChangeFilmInfoActionHandler({
+        id: key.toLowerCase(),
+        handler: this._onFilmInfoActionChange(ACTION_PROPERTIES[key].PROPERTY)
+      });
+    });
+  }
+
   _showFilmInfo(info) {
     return () => {
       this._onViewChange();
@@ -39,21 +51,7 @@ export default class FilmController {
 
       document.addEventListener(`keydown`, info.onEscPress);
       info.setCloseButtonHandler(this._onFilmInfoCloseElementClick(info));
-      this._filmInfo.setChangeFilmInfoActionHandler(
-          this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_ADDED_TO_WATCHLIST),
-          FILM_ACTION.ADD_TO_WATCHLIST,
-          FILM_INFO_ACTION_HANDLER.ADD_TO_WATCHLIST
-      );
-      this._filmInfo.setChangeFilmInfoActionHandler(
-          this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_MARKED_AS_WATCHED),
-          FILM_ACTION.MARK_AS_WATCHED,
-          FILM_INFO_ACTION_HANDLER.MARK_AS_WATCHED
-      );
-      this._filmInfo.setChangeFilmInfoActionHandler(
-          this._onFilmInfoActionChange(CARD_ACTION_PROPERTIES.IS_FAVORITE),
-          FILM_ACTION.FAVORITE,
-          FILM_INFO_ACTION_HANDLER.FAVORITE
-      );
+      this._setChangeFilmInfoActionHandlers();
       this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange.bind(this));
     };
   }
@@ -147,18 +145,7 @@ export default class FilmController {
 
     renderElement(this._container, this._card);
 
+    this._setClickCardActionHandlers();
     this._card.setClickHandler(this._showFilmInfo(this._filmInfo));
-    this._card.setClickCardActionHandler(
-        this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_ADDED_TO_WATCHLIST),
-        FILM_ACTION.ADD_TO_WATCHLIST
-    );
-    this._card.setClickCardActionHandler(
-        this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_MARKED_AS_WATCHED),
-        FILM_ACTION.MARK_AS_WATCHED
-    );
-    this._card.setClickCardActionHandler(
-        this._onCardActionClick(CARD_ACTION_PROPERTIES.IS_FAVORITE),
-        FILM_ACTION.FAVORITE
-    );
   }
 }

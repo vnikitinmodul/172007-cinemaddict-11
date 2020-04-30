@@ -1,4 +1,6 @@
-import {POSTERS_PATH} from "../constants.js";
+import {
+  POSTERS_PATH,
+} from "../constants.js";
 import AbstractComponent from "./abstract.js";
 
 const CARD_SHOW_DETAILS = [
@@ -10,12 +12,6 @@ const CARD_SHOW_DETAILS = [
 const CARD_CONTROL_ACTIVE_CLASS = `film-card__controls-item--active`;
 
 const getShowDetailsElements = (card) => card.getElement().querySelectorAll(CARD_SHOW_DETAILS.join(`, `));
-
-const getCardActionsElements = (element) => ({
-  addToWatchlist: element.querySelector(`.film-card__controls-item--add-to-watchlist`),
-  markAsWatched: element.querySelector(`.film-card__controls-item--mark-as-watched`),
-  favorite: element.querySelector(`.film-card__controls-item--favorite`),
-});
 
 const cutText = (text, maxLength = 140, symbol = `…`) => (
   text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text
@@ -67,8 +63,9 @@ export default class Card extends AbstractComponent {
     return getCardMarkup(this._controller.getData());
   }
 
-  setClickCardActionHandler(handler, element) {
-    getCardActionsElements(this.getElement())[element].addEventListener(`click`, handler);
+  setClickCardActionHandler(param) {
+    const {className, handler} = param;
+    this.getElement().querySelector(`.${className}`).addEventListener(`click`, handler);
   }
 
   setClickHandler(handler) {
