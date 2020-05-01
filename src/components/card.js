@@ -1,4 +1,6 @@
-import {POSTERS_PATH} from "../constants.js";
+import {
+  POSTERS_PATH,
+} from "../constants.js";
 import AbstractComponent from "./abstract.js";
 
 const CARD_SHOW_DETAILS = [
@@ -6,6 +8,8 @@ const CARD_SHOW_DETAILS = [
   `.film-card__title`,
   `.film-card__comments`,
 ];
+
+const CARD_CONTROL_ACTIVE_CLASS = `film-card__controls-item--active`;
 
 const getShowDetailsElements = (card) => card.getElement().querySelectorAll(CARD_SHOW_DETAILS.join(`, `));
 
@@ -23,6 +27,9 @@ const getCardMarkup = (filmData) => {
     poster,
     description,
     comments,
+    isAddedToWatchlist,
+    isMarkedAsWatched,
+    isFavorite,
   } = filmData;
 
   return `<article class="film-card">
@@ -37,22 +44,28 @@ const getCardMarkup = (filmData) => {
     <p class="film-card__description">${cutText(description)}</p>
     <a class="film-card__comments">${comments.length} comments</a>
     <form class="film-card__controls">
-      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist">Add to watchlist</button>
-      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched">Mark as watched</button>
-      <button class="film-card__controls-item button film-card__controls-item--favorite">Mark as favorite</button>
+      <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${isAddedToWatchlist ? ` ${CARD_CONTROL_ACTIVE_CLASS}` : ``}">Add to watchlist</button>
+      <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${isMarkedAsWatched ? ` ${CARD_CONTROL_ACTIVE_CLASS}` : ``}">Mark as watched</button>
+      <button class="film-card__controls-item button film-card__controls-item--favorite${isFavorite ? ` ${CARD_CONTROL_ACTIVE_CLASS}` : ``}">Mark as favorite</button>
     </form>
   </article>`;
 };
 
 export default class Card extends AbstractComponent {
-  constructor(filmData) {
+  constructor(controller) {
     super();
 
-    this._film = filmData;
+    this._controller = controller;
+    this._cardActionsElements = {};
   }
 
   getTemplate() {
-    return getCardMarkup(this._film);
+    return getCardMarkup(this._controller.getData());
+  }
+
+  setClickCardActionHandler(param) {
+    const {className, handler} = param;
+    this.getElement().querySelector(`.${className}`).addEventListener(`click`, handler);
   }
 
   setClickHandler(handler) {

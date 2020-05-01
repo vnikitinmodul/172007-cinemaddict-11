@@ -10,6 +10,7 @@
     "build": "webpack"
   },
   "devDependencies": {
+    "clone-deep": "4.0.1",
     "eslint": "6.1.0",
     "eslint-config-htmlacademy": "0.5.2",
     "webpack": "4.42.1",

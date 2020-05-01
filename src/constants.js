@@ -18,10 +18,26 @@ const CardsNum = {
   COMMENTED: 2
 };
 
+const ACTION_PROPERTIES = {
+  WATCHLIST: {
+    MODIFICATOR: `add-to-watchlist`,
+    PROPERTY: `isAddedToWatchlist`,
+  },
+  WATCHED: {
+    MODIFICATOR: `mark-as-watched`,
+    PROPERTY: `isMarkedAsWatched`,
+  },
+  FAVORITE: {
+    MODIFICATOR: `favorite`,
+    PROPERTY: `isFavorite`,
+  },
+};
+
 export {
   POSTERS_PATH,
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
   TITLE_MESSAGE,
   CardsNum,
+  ACTION_PROPERTIES,
 };
