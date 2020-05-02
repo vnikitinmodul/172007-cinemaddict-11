@@ -26,7 +26,7 @@ export default class FilmController {
   _setClickCardActionHandlers() {
     Object.keys(ACTION_PROPERTIES).forEach((key) => {
       this._card.setClickCardActionHandler({
-        className: `film-card__controls-item--${ACTION_PROPERTIES[key].MODIFICATOR}`,
+        className: `film-card__controls-item--${ACTION_PROPERTIES[key].MODIFIER}`,
         handler: this._onCardActionClick(ACTION_PROPERTIES[key].PROPERTY)
       });
     });

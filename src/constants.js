@@ -20,15 +20,15 @@ const CardsNum = {
 
 const ACTION_PROPERTIES = {
   WATCHLIST: {
-    MODIFICATOR: `add-to-watchlist`,
+    MODIFIER: `add-to-watchlist`,
     PROPERTY: `isAddedToWatchlist`,
   },
   WATCHED: {
-    MODIFICATOR: `mark-as-watched`,
+    MODIFIER: `mark-as-watched`,
     PROPERTY: `isMarkedAsWatched`,
   },
   FAVORITE: {
-    MODIFICATOR: `favorite`,
+    MODIFIER: `favorite`,
     PROPERTY: `isFavorite`,
   },
 };

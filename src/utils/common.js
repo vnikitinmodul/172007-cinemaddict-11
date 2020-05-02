@@ -1,3 +1,5 @@
+import moment from "moment";
+
 const HIDDEN_CLASS = `visually-hidden`;
 
 const MONTH_NAMES = [
@@ -44,7 +46,7 @@ const getSomeFromArray = (array, min = 1, max = array.length) => {
 };
 
 const getRandomDate = (yearsAgo = 1) => {
-  return new Date(new Date() - new Date(getRandomNum(0, yearsAgo * Time.DAYS_PER_YEAR * Time.HOURS_PER_DAY * Time.MINUTES_PER_HOUR * Time.SECONDS_PER_MINUTE * Time.MILLISECONDS_PER_SECOND)));
+  return new Date(new Date() - new Date(getRandomNum(0, Object.values(Time).reduce((acc, item) => (acc * item), yearsAgo))));
 };
 
 const getMonthName = (num) => {
@@ -70,6 +72,12 @@ const hideElement = (element) => {
   element.classList.add(HIDDEN_CLASS);
 };
 
+const getDurationMoment = (duration) => {
+  const durationMoment = moment.duration(duration, `minutes`);
+
+  return `${durationMoment.hours() ? `${durationMoment.hours()}h ` : ``}${durationMoment.minutes() ? `${durationMoment.minutes()}m ` : ``}`;
+};
+
 export {
   getRandomNum,
   getRandomFromArray,
@@ -80,4 +88,5 @@ export {
   generateArrayData,
   showElement,
   hideElement,
+  getDurationMoment,
 };

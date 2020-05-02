@@ -1,8 +1,8 @@
+import moment from "moment";
 import {
   POSTERS_PATH,
   ACTION_PROPERTIES,
 } from "../constants.js";
-import moment from "moment";
 import * as util from "../utils/common.js";
 import {renderElement} from "../utils/render.js";
 import AbstractSmartComponent from "./abstract-smart.js";
@@ -35,8 +35,6 @@ const getFilmDetailsMarkup = (filmDetailsData) => {
     isFavorite,
     selectedEmoji,
   } = filmDetailsData;
-
-  const durationMoment = moment.duration(duration, `minutes`);
 
   return `<section class="film-details">
     <form class="film-details__inner" action="" method="get">
@@ -82,7 +80,7 @@ const getFilmDetailsMarkup = (filmDetailsData) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${durationMoment.hours() ? `${durationMoment.hours()}h ` : ``}${durationMoment.minutes() ? `${durationMoment.minutes()}m ` : ``}</td>
+                <td class="film-details__cell">${util.getDurationMoment(duration)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
