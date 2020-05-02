@@ -128,14 +128,9 @@ const FilmRating = {
 
 const FILM_YEAR_AGO = 100;
 
-const FilmDurationHour = {
-  MIN: 0,
-  MAX: 2,
-};
-
 const FilmDurationMinute = {
-  MIN: 0,
-  MAX: 60,
+  MIN: 30,
+  MAX: 180,
 };
 
 const FilmDescriptionLength = {
@@ -149,11 +144,6 @@ const FilmsRangeNum = {
 };
 
 
-const getDuration = (hours, minutes) => (
-  `${hours ? `${hours}h` : ``} ${minutes ? `${util.addZeroBefore(minutes)}m` : ``}`
-);
-
-
 const generateCard = () => ({
   title: util.getRandomFromArray(FILM_TITLES),
   titleOriginal: util.getRandomFromArray(FILM_TITLES_ORIGINAL),
@@ -165,7 +155,7 @@ const generateCard = () => ({
   poster: util.getRandomFromArray(FILM_POSTERS),
   rating: (util.getRandomNum(FilmRating.MIN * FILM_RATING_PRECISION, FilmRating.MAX * FILM_RATING_PRECISION) / FILM_RATING_PRECISION).toFixed(1),
   date: util.getRandomDate(FILM_YEAR_AGO),
-  duration: getDuration(util.getRandomNum(FilmDurationHour.MIN, FilmDurationHour.MAX), util.getRandomNum(FilmDurationMinute.MIN, FilmDurationMinute.MAX)),
+  duration: util.getRandomNum(FilmDurationMinute.MIN, FilmDurationMinute.MAX),
   genres: util.getSomeFromArray(FILM_GENRES),
   description: util.getSomeFromArray(FILM_DESCRIPTION_STRINGS, FilmDescriptionLength.MIN, FilmDescriptionLength.MAX).join(` `),
   comments: generateComments(),

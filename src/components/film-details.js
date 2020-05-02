@@ -1,3 +1,4 @@
+import moment from "moment";
 import {
   POSTERS_PATH,
   ACTION_PROPERTIES,
@@ -75,11 +76,11 @@ const getFilmDetailsMarkup = (filmDetailsData) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Release Date</td>
-                <td class="film-details__cell">${util.addZeroBefore(date.getDate())} ${util.getMonthName(date.getMonth())} ${date.getFullYear()}</td>
+                <td class="film-details__cell">${moment(date).format(`DD MMMM YYYY`)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${duration}</td>
+                <td class="film-details__cell">${util.getDurationMoment(duration)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
