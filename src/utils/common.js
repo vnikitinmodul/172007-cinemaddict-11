@@ -44,7 +44,7 @@ const getSomeFromArray = (array, min = 1, max = array.length) => {
 };
 
 const getRandomDate = (yearsAgo = 1) => {
-  return new Date(new Date() - new Date(getRandomNum(0, yearsAgo * Time.DAYS_PER_YEAR) * Time.HOURS_PER_DAY * Time.MINUTES_PER_HOUR * Time.SECONDS_PER_MINUTE * Time.MILLISECONDS_PER_SECOND));
+  return new Date(new Date() - new Date(getRandomNum(0, yearsAgo * Time.DAYS_PER_YEAR * Time.HOURS_PER_DAY * Time.MINUTES_PER_HOUR * Time.SECONDS_PER_MINUTE * Time.MILLISECONDS_PER_SECOND)));
 };
 
 const getMonthName = (num) => {
