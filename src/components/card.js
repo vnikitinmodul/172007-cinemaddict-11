@@ -20,7 +20,7 @@ const cutText = (text, maxLength = 140, symbol = `…`) => (
   text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text
 );
 
-const getCardMarkup = (filmData) => {
+const getCardMarkup = (filmData, commentsLength) => {
   const {
     title,
     rating,
@@ -29,7 +29,6 @@ const getCardMarkup = (filmData) => {
     genres,
     poster,
     description,
-    comments,
     isAddedToWatchlist,
     isMarkedAsWatched,
     isFavorite,
@@ -45,7 +44,7 @@ const getCardMarkup = (filmData) => {
     </p>
     <img src="${POSTERS_PATH + poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${cutText(description)}</p>
-    <a class="film-card__comments">${comments.length} comments</a>
+    <a class="film-card__comments">${commentsLength} comments</a>
     <form class="film-card__controls">
       <button class="film-card__controls-item button film-card__controls-item--add-to-watchlist${isAddedToWatchlist ? ` ${CARD_CONTROL_ACTIVE_CLASS}` : ``}">Add to watchlist</button>
       <button class="film-card__controls-item button film-card__controls-item--mark-as-watched${isMarkedAsWatched ? ` ${CARD_CONTROL_ACTIVE_CLASS}` : ``}">Mark as watched</button>
@@ -63,7 +62,7 @@ export default class Card extends AbstractComponent {
   }
 
   getTemplate() {
-    return getCardMarkup(this._controller.getData());
+    return getCardMarkup(this._controller.getData(), this._controller.getCommentsData().commentsList.length);
   }
 
   setClickCardActionHandler(param) {

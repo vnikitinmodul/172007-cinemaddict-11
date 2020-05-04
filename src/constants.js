@@ -18,6 +18,11 @@ const CardsNum = {
   COMMENTED: 2
 };
 
+const FilmsRangeNum = {
+  MIN: 15,
+  MAX: 20,
+};
+
 const ACTION_PROPERTIES = {
   WATCHLIST: {
     MODIFIER: `add-to-watchlist`,
@@ -33,11 +38,36 @@ const ACTION_PROPERTIES = {
   },
 };
 
+const FILTERS = [
+  {
+    HREF: `#all`,
+    NAME: `All movies`,
+    FUNCTION: (item) => (item),
+  },
+  {
+    HREF: `#watchlist`,
+    NAME: `Watchlist`,
+    FUNCTION: (item) => (item.isAddedToWatchlist),
+  },
+  {
+    HREF: `#history`,
+    NAME: `History`,
+    FUNCTION: (item) => (item.isMarkedAsWatched),
+  },
+  {
+    HREF: `#favorites`,
+    NAME: `Favorites`,
+    FUNCTION: (item) => (item.isFavorite),
+  },
+];
+
 export {
   POSTERS_PATH,
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
   TITLE_MESSAGE,
   CardsNum,
+  FilmsRangeNum,
   ACTION_PROPERTIES,
+  FILTERS,
 };

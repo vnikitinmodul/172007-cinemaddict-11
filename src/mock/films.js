@@ -1,5 +1,4 @@
 import * as util from "../utils/common.js";
-import {generateComments} from "./comments.js";
 
 
 const FILM_TITLES = [
@@ -138,11 +137,6 @@ const FilmDescriptionLength = {
   MAX: 5,
 };
 
-const FilmsRangeNum = {
-  MIN: 15,
-  MAX: 20,
-};
-
 
 const generateCard = () => ({
   title: util.getRandomFromArray(FILM_TITLES),
@@ -158,7 +152,9 @@ const generateCard = () => ({
   duration: util.getRandomNum(FilmDurationMinute.MIN, FilmDurationMinute.MAX),
   genres: util.getSomeFromArray(FILM_GENRES),
   description: util.getSomeFromArray(FILM_DESCRIPTION_STRINGS, FilmDescriptionLength.MIN, FilmDescriptionLength.MAX).join(` `),
-  comments: generateComments(),
+  isAddedToWatchlist: util.getRandomBoolean(0.2),
+  isMarkedAsWatched: util.getRandomBoolean(0.2),
+  isFavorite: util.getRandomBoolean(0.2),
 });
 
-export const generateFilms = () => util.generateArrayData(FilmsRangeNum.MIN, FilmsRangeNum.MAX, generateCard);
+export const generateFilms = (num) => util.generateArrayData(num, generateCard, true);

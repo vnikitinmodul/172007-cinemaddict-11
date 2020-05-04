@@ -14,7 +14,7 @@ const sortType = [
   },
   {
     name: `date`,
-    fn: (a, b) => (Date.parse(a.date) - Date.parse(b.date)),
+    fn: (a, b) => (Date.parse(b.date) - Date.parse(a.date)),
   },
   {
     name: `rating`,

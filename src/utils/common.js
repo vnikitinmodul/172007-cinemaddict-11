@@ -57,12 +57,17 @@ const addZeroBefore = (value) => {
   return value < 10 ? `0${value}` : value;
 };
 
-const generateArrayData = (min, max, generator) => (
-  [...Array(getRandomNum(min, max)).keys()].reduce((accumulator) => {
+const generateArrayData = (num, generator, isSetId) => {
+  return [...Array(num).keys()].reduce((accumulator, item, i) => {
     accumulator.push(generator());
+
+    if (isSetId) {
+      accumulator[i].id = i;
+    }
+
     return accumulator;
-  }, [])
-);
+  }, []);
+};
 
 const showElement = (element) => {
   element.classList.remove(HIDDEN_CLASS);
@@ -78,6 +83,10 @@ const getDurationMoment = (duration) => {
   return `${durationMoment.hours() ? `${durationMoment.hours()}h ` : ``}${durationMoment.minutes() ? `${durationMoment.minutes()}m ` : ``}`;
 };
 
+const getRandomBoolean = (chance = 0.5) => (
+  Math.floor(Math.random() - chance)
+);
+
 export {
   getRandomNum,
   getRandomFromArray,
@@ -89,4 +98,5 @@ export {
   showElement,
   hideElement,
   getDurationMoment,
+  getRandomBoolean,
 };

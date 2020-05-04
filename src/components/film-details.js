@@ -14,7 +14,7 @@ const getSelectedEmojiTemplate = (emoji) => {
   return emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">` : ``;
 };
 
-const getFilmDetailsMarkup = (filmDetailsData) => {
+const getFilmDetailsMarkup = (filmDetailsData, comments) => {
   const {
     title,
     rating,
@@ -27,7 +27,6 @@ const getFilmDetailsMarkup = (filmDetailsData) => {
     country,
     poster,
     description,
-    comments,
     age,
     titleOriginal,
     isAddedToWatchlist,
@@ -166,11 +165,11 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return getFilmDetailsMarkup(this._controller.getData());
+    return getFilmDetailsMarkup(this._controller.getData(), this.getComments());
   }
 
   getComments() {
-    return this._controller.getData().comments;
+    return this._controller.getCommentsData().commentsList;
   }
 
   setCommentsInstance(comments) {

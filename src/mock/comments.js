@@ -1,5 +1,6 @@
 import * as util from "../utils/common.js";
 
+
 const COMMENT_AUTHORS = [
   `John Doe`,
   `Tim Macoveev`,
@@ -36,4 +37,8 @@ const generateComment = () => (
   }
 );
 
-export const generateComments = () => util.generateArrayData(CommentsRangeNum.MIN, CommentsRangeNum.MAX, generateComment);
+const generateCommentsList = () => ({
+  commentsList: util.generateArrayData(util.getRandomNum(...Object.values(CommentsRangeNum)), generateComment)
+});
+
+export const generateComments = (num) => (util.generateArrayData(num, generateCommentsList, true));

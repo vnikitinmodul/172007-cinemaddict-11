@@ -19,6 +19,7 @@ export default class FilmController {
     this._card = null;
     this._filmInfo = null;
     this._data = null;
+    this._commentsData = null;
     this._onDataChange = onDataChange;
     this._onViewChange = onViewChange;
   }
@@ -91,7 +92,7 @@ export default class FilmController {
       const newCardData = cloneDeep(thisCardData);
       newCardData[property] = !thisCardData[property];
       this._data = newCardData;
-      this._onDataChange(thisCardData, newCardData);
+      this._onDataChange(this._card, newCardData);
     };
   }
 
@@ -101,7 +102,7 @@ export default class FilmController {
       const newFilmInfoData = cloneDeep(thisFilmInfoData);
       newFilmInfoData[property] = !thisFilmInfoData[property];
       this._data = newFilmInfoData;
-      this._onDataChange(thisFilmInfoData, newFilmInfoData);
+      this._onDataChange(this._filmInfo, newFilmInfoData);
       this._filmInfo.rerender();
     };
   }
@@ -127,6 +128,10 @@ export default class FilmController {
     return this._data;
   }
 
+  getCommentsData() {
+    return this._commentsData;
+  }
+
   getCard() {
     return this._card;
   }
@@ -135,8 +140,9 @@ export default class FilmController {
     return this._filmInfo;
   }
 
-  render(data) {
-    this._data = data;
+  render(data, commentsData) {
+    this._data = data || this._data;
+    this._commentsData = commentsData || this._commentsData;
 
     if (!this._card) {
       this._card = new Card(this);
