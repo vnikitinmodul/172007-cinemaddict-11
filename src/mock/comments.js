@@ -38,7 +38,7 @@ const generateComment = () => (
 );
 
 const generateCommentsList = () => ({
-  commentsList: util.generateArrayData(util.getRandomNum(...Object.values(CommentsRangeNum)), generateComment)
+  commentsList: util.generateArrayData(util.getRandomNum(...Object.values(CommentsRangeNum)), generateComment, `commentId`)
 });
 
-export const generateComments = (num) => (util.generateArrayData(num, generateCommentsList, true));
+export const generateComments = (num) => (util.generateArrayData(num, generateCommentsList, `id`));

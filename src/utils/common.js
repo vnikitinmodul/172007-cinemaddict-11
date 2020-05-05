@@ -57,12 +57,12 @@ const addZeroBefore = (value) => {
   return value < 10 ? `0${value}` : value;
 };
 
-const generateArrayData = (num, generator, isSetId) => {
+const generateArrayData = (num, generator, iterator) => {
   return [...Array(num).keys()].reduce((accumulator, item, i) => {
     accumulator.push(generator());
 
-    if (isSetId) {
-      accumulator[i].id = i;
+    if (iterator) {
+      accumulator[i][iterator] = i;
     }
 
     return accumulator;

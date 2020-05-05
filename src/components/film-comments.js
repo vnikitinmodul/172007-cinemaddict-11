@@ -1,5 +1,5 @@
 import moment from "moment";
-import AbstractComponent from "./abstract.js";
+import AbstractSmartComponent from "./abstract-smart.js";
 
 const getCommentMarkup = (item) => {
   const {
@@ -7,6 +7,7 @@ const getCommentMarkup = (item) => {
     author,
     date,
     text,
+    commentId,
   } = item;
 
   return `<li class="film-details__comment">
@@ -18,7 +19,7 @@ const getCommentMarkup = (item) => {
       <p class="film-details__comment-info">
         <span class="film-details__comment-author">${author}</span>
         <span class="film-details__comment-day" title="${moment(date).format(`YYYY/MM/DD HH:mm`)}">${moment(date).fromNow()}</span>
-        <button class="film-details__comment-delete">Delete</button>
+        <button class="film-details__comment-delete" data-id="${commentId}">Delete</button>
       </p>
     </div>
   </li>`;
@@ -29,11 +30,12 @@ const getFilmCommentsMarkup = (commentsData) => (
     .map(getCommentMarkup).join(``)
 );
 
-export default class Comments extends AbstractComponent {
-  constructor(commentsData) {
+export default class FilmComments extends AbstractSmartComponent {
+  constructor() {
     super();
 
-    this._comments = commentsData;
+    this._comments = [];
+    this._onClickDeleteComment = null;
   }
 
   getElement() {
@@ -42,5 +44,21 @@ export default class Comments extends AbstractComponent {
 
   getTemplate() {
     return getFilmCommentsMarkup(this._comments);
+  }
+
+  setComments(data) {
+    this._comments = data;
+  }
+
+  recoveryListeners() {
+    this.setDeleteCommentHandler(this._onClickDeleteComment);
+  }
+
+  setDeleteCommentHandler(handler) {
+    this._onClickDeleteComment = handler;
+
+    this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((item) => {
+      item.addEventListener(`click`, handler);
+    });
   }
 }

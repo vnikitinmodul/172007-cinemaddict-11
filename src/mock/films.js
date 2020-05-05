@@ -157,4 +157,4 @@ const generateCard = () => ({
   isFavorite: util.getRandomBoolean(0.2),
 });
 
-export const generateFilms = (num) => util.generateArrayData(num, generateCard, true);
+export const generateFilms = (num) => util.generateArrayData(num, generateCard, `id`);

@@ -28,7 +28,15 @@ export default class MainController {
     this._filmsOther = [];
     this._filmsListElements = {};
 
+    this._handlers = {
+      onDataChange: this._onDataChange.bind(this),
+      onViewChange: this._onViewChange.bind(this),
+      onCommentsDataChange: this._onCommentsDataChange.bind(this),
+    };
+
     this._onFilterActivate = this._onFilterActivate.bind(this);
+    this._dataChangeModelUpdate = this._dataChangeModelUpdate.bind(this);
+    this._dataCommentsChangeModelUpdate = this._dataCommentsChangeModelUpdate.bind(this);
 
     this._filmsModel.setFilterChangeHandler(this._onFilterActivate);
   }
@@ -70,7 +78,7 @@ export default class MainController {
 
     data.slice(start, start + num)
       .forEach((item) => {
-        const film = new FilmController(this._filmsListElements.main, this._onDataChange.bind(this), this._onViewChange.bind(this));
+        const film = new FilmController(this._filmsListElements.main, this._handlers);
         film.render(item, this._commentsModel.getComments(item.id));
         this._collectFilmsMain(film);
       });
@@ -90,7 +98,7 @@ export default class MainController {
     const filmsDataCopy = this._filmsModel.getFilms().slice();
 
     for (let i = 0; i < Math.min(num, this._filmsLength); i++) {
-      const film = new FilmController(container, this._onDataChange.bind(this), this._onViewChange.bind(this));
+      const film = new FilmController(container, this._handlers);
       const currentFilm = util.getRandomFromArray(filmsDataCopy, true);
       film.render(currentFilm, this._commentsModel.getComments(currentFilm.id));
       this._collectFilmsOther(film);
@@ -169,21 +177,56 @@ export default class MainController {
     this._rerenderCardsMain(type);
   }
 
-  _onDataChange(component, newData) {
-    const id = newData.id;
+  _dataChangeHandler(data, newData, functions) {
+    const id = data.id;
+    const {updateModel, filmHandler} = functions;
 
-    this._filmsModel.updateFilm(newData);
+    updateModel(newData);
+
     this._filmsOther
       .concat(this._filmsMain)
       .filter((film) => film.getData().id === id)
       .forEach((filteredFilm) => {
-        filteredFilm.render(newData);
+        filmHandler(filteredFilm, newData);
       });
+  }
+
+  _dataChangeModelUpdate(newData) {
+    this._filmsModel.updateFilm(newData);
+  }
+
+  _dataCommentsChangeModelUpdate(newData) {
+    this._commentsModel.setComments(newData);
+  }
+
+  _filteredFilmHandler(filteredFilm, newData) {
+    filteredFilm.render(newData);
+  }
+
+  _filteredFilmCommentsHandler(filteredFilm, newData) {
+    filteredFilm.setCommentsData(newData);
+    filteredFilm.getFilmInfo().rerender();
+  }
+
+  _onDataChange(data, newData) {
+    const functions = {
+      updateModel: this._dataChangeModelUpdate,
+      filmHandler: this._filteredFilmHandler,
+    };
+    return this._dataChangeHandler(data, newData, functions);
+  }
+
+  _onCommentsDataChange(data, newData) {
+    const functions = {
+      updateModel: this._dataCommentsChangeModelUpdate,
+      filmHandler: this._filteredFilmCommentsHandler,
+    };
+    return this._dataChangeHandler(data, newData, functions);
   }
 
   _onViewChange() {
     this._filmsOther.concat(this._filmsMain).forEach((item) => {
-      item.closeFilmInfo(item.getFilmInfo());
+      item.closeFilmInfo();
     });
   }
 

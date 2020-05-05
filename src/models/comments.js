@@ -1,17 +1,23 @@
 export default class Comments {
   constructor() {
-    this._commentsData = null;
+    this._commentsData = [];
   }
 
-  getCommentsAll() {
-    return this._commentsData;
+  _callHandlers(handlers) {
+    handlers.forEach((handler) => handler());
   }
 
   getComments(id) {
     return this._commentsData.find((item) => (item.id === id));
   }
 
-  setComments(data) {
+  setCommentsAll(data) {
     this._commentsData = data;
+  }
+
+  setComments(data) {
+    const index = this._commentsData.findIndex((item) => (item.id === data.id));
+
+    this._commentsData[index] = data;
   }
 }

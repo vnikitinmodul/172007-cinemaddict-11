@@ -47,17 +47,17 @@ const FILTERS = [
   {
     HREF: `#watchlist`,
     NAME: `Watchlist`,
-    FUNCTION: (item) => (item.isAddedToWatchlist),
+    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHLIST.PROPERTY]),
   },
   {
     HREF: `#history`,
     NAME: `History`,
-    FUNCTION: (item) => (item.isMarkedAsWatched),
+    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHED.PROPERTY]),
   },
   {
     HREF: `#favorites`,
     NAME: `Favorites`,
-    FUNCTION: (item) => (item.isFavorite),
+    FUNCTION: (item) => (item[ACTION_PROPERTIES.FAVORITE.PROPERTY]),
   },
 ];
 

@@ -6,7 +6,7 @@ import {
 import * as util from "../utils/common.js";
 import {renderElement} from "../utils/render.js";
 import AbstractSmartComponent from "./abstract-smart.js";
-import Comments from "./film-comments.js";
+import FilmComments from "./film-comments.js";
 
 const FILM_CLOSE_BUTTON = `.film-details__close-btn`;
 
@@ -157,11 +157,11 @@ export default class FilmDetails extends AbstractSmartComponent {
     super();
 
     this._controller = controller;
-    this._commentsInstance = null;
     this._onEscPress = null;
     this._onCloseClick = null;
-    this._filmInfoActionHandlers = [];
     this._onChangeEmoji = null;
+    this._filmInfoActionHandlers = [];
+    this._commentsComponent = null;
   }
 
   getTemplate() {
@@ -172,8 +172,8 @@ export default class FilmDetails extends AbstractSmartComponent {
     return this._controller.getCommentsData().commentsList;
   }
 
-  setCommentsInstance(comments) {
-    this._commentsInstance = comments;
+  getCommentsComponent() {
+    return this._commentsComponent;
   }
 
   render() {
@@ -183,13 +183,22 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   renderComments() {
     const filmCommentsList = this.getElement().querySelector(`.film-details__comments-list`);
-    renderElement(filmCommentsList, new Comments(this.getComments()));
+    this._commentsComponent = this._commentsComponent || new FilmComments();
+
+    this._commentsComponent.setComments(this.getComments());
+
+    renderElement(filmCommentsList, this._commentsComponent);
   }
 
   rerender() {
     super.rerender();
 
+    if (this._commentsComponent) {
+      this._commentsComponent.removeElement();
+    }
+
     this.renderComments();
+    this._commentsComponent.recoveryListeners();
   }
 
   set onEscPress(handler) {

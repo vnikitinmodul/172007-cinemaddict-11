@@ -31,7 +31,7 @@ const films = new Films();
 const comments = new Comments();
 
 films.setFilms(generateFilms(filmsLength));
-comments.setComments(generateComments(filmsLength));
+comments.setCommentsAll(generateComments(filmsLength));
 
 const mainContainer = new MainController(mainElement, films, comments);
 const filters = new FiltersController(mainElement, films);

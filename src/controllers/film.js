@@ -13,22 +13,25 @@ import {
 
 
 export default class FilmController {
-  constructor(container, onDataChange, onViewChange) {
+  constructor(container, handlers) {
     this._container = container;
     this._bodyElement = document.body;
     this._card = null;
     this._filmInfo = null;
     this._data = null;
     this._commentsData = null;
-    this._onDataChange = onDataChange;
-    this._onViewChange = onViewChange;
+    this._onDataChange = handlers.onDataChange;
+    this._onViewChange = handlers.onViewChange;
+    this._onCommentsDataChange = handlers.onCommentsDataChange;
+    this._onFilmInfoEmojiChange = this._onFilmInfoEmojiChange.bind(this);
+    this._onCommentDeleteClick = this._onCommentDeleteClick.bind(this);
   }
 
   _setClickCardActionHandlers() {
     Object.keys(ACTION_PROPERTIES).forEach((key) => {
       this._card.setClickCardActionHandler({
         className: `film-card__controls-item--${ACTION_PROPERTIES[key].MODIFIER}`,
-        handler: this._onCardActionClick(ACTION_PROPERTIES[key].PROPERTY)
+        handler: this._onActionClick(`card`, ACTION_PROPERTIES[key].PROPERTY)
       });
     });
   }
@@ -37,73 +40,73 @@ export default class FilmController {
     Object.keys(ACTION_PROPERTIES).forEach((key) => {
       this._filmInfo.setChangeFilmInfoActionHandler({
         id: key.toLowerCase(),
-        handler: this._onFilmInfoActionChange(ACTION_PROPERTIES[key].PROPERTY)
+        handler: this._onActionClick(`filmInfo`, ACTION_PROPERTIES[key].PROPERTY)
       });
     });
   }
 
-  _showFilmInfo(info) {
+  _showFilmInfo() {
     return () => {
       this._onViewChange();
 
-      this._renderFilmInfo(info);
+      this._renderFilmInfo();
 
-      info.onEscPress = this._onFilmInfoEscPress(info);
+      this._filmInfo.onEscPress = this._onFilmInfoEscPress();
 
-      document.addEventListener(`keydown`, info.onEscPress);
-      info.setCloseButtonHandler(this._onFilmInfoCloseElementClick(info));
+      document.addEventListener(`keydown`, this._filmInfo.onEscPress);
+      this._filmInfo.setCloseButtonHandler(this._onFilmInfoCloseElementClick());
       this._setChangeFilmInfoActionHandlers();
-      this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange.bind(this));
+      this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange);
+      this._filmInfo
+        .getCommentsComponent()
+        .setDeleteCommentHandler(this._onCommentDeleteClick);
     };
   }
 
-  _renderFilmInfo(info) {
+  _renderFilmInfo() {
     this._updateBodyClassList(BODY_HIDE_OVERFLOW_CLASS);
-    info.render();
+    this._filmInfo.render();
   }
 
   _updateBodyClassList(className, method = `add`) {
     this._bodyElement.classList[method](className);
   }
 
-  _removeFilmInfo(info) {
-    info.removeElement(true);
+  _removeFilmInfo() {
+    this._filmInfo.removeElement(true);
+    this._filmInfo.removeContainer();
     this._updateBodyClassList(BODY_HIDE_OVERFLOW_CLASS, `remove`);
   }
 
-  _onFilmInfoCloseElementClick(info) {
+  _onFilmInfoCloseElementClick() {
     return () => {
-      this.closeFilmInfo(info);
+      this.closeFilmInfo();
     };
   }
 
-  _onFilmInfoEscPress(info) {
+  _onFilmInfoEscPress() {
     return (evt) => {
       if (evt.key === KEY_CODE.ESC) {
-        this.closeFilmInfo(info);
+        this.closeFilmInfo();
       }
     };
   }
 
-  _onCardActionClick(property) {
+  _onActionClick(type, property) {
     return (evt) => {
-      evt.preventDefault();
-      const thisCardData = this._data;
-      const newCardData = cloneDeep(thisCardData);
-      newCardData[property] = !thisCardData[property];
-      this._data = newCardData;
-      this._onDataChange(this._card, newCardData);
-    };
-  }
+      if (type === `card`) {
+        evt.preventDefault();
+      }
 
-  _onFilmInfoActionChange(property) {
-    return () => {
-      const thisFilmInfoData = this._data;
-      const newFilmInfoData = cloneDeep(thisFilmInfoData);
-      newFilmInfoData[property] = !thisFilmInfoData[property];
-      this._data = newFilmInfoData;
-      this._onDataChange(this._filmInfo, newFilmInfoData);
-      this._filmInfo.rerender();
+      const thisData = this._data;
+      const newData = cloneDeep(thisData);
+      newData[property] = !thisData[property];
+      this._data = newData;
+      this._onDataChange(thisData, newData);
+
+      if (type === `filmInfo`) {
+        this._filmInfo.rerender();
+      }
     };
   }
 
@@ -114,14 +117,25 @@ export default class FilmController {
     this._filmInfo.rerender();
   }
 
-  closeFilmInfo(info) {
-    if (!info) {
-      return;
-    }
+  _onCommentDeleteClick(evt) {
+    evt.preventDefault();
 
-    this._removeFilmInfo(info);
+    const thisCommentsData = this._commentsData;
+    const newCommentsData = cloneDeep(thisCommentsData);
+    const commentId = evt.target.getAttribute(`data-id`);
+    newCommentsData.commentsList.splice(newCommentsData.commentsList.findIndex((item) => (item.commentId === Number(commentId))), 1);
+    this._onCommentsDataChange(thisCommentsData, newCommentsData);
+    this._onDataChange(this._data, this._data);
+  }
 
-    document.removeEventListener(`keydown`, info.onEscPress);
+  closeFilmInfo() {
+    this._removeFilmInfo();
+
+    document.removeEventListener(`keydown`, this._filmInfo.onEscPress);
+  }
+
+  setCommentsData(data) {
+    this._commentsData = data;
   }
 
   getData() {
