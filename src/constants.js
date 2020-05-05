@@ -23,6 +23,25 @@ const FilmsRangeNum = {
   MAX: 20,
 };
 
+const COMMENT_AUTHORS = [
+  `John Doe`,
+  `Tim Macoveev`,
+  `John Smith`,
+  `Judy Doe`,
+];
+
+const COMMENT_EMOJIES = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
+];
+
+const ENCODE_PARAM = {
+  encodeEverything: true,
+  strict: true,
+};
+
 const ACTION_PROPERTIES = {
   WATCHLIST: {
     MODIFIER: `add-to-watchlist`,
@@ -68,6 +87,9 @@ export {
   TITLE_MESSAGE,
   CardsNum,
   FilmsRangeNum,
+  COMMENT_AUTHORS,
+  COMMENT_EMOJIES,
+  ENCODE_PARAM,
   ACTION_PROPERTIES,
   FILTERS,
 };

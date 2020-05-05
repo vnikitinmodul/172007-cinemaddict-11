@@ -213,6 +213,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.setCloseButtonHandler(this._onCloseClick);
     this._filmInfoActionHandlers.forEach(this.setChangeFilmInfoActionHandler.bind(this));
     this.setChangeEmojiHandler(this._onChangeEmoji);
+    this.setSubmitFormHandler(this._onSubmitForm);
   }
 
   setCloseButtonHandler(handler) {
@@ -237,5 +238,10 @@ export default class FilmDetails extends AbstractSmartComponent {
     this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((item) => {
       item.addEventListener(`change`, handler);
     });
+  }
+
+  setSubmitFormHandler(handler) {
+    this._onSubmitForm = handler;
+    this.getElement().querySelector(`.film-details__inner`).addEventListener(`keydown`, handler);
   }
 }

@@ -1,19 +1,9 @@
 import * as util from "../utils/common.js";
+import {
+  COMMENT_AUTHORS,
+  COMMENT_EMOJIES,
+} from "../constants.js";
 
-
-const COMMENT_AUTHORS = [
-  `John Doe`,
-  `Tim Macoveev`,
-  `John Smith`,
-  `Judy Doe`,
-];
-
-const COMMENT_EMOJIES = [
-  `angry`,
-  `puke`,
-  `sleeping`,
-  `smile`,
-];
 
 const COMMENT_TEXTS = [
   `Interesting setting and a good cast`,
