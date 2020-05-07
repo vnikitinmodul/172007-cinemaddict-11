@@ -18,6 +18,30 @@ const CardsNum = {
   COMMENTED: 2
 };
 
+const FilmsRangeNum = {
+  MIN: 15,
+  MAX: 20,
+};
+
+const COMMENT_AUTHORS = [
+  `John Doe`,
+  `Tim Macoveev`,
+  `John Smith`,
+  `Judy Doe`,
+];
+
+const COMMENT_EMOJIES = [
+  `smile`,
+  `sleeping`,
+  `puke`,
+  `angry`,
+];
+
+const ENCODE_PARAM = {
+  encodeEverything: true,
+  strict: true,
+};
+
 const ACTION_PROPERTIES = {
   WATCHLIST: {
     MODIFIER: `add-to-watchlist`,
@@ -33,11 +57,39 @@ const ACTION_PROPERTIES = {
   },
 };
 
+const FILTERS = [
+  {
+    HREF: `#all`,
+    NAME: `All movies`,
+    FUNCTION: (item) => (item),
+  },
+  {
+    HREF: `#watchlist`,
+    NAME: `Watchlist`,
+    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHLIST.PROPERTY]),
+  },
+  {
+    HREF: `#history`,
+    NAME: `History`,
+    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHED.PROPERTY]),
+  },
+  {
+    HREF: `#favorites`,
+    NAME: `Favorites`,
+    FUNCTION: (item) => (item[ACTION_PROPERTIES.FAVORITE.PROPERTY]),
+  },
+];
+
 export {
   POSTERS_PATH,
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
   TITLE_MESSAGE,
   CardsNum,
+  FilmsRangeNum,
+  COMMENT_AUTHORS,
+  COMMENT_EMOJIES,
+  ENCODE_PARAM,
   ACTION_PROPERTIES,
+  FILTERS,
 };

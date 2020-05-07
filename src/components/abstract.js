@@ -36,4 +36,8 @@ export default class AbstractComponent {
   get container() {
     return this._container;
   }
+
+  removeContainer() {
+    this._container = null;
+  }
 }

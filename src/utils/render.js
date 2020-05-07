@@ -1,4 +1,7 @@
 const renderElement = (container, component, method = `append`) => {
+  if (!container) {
+    return;
+  }
   component.container = container;
   if (container.contains(component.getElement())) {
     const oldElement = component.getElement();

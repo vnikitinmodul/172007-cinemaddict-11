@@ -1,21 +1,18 @@
-import AbstractComponent from "./abstract.js";
+import AbstractSmartComponent from "./abstract-smart.js";
 
-const getFiltersMarkup = (item) => {
-  const {
-    name,
-    sum,
-    isChecked,
-    isSumOff,
-  } = item;
+import {FILTERS} from "../constants.js";
 
-  return `<a href="#watchlist" class="main-navigation__item ${isChecked ? `main-navigation__item--active` : ``}">${name}
-    ${!isSumOff ? `<span class="main-navigation__item-count">${sum}</span>` : ``}
-  </a>`;
-};
+const FILTER_CLASS_ACTIVE = `main-navigation__item--active`;
 
-const getNavigationMarkup = (filters) => {
-  const filtersMarkup = filters
-    .map(getFiltersMarkup).join(``);
+const getFiltersMarkup = (filter, filmsModel) => (
+  `<a href="${filter.HREF}" class="main-navigation__item">${filter.NAME}
+    ${filter.HREF !== filmsModel.getDefaultFilter() ? `<span class="main-navigation__item-count">${filmsModel.getFilmsNum(filter.FUNCTION)}</span>` : ``}
+  </a>`
+);
+
+const getNavigationMarkup = (filmsModel) => {
+  const filtersMarkup = FILTERS
+    .map((item) => (getFiltersMarkup(item, filmsModel))).join(``);
 
   return `<nav class="main-navigation">
     <div class="main-navigation__items">
@@ -25,14 +22,41 @@ const getNavigationMarkup = (filters) => {
   </nav>`;
 };
 
-export default class Navigation extends AbstractComponent {
-  constructor(filters) {
+export default class Navigation extends AbstractSmartComponent {
+  constructor(filmsModel) {
     super();
 
-    this._filters = filters;
+    this._filmsModel = filmsModel;
+    this._filterElements = null;
+    this._filterChangeHandler = null;
+  }
+
+  _getFilterElements() {
+    this._filterElements = this.getElement().querySelectorAll(`.main-navigation__item`);
+
+    return this._filterElements;
+  }
+
+  setFilterActive(filter = this._filmsModel.getCurrentFilter()) {
+    this._getFilterElements().forEach((item) => {
+      item.classList.remove(FILTER_CLASS_ACTIVE);
+    });
+
+    [...this._getFilterElements()].find((item) => (item.getAttribute(`href`) === filter)).classList.add(FILTER_CLASS_ACTIVE);
+  }
+
+  setClickFilterHandler(handler) {
+    this._filterChangeHandler = handler;
+    document.querySelectorAll(`.main-navigation__item`).forEach((item) => {
+      item.addEventListener(`click`, handler);
+    });
   }
 
   getTemplate() {
-    return getNavigationMarkup(this._filters);
+    return getNavigationMarkup(this._filmsModel);
+  }
+
+  recoveryListeners() {
+    this.setClickFilterHandler(this._filterChangeHandler);
   }
 }
