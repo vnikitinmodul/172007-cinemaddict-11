@@ -18,8 +18,9 @@ import {
 
 
 export default class FilmController {
-  constructor(container, handlers) {
+  constructor(container, handlers, api) {
     this._container = container;
+    this._api = api;
     this._bodyElement = document.body;
     this._card = null;
     this._filmInfo = null;
@@ -55,18 +56,22 @@ export default class FilmController {
     return () => {
       this._onViewChange();
 
-      this._renderFilmInfo();
+      this._api.getComments(this._data.id)
+        .then((commentsData) => {
+          this._onCommentsDataChange(this._commentsData, {id: this._data.id, commentsList: commentsData});
+          this._renderFilmInfo();
 
-      this._filmInfo.onEscPress = this._onFilmInfoEscPress();
+          this._filmInfo.onEscPress = this._onFilmInfoEscPress();
 
-      document.addEventListener(`keydown`, this._filmInfo.onEscPress);
-      this._filmInfo.setCloseButtonHandler(this._onFilmInfoCloseElementClick());
-      this._setChangeFilmInfoActionHandlers();
-      this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange);
-      this._filmInfo.setSubmitFormHandler(this._onFilmInfoFormSubmit);
-      this._filmInfo
-        .getCommentsComponent()
-        .setDeleteCommentHandler(this._onCommentDeleteClick);
+          document.addEventListener(`keydown`, this._filmInfo.onEscPress);
+          this._filmInfo.setCloseButtonHandler(this._onFilmInfoCloseElementClick());
+          this._setChangeFilmInfoActionHandlers();
+          this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange);
+          this._filmInfo.setSubmitFormHandler(this._onFilmInfoFormSubmit);
+          this._filmInfo
+            .getCommentsComponent()
+            .setDeleteCommentHandler(this._onCommentDeleteClick);
+        });
     };
   }
 

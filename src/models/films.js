@@ -2,7 +2,7 @@ import {FILTERS} from "../constants.js";
 
 export default class Films {
   constructor() {
-    this._filmsData = null;
+    this._filmsData = [];
     this._defaultFilter = FILTERS[0].HREF;
     this._currentFilter = this._defaultFilter;
     this._filterChangeHandlers = [];

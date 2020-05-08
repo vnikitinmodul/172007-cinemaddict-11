@@ -1,4 +1,4 @@
-const POSTERS_PATH = `./images/posters/`;
+const POSTERS_PATH = `./`;
 
 const KEY_CODE = {
   ESC: `Escape`,
@@ -8,7 +8,8 @@ const KEY_CODE = {
 const BODY_HIDE_OVERFLOW_CLASS = `hide-overflow`;
 
 const TITLE_MESSAGE = {
-  NO_MOVIES: `There are no movies in our database`
+  NO_MOVIES: `There are no movies in our database`,
+  LOADING: `Loading...`,
 };
 
 const CardsNum = {

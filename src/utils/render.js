@@ -1,3 +1,5 @@
+import * as util from "./common.js";
+
 const renderElement = (container, component, method = `append`) => {
   if (!container) {
     return;
@@ -7,7 +9,7 @@ const renderElement = (container, component, method = `append`) => {
     const oldElement = component.getElement();
     component.removeElement();
     container.replaceChild(component.getElement(), oldElement);
-  } else {
+  } else if (component.getElement()) {
     container[method](component.getElement());
   }
 };
@@ -18,7 +20,13 @@ const createElement = (template, isWrapped) => {
   return isWrapped ? element : element.firstChild;
 };
 
+const showTitle = (element, message) => {
+  util.showElement(element);
+  element.textContent = message;
+};
+
 export {
   renderElement,
   createElement,
+  showTitle,
 };
