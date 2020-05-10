@@ -1,5 +1,8 @@
 import * as util from "./common.js";
 
+const TITLE_ELEMENT_CLASS = `films-list__title`;
+const TITLE_ERROR_CLASS = `${TITLE_ELEMENT_CLASS}--error`;
+
 const renderElement = (container, component, method = `append`) => {
   if (!container) {
     return;
@@ -20,13 +23,25 @@ const createElement = (template, isWrapped) => {
   return isWrapped ? element : element.firstChild;
 };
 
-const showTitle = (element, message) => {
+const showTitle = (message, element = document.querySelector(`.${TITLE_ELEMENT_CLASS}`)) => {
   util.showElement(element);
   element.textContent = message;
+};
+
+const hideTitle = (element = document.querySelector(`.${TITLE_ELEMENT_CLASS}`)) => {
+  element.classList.remove(TITLE_ERROR_CLASS);
+  util.hideElement(element);
+};
+
+const showError = (message) => {
+  document.querySelector(`.${TITLE_ELEMENT_CLASS}`).classList.add(TITLE_ERROR_CLASS);
+  showTitle(message);
 };
 
 export {
   renderElement,
   createElement,
   showTitle,
+  hideTitle,
+  showError,
 };

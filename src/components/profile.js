@@ -16,10 +16,10 @@ const getProfileMarkup = (rating) => (
 );
 
 export default class Profile extends AbstractSmartComponent {
-  constructor(rating) {
+  constructor() {
     super();
 
-    this._rating = rating;
+    this._rating = null;
   }
 
   updateRating(rating) {

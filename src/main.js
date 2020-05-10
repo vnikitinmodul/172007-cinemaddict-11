@@ -1,7 +1,8 @@
-import * as util from "./utils/common.js";
 import {
   renderElement,
   showTitle,
+  hideTitle,
+  showError,
 } from "./utils/render.js";
 import API from "./api.js";
 
@@ -28,15 +29,14 @@ const mainContainer = new MainController(mainElement, films, comments, api);
 const filters = new FiltersController(mainElement, films);
 
 filters.render();
-mainContainer.render();
+mainContainer.render(filters);
 
-const titleElement = document.querySelector(`.films-list__title`);
-
-showTitle(titleElement, TITLE_MESSAGE.LOADING);
+showTitle(TITLE_MESSAGE.LOADING);
 
 api.getFilms()
   .then((filmsData) => {
     films.setFilms(filmsData);
-    util.hideElement(titleElement);
+    hideTitle();
     renderElement(footerStatisticsElement, new FooterStatistics(filmsData.length));
-  });
+  })
+  .catch((err) => showError(err));

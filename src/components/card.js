@@ -12,6 +12,21 @@ const CARD_SHOW_DETAILS = [
   `.film-card__comments`,
 ];
 
+const RATING_VALUES = {
+  POOR: {
+    NAME: `poor`,
+    NUM: 5
+  },
+  AVERAGE: {
+    NAME: `average`,
+    NUM: 7
+  },
+  GOOD: {
+    NAME: `good`,
+    NUM: 10
+  },
+};
+
 const CARD_CONTROL_ACTIVE_CLASS = `film-card__controls-item--active`;
 
 const getShowDetailsElements = (card) => card.getElement().querySelectorAll(CARD_SHOW_DETAILS.join(`, `));
@@ -19,6 +34,16 @@ const getShowDetailsElements = (card) => card.getElement().querySelectorAll(CARD
 const cutText = (text, maxLength = 140, symbol = `…`) => (
   text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text
 );
+
+const getRatingColor = (rating) => {
+  if (rating < RATING_VALUES.POOR.NUM) {
+    return RATING_VALUES.POOR.NAME;
+  } else if (rating < RATING_VALUES.AVERAGE.NUM) {
+    return RATING_VALUES.AVERAGE.NAME;
+  } else {
+    return RATING_VALUES.GOOD.NAME;
+  }
+};
 
 const getCardMarkup = (filmData) => {
   const {
@@ -37,7 +62,7 @@ const getCardMarkup = (filmData) => {
 
   return `<article class="film-card">
     <h3 class="film-card__title">${title}</h3>
-    <p class="film-card__rating">${rating}</p>
+    <p class="film-card__rating film-card__rating--${getRatingColor(rating)}">${rating}</p>
     <p class="film-card__info">
       <span class="film-card__year" title="${moment(date).format(`DD MMMM YYYY`)}">${moment(date).format(`YYYY`)}</span>
       <span class="film-card__duration">${util.getDurationMoment(duration)}</span>

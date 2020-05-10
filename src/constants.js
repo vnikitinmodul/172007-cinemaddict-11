@@ -12,16 +12,21 @@ const TITLE_MESSAGE = {
   LOADING: `Loading...`,
 };
 
-const CardsNum = {
-  START: 5,
-  MORE: 5,
-  TOP: 2,
-  COMMENTED: 2
-};
-
-const FilmsRangeNum = {
-  MIN: 15,
-  MAX: 20,
+const CardsOther = {
+  START: {
+    NUM: 5,
+  },
+  MORE: {
+    NUM: 5,
+  },
+  TOP: {
+    NUM: 2,
+    SORT: (a, b) => (parseFloat(b.rating) - parseFloat(a.rating)),
+  },
+  COMMENTED: {
+    NUM: 2,
+    SORT: (a, b) => (parseFloat(b.comments.length) - parseFloat(a.comments.length)),
+  },
 };
 
 const COMMENT_AUTHORS = [
@@ -86,8 +91,7 @@ export {
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
   TITLE_MESSAGE,
-  CardsNum,
-  FilmsRangeNum,
+  CardsOther,
   COMMENT_AUTHORS,
   COMMENT_EMOJIES,
   ENCODE_PARAM,
