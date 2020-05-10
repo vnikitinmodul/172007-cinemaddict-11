@@ -419,6 +419,11 @@ button {
   transition: opacity 0.1s ease-in;
 }
 
+.film-card__controls-item[disabled="true"] {
+  opacity: .25;
+  pointer-events: none;
+}
+
 .film-card__controls-item:last-of-type {
   border-right: 0;
 }
@@ -723,6 +728,9 @@ button {
 .film-details__control-label--favorite::before {
   background: url("../images/icons/icon-favorite.svg") no-repeat;
   background-size: 18px;
+}
+.film-details__control-input[disabled="true"] + .film-details__control-label {
+	opacity: .25;
 }
 .film-details__control-input:checked + .film-details__control-label {
   color: #f5df00;
@@ -1074,4 +1082,7 @@ button {
   min-height: 300px;
   padding-top: 50px;
   padding-bottom: 50px;
+}
+.films-list__title--error {
+	color: red;
 }

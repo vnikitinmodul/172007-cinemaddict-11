@@ -21,6 +21,10 @@ export default class FiltersController {
     this._component.setFilterActive();
   }
 
+  getComponent() {
+    return this._component;
+  }
+
   render() {
     this._component = this._component || new Navigation(this._model);
     renderElement(this._container, this._component);
