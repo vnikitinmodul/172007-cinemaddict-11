@@ -15,6 +15,7 @@ import Comments from "./models/comments.js";
 
 import Profile from "./components/profile.js";
 import FooterStatistics from "./components/footer-statistics.js";
+import Statistics from "./components/statistics.js";
 
 
 const filmsLength = util.getRandomNum(...Object.values(FilmsRangeNum));
@@ -27,17 +28,21 @@ const mainElement = document.querySelector(`.main`);
 const footerElement = document.querySelector(`.footer`);
 const footerStatisticsElement = footerElement.querySelector(`.footer__statistics`);
 
-const films = new Films();
-const comments = new Comments();
+const models = {
+  films: new Films(),
+  comments: new Comments(),
+};
 
-films.setFilms(generateFilms(filmsLength));
-comments.setCommentsAll(generateComments(filmsLength));
+models.films.setFilms(generateFilms(filmsLength));
+models.comments.setCommentsAll(generateComments(filmsLength));
 
-const mainContainer = new MainController(mainElement, films, comments);
-const filters = new FiltersController(mainElement, films);
+const statistics = new Statistics();
+const mainContainer = new MainController(mainElement, models, statistics);
+const filters = new FiltersController(mainElement, models.films);
 
 renderElement(headerElement, new Profile(profileData));
 renderElement(footerStatisticsElement, new FooterStatistics(footerStatisticsData));
 
 filters.render();
 mainContainer.render();
+renderElement(mainElement, statistics);

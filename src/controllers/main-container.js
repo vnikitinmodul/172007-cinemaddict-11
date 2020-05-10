@@ -13,12 +13,14 @@ import {
 } from "../constants.js";
 
 export default class MainController {
-  constructor(container, filmsModel, commentsModel) {
+  constructor(container, models, statistics) {
     this._container = container;
     this._filmsLength = 0;
     this._filmsLoadedLength = 0;
-    this._filmsModel = filmsModel;
-    this._commentsModel = commentsModel;
+    this._filmsModel = models.films;
+    this._commentsModel = models.comments;
+    this._filmsComponents = null;
+    this._statistics = statistics;
     this._showMore = null;
     this._navigation = null;
     this._sortComponent = new Sort();
@@ -45,6 +47,12 @@ export default class MainController {
     this._currentSort = this._defaultSort;
     renderElement(this._container, this._sortComponent);
     this._sortComponent.setSortHandler(this._onSortClick.bind(this));
+  }
+
+  _showMainScreen() {
+    util.hideElement(this._statistics.getElement());
+    util.showElement(this._filmsComponent.getElement());
+    this._renderSort();
   }
 
   _renderCardsAll() {
@@ -231,16 +239,20 @@ export default class MainController {
   }
 
   _onFilterActivate() {
+    this._showMainScreen();
     this._rerenderCardsMain();
-    this._renderSort();
+  }
+
+  _onStatsClick() {
+    util.showElement(this._statistics);
   }
 
   render() {
-
     this._getFilmsLength();
 
-    this._renderSort();
-    renderElement(this._container, new Films());
+    this._filmsComponent = new Films();
+    this._showMainScreen();
+    renderElement(this._container, this._filmsComponent);
 
     this._filmsListElements = {
       wrapper: document.querySelector(`.films-list`),

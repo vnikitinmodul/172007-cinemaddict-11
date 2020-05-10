@@ -10,7 +10,6 @@ export default class FiltersController {
   }
 
   _onFilterActivate(evt) {
-    evt.preventDefault();
     const targetHref = evt.target.getAttribute(`href`);
 
     this._component.setFilterActive(targetHref);

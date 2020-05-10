@@ -52,6 +52,10 @@ export default class Navigation extends AbstractSmartComponent {
     });
   }
 
+  setClickStats(handler) {
+    this._element.querySelector(`.main-navigation__additional`).addEventListener(`click`, handler);
+  }
+
   getTemplate() {
     return getNavigationMarkup(this._filmsModel);
   }
