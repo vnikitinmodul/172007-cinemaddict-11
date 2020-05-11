@@ -35,7 +35,6 @@ const filters = new FiltersController(mainElement, models.films);
 
 filters.render();
 mainContainer.render(filters);
-renderElement(mainElement, statistics);
 
 showTitle(TITLE_MESSAGE.LOADING);
 

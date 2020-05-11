@@ -25,6 +25,12 @@ const Time = {
   MILLISECONDS_PER_SECOND: 1000,
 };
 
+const RATING_NAMES = [
+  `Novice`,
+  `Fan`,
+  `Movie Buff`,
+];
+
 const getRandomNum = (min, max) => (
   Math.floor(Math.random() * (max - min + 1) + min)
 );
@@ -87,6 +93,8 @@ const getRandomBoolean = (chance = 0.5) => (
   Math.floor(Math.random() - chance)
 );
 
+const getRatingName = (rating) => (RATING_NAMES[Math.ceil(rating / 10) - 1]);
+
 export {
   getRandomNum,
   getRandomFromArray,
@@ -99,4 +107,5 @@ export {
   hideElement,
   getDurationMoment,
   getRandomBoolean,
+  getRatingName,
 };
