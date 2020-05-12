@@ -14,8 +14,9 @@ export default class Films {
     handlers.forEach((handler) => handler());
   }
 
-  getFilms() {
-    return this._filmsData.filter(FILTERS.find((item) => (item.HREF === this._currentFilter)).FUNCTION);
+  getFilms(filter) {
+    filter = filter || FILTERS.find((item) => (item.HREF === this._currentFilter)).FUNCTION;
+    return this._filmsData.filter(filter);
   }
 
   getFilmsNum(filter = this._defaultFilter) {

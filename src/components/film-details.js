@@ -14,6 +14,15 @@ const getSelectedEmojiTemplate = (emoji) => {
   return emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">` : ``;
 };
 
+const getGenresMarkup = (genres) => (
+  `<tr class="film-details__row">
+    <td class="film-details__term">Genre${genres.length > 1 ? `s` : ``}</td>
+    <td class="film-details__cell">
+      <span class="film-details__genre">${genres.join(`</span><span class="film-details__genre">`)}</span>
+    </td>
+  </tr>`
+);
+
 const getFilmDetailsMarkup = (filmDetailsData, comments) => {
   const {
     title,
@@ -79,18 +88,13 @@ const getFilmDetailsMarkup = (filmDetailsData, comments) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${util.getDurationMoment(duration)}</td>
+                <td class="film-details__cell">${util.getDurationMoment(duration, true).join(` `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
                 <td class="film-details__cell">${country}</td>
               </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Genre${genres.length > 1 ? `s` : ``}</td>
-                <td class="film-details__cell">
-                  <span class="film-details__genre">${genres.join(`</span><span class="film-details__genre">`)}</span>
-                </td>
-              </tr>
+              ${genres.length ? getGenresMarkup(genres) : ``}
             </table>
 
             <p class="film-details__film-description">${description}</p>

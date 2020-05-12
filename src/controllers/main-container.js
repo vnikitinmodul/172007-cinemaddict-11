@@ -53,6 +53,7 @@ export default class MainController {
     this._dataCommentsChangeModelUpdate = this._dataCommentsChangeModelUpdate.bind(this);
     this._filteredFilmHandler = this._filteredFilmHandler.bind(this);
     this._onStatsClick = this._onStatsClick.bind(this);
+    this._onStatsFilterChange = this._onStatsFilterChange.bind(this);
 
     this._filmsModel.setFilterChangeHandler(this._onFilterActivate);
   }
@@ -268,21 +269,17 @@ export default class MainController {
     this._rerenderCardsMain();
   }
 
-  _updateStatsData() {
-    const statData = {
-      rating: this._filmsModel.getFilmsNum(this._ratingUpdateFunction),
-    };
-    this._statistics.setData(statData);
-  }
-
   _onStatsClick() {
-    this._updateStatsData();
     this._statistics.rerender();
     util.hideElement(this._filmsComponent.getElement());
     util.hideElement(this._sortComponent.getElement());
     util.showElement(this._statistics.getElement());
     this._filmsModel.clearFilter();
     this._filters.getComponent().setStatsActive();
+  }
+
+  _onStatsFilterChange(evt) {
+    this._statistics.activateFilter(evt.target.value);
   }
 
   render(filters) {
@@ -292,7 +289,7 @@ export default class MainController {
 
     renderElement(document.querySelector(`.header`), this._profile);
     this._filmsComponent = new Films();
-    this._updateStatsData();
+    this._statistics.updateData();
     renderElement(this._container, this._statistics);
     this._showMainScreen();
     renderElement(this._container, this._filmsComponent);
@@ -308,6 +305,7 @@ export default class MainController {
     this._renderCardsAll();
 
     this._filters.getComponent().setClickStats(this._onStatsClick);
+    this._statistics.setStatsFilterChangeHandler(this._onStatsFilterChange);
     this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
     this._filmsModel.setDataLoadHandler(
         this._filters.getComponent()

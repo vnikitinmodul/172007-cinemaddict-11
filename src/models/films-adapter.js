@@ -17,7 +17,7 @@ export default class FilmsAdapter {
     this.isAddedToWatchlist = data.user_details.watchlist;
     this.isMarkedAsWatched = data.user_details.already_watched;
     this.isFavorite = data.user_details.favorite;
-    this.watchingDate = data.user_details.watching_date;
+    this.watchingDate = new Date(data.user_details.watching_date);
     this.comments = data.comments;
   }
 

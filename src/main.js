@@ -29,7 +29,7 @@ const models = {
   comments: new Comments(),
 };
 
-const statistics = new Statistics();
+const statistics = new Statistics(models.films);
 const mainContainer = new MainController(mainElement, models, statistics, api);
 const filters = new FiltersController(mainElement, models.films);
 

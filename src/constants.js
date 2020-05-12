@@ -1,3 +1,5 @@
+import moment from "moment"
+
 const POSTERS_PATH = `./`;
 
 const KEY_CODE = {
@@ -86,6 +88,29 @@ const FILTERS = [
   },
 ];
 
+const FILTERS_STATISTICS = [
+  {
+    NAME: `All time`,
+    FUNCTION: (item) => (item),
+  },
+  {
+    NAME: `Today`,
+    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`))),
+  },
+  {
+    NAME: `Week`,
+    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`isoWeek`))),
+  },
+  {
+    NAME: `Month`,
+    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`month`))),
+  },
+  {
+    NAME: `Year`,
+    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`year`))),
+  },
+];
+
 export {
   POSTERS_PATH,
   KEY_CODE,
@@ -97,4 +122,5 @@ export {
   ENCODE_PARAM,
   ACTION_PROPERTIES,
   FILTERS,
+  FILTERS_STATISTICS,
 };

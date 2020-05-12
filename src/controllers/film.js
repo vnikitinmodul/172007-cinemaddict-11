@@ -117,6 +117,7 @@ export default class FilmController {
       evt.target.setAttribute(`disabled`, true);
 
       newData[property] = !thisData[property];
+      newData.watchingDate = new Date();
       this._data = newData;
       this._api.updateFilm(this._data.id, newData)
         .then((serverData) => {

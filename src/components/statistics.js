@@ -1,33 +1,64 @@
-import Chart from "chart.js"
-import ChartDataLabels from "chartjs-plugin-datalabels"
+import Chart from "chart.js";
+import ChartDataLabels from "chartjs-plugin-datalabels";
 import * as util from "../utils/common.js";
 import AbstractSmartComponent from "./abstract-smart.js";
 
-const getStaticticsMarkup = (data) => (
+import {
+  FILTERS,
+  FILTERS_STATISTICS,
+} from "../constants.js";
+
+const STATS_FILTER_NAME = `History`;
+const STATS_TYPE = `horizontalBar`;
+const STATS_COLORS = {
+  BG_COLOR: `#ffe800`,
+  TEXT_COLOR: `#ffffff`,
+};
+const STATS_POSITIONS = {
+  ANCHOR: `start`,
+  ALIGN: `start`,
+};
+const StatSize = {
+  FONT: 20,
+  OFFSET: 40,
+  PADDING: 100,
+  BAR_THICKNESS: 24,
+  BAR_HEIGHT: 50,
+};
+
+const getFilterName = (name) => name.toLowerCase().replace(` `, `-`);
+
+const getRankMarkup = (rating) => (
+  `<p class="statistic__rank">
+    Your rank
+    <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
+    <span class="statistic__rank-label">${util.getRatingName(rating)}</span>
+  </p>`
+);
+
+const getFiltersStatisticsMarkup = (filter) => (
+  FILTERS_STATISTICS.map((item) => {
+    const itemName = getFilterName(item.NAME);
+    return `<input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-${itemName}" value="${itemName}" ${itemName === filter ? `checked` : ``}>
+    <label for="statistic-${itemName}" class="statistic__filters-label">${item.NAME}</label>`;
+  }).join(``)
+);
+
+const getTopGenreMarkup = (dataGenres) => (
+  `<li class="statistic__text-item">
+    <h4 class="statistic__item-title">Top genre</h4>
+    <p class="statistic__item-text">${dataGenres[0].name}</p>
+  </li>`
+);
+
+const getStaticticsMarkup = (data, rating, filter) => (
   `<section class="statistic">
-    <p class="statistic__rank">
-      Your rank
-      <img class="statistic__img" src="images/bitmap@2x.png" alt="Avatar" width="35" height="35">
-      <span class="statistic__rank-label">${util.getRatingName(data.rating)}</span>
-    </p>
+    ${rating ? getRankMarkup(rating) : ``}
 
     <form action="https://echo.htmlacademy.ru/" method="get" class="statistic__filters">
       <p class="statistic__filters-description">Show stats:</p>
 
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-all-time" value="all-time" checked>
-      <label for="statistic-all-time" class="statistic__filters-label">All time</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-today" value="today">
-      <label for="statistic-today" class="statistic__filters-label">Today</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-week" value="week">
-      <label for="statistic-week" class="statistic__filters-label">Week</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-month" value="month">
-      <label for="statistic-month" class="statistic__filters-label">Month</label>
-
-      <input type="radio" class="statistic__filters-input visually-hidden" name="statistic-filter" id="statistic-year" value="year">
-      <label for="statistic-year" class="statistic__filters-label">Year</label>
+      ${getFiltersStatisticsMarkup(filter)}
     </form>
 
     <ul class="statistic__text-list">
@@ -37,12 +68,9 @@ const getStaticticsMarkup = (data) => (
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">130 <span class="statistic__item-description">h</span> 22 <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${util.getDurationMoment(data.duration)[0]} <span class="statistic__item-description">h</span> ${util.getDurationMoment(data.duration)[1]} <span class="statistic__item-description">m</span></p>
       </li>
-      <li class="statistic__text-item">
-        <h4 class="statistic__item-title">Top genre</h4>
-        <p class="statistic__item-text">Sci-Fi</p>
-      </li>
+      ${data.genres.length ? getTopGenreMarkup(data.genres) : ``}
     </ul>
 
     <div class="statistic__chart-wrap">
@@ -53,49 +81,34 @@ const getStaticticsMarkup = (data) => (
 );
 
 export default class Statictics extends AbstractSmartComponent {
-  constructor() {
+  constructor(filmsModel) {
     super();
 
+    this._filmsModel = filmsModel;
     this._data = null;
-  }
-
-  recoveryListeners() {}
-
-  rerender() {
-    super.rerender();
-    this._renderChart();
-  }
-
-  getTemplate() {
-    return getStaticticsMarkup(this._data);
-  }
-
-  setData(data) {
-    this._data = data;
+    this._rating = null;
+    this._statChart = null;
+    this._statsFilterChangeHandler = null;
+    this._defaultFilter = getFilterName(FILTERS_STATISTICS[0].NAME);
+    this._currentFilter = this._defaultFilter;
   }
 
   _renderChart() {
-    const BAR_HEIGHT = 50;
     const statisticCtx = document.querySelector(`.statistic__chart`);
 
-    // Обязательно рассчитайте высоту canvas, она зависит от количества элементов диаграммы
-    statisticCtx.height = BAR_HEIGHT * 5;
+    statisticCtx.height = StatSize.BAR_HEIGHT * this._data.genres.length;
 
-    const myChart = new Chart(statisticCtx, {
+    this._statChart = new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
-      type: `horizontalBar`,
+      type: STATS_TYPE,
       data: {
-        labels: [
-          `Sci-Fi`, `Animation`, `Fantasy`, `Comedy`, `TV Series`
-        ],
+        labels: this._data.genres.map((item) => (item.name)),
         datasets: [
           {
-            data: [
-              11, 8, 7, 4, 3
-            ],
-            backgroundColor: `#ffe800`,
-            hoverBackgroundColor: `#ffe800`,
-            anchor: `start`
+            data: this._data.genres.map((item) => (item.num)),
+            backgroundColor: STATS_COLORS.BG_COLOR,
+            hoverBackgroundColor: STATS_COLORS.BG_COLOR,
+            anchor: STATS_POSITIONS.ANCHOR
           }
         ]
       },
@@ -103,27 +116,27 @@ export default class Statictics extends AbstractSmartComponent {
         plugins: {
           datalabels: {
             font: {
-              size: 20
+              size: StatSize.FONT
             },
-            color: `#ffffff`,
-            anchor: `start`,
-            align: `start`,
-            offset: 40
+            color: STATS_COLORS.TEXT_COLOR,
+            anchor: STATS_POSITIONS.ANCHOR,
+            align: STATS_POSITIONS.ALIGN,
+            offset: StatSize.OFFSET
           }
         },
         scales: {
           yAxes: [
             {
               ticks: {
-                fontColor: `#ffffff`,
-                padding: 100,
-                fontSize: 20
+                fontColor: STATS_COLORS.TEXT_COLOR,
+                padding: StatSize.PADDING,
+                fontSize: StatSize.FONT
               },
               gridLines: {
                 display: false,
                 drawBorder: false
               },
-              barThickness: 24
+              barThickness: StatSize.BAR_THICKNESS
             }
           ],
           xAxes: [
@@ -146,6 +159,72 @@ export default class Statictics extends AbstractSmartComponent {
           enabled: false
         }
       }
+    });
+  }
+
+  _getGenres(films) {
+    return films.reduce(
+        (accum, film) => {
+          film.genres.forEach(
+              (genre) => {
+                const currentGenre = accum.find((item) => (item.name === genre));
+                if (currentGenre) {
+                  ++currentGenre.num;
+                } else {
+                  accum.push({
+                    name: genre,
+                    num: 1,
+                  });
+                }
+              }
+          );
+          return accum;
+        }, []).sort((a, b) => (parseFloat(b.num) - parseFloat(a.num)));
+  }
+
+  recoveryListeners() {
+    this.setStatsFilterChangeHandler(this._statsFilterChangeHandler);
+  }
+
+  rerender() {
+    this.updateData();
+    super.rerender();
+    this._renderChart();
+  }
+
+  getTemplate() {
+    return getStaticticsMarkup(this._data, this._rating, this._currentFilter);
+  }
+
+  updateData() {
+    const filmsWatched = this._filmsModel.getFilms(FILTERS.find((item) => (item.NAME === STATS_FILTER_NAME)).FUNCTION);
+    const filteredFilms = filmsWatched.filter(
+        FILTERS_STATISTICS.find(
+            (item) => (getFilterName(item.NAME) === this._currentFilter)
+        ).FUNCTION
+    );
+    this._data = {
+      rating: filteredFilms.length,
+      duration: filteredFilms.reduce((accum, item) => (accum + item.duration), 0),
+      genres: this._getGenres(filteredFilms)
+    };
+    this._rating = filmsWatched.length;
+  }
+
+  activateFilter(filter) {
+    if (this._currentFilter === filter) {
+      return;
+    }
+
+    this._currentFilter = filter;
+    this.updateData();
+    this.rerender();
+  }
+
+  setStatsFilterChangeHandler(handler) {
+    this._statsFilterChangeHandler = handler;
+    this.getElement().querySelectorAll(`.statistic__filters-input`).forEach((item) => {
+      item.addEventListener(`change`, handler);
     });
   }
 }

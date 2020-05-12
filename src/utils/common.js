@@ -83,10 +83,10 @@ const hideElement = (element) => {
   element.classList.add(HIDDEN_CLASS);
 };
 
-const getDurationMoment = (duration) => {
+const getDurationMoment = (duration, isUnitShow) => {
   const durationMoment = moment.duration(duration, `minutes`);
 
-  return `${durationMoment.hours() ? `${durationMoment.hours()}h ` : ``}${durationMoment.minutes() ? `${durationMoment.minutes()}m ` : ``}`;
+  return [durationMoment.hours() || !isUnitShow ? `${durationMoment.hours()}${isUnitShow ? `h` : ``}` : ``, durationMoment.minutes() || !isUnitShow ? `${durationMoment.minutes()}${isUnitShow ? `m` : ``}` : ``];
 };
 
 const getRandomBoolean = (chance = 0.5) => (
