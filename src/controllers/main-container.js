@@ -82,14 +82,17 @@ export default class MainController {
       return;
     }
 
+    const [start, num] = range || [0, CardsOther.START.NUM];
+
     if (!range) {
       this._resetCardsMain();
     }
 
-    const [start, num] = range || [0, CardsOther.START.NUM];
+    this._checkButton();
+
     const data = this._filmsModel.getFilms().slice().sort(this._sortComponent.getSortType(sortType).fn);
 
-    this._filmsLoadedLength += num;
+    this._filmsLoadedLength = start === null ? num : this._filmsLoadedLength + num;
 
     if (!this._showMore && (this._filmsLength > this._filmsLoadedLength)) {
       this._renderButton();
@@ -103,14 +106,13 @@ export default class MainController {
       });
   }
 
-  _rerenderCardsMain(type = this._defaultSort) {
+  _rerenderCardsMain(type = this._defaultSort, range) {
     this._clearCardsMain();
-    this._renderCardsMain(null, type);
+    this._renderCardsMain(range, type);
   }
 
   _resetCardsMain() {
     this._filmsLoadedLength = 0;
-    this._checkButton();
   }
 
   _renderCardsOther() {
@@ -229,7 +231,11 @@ export default class MainController {
   }
 
   _filteredFilmHandler(filteredFilm, newData) {
-    filteredFilm.render(newData);
+    if (this._filmsModel.getCurrentFilter() === this._filmsModel.getDefaultFilter()) {
+      filteredFilm.render(newData);
+    } else {
+      this._rerenderCardsMain(this._currentSort, [null, this._filmsLoadedLength]);
+    }
     this._refreshProfile();
   }
 

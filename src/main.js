@@ -4,7 +4,7 @@ import {
   hideTitle,
   showError,
 } from "./utils/render.js";
-import API from "./api.js";
+import API from "./api/index.js";
 
 import MainController from "./controllers/main-container.js";
 import FiltersController from "./controllers/filters.js";
