@@ -6,8 +6,8 @@ import {
 } from "./utils/render.js";
 import API from "./api/index.js";
 
-import MainController from "./controllers/main-container.js";
-import FiltersController from "./controllers/filters.js";
+import MainController from "./controllers/main-controller.js";
+import FiltersController from "./controllers/filters-controller.js";
 
 import Films from "./models/films.js";
 import Comments from "./models/comments.js";

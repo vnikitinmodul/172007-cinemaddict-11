@@ -30,7 +30,7 @@ const getSortMarkup = () => (
   </ul>`
 );
 
-export default class Sort extends AbstractComponent {
+export default class Sorting extends AbstractComponent {
   constructor() {
     super();
 

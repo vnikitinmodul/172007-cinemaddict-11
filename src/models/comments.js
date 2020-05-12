@@ -11,13 +11,13 @@ export default class Comments {
     return this._commentsData.find((item) => (item.id === id));
   }
 
-  setCommentsAll(data) {
-    this._commentsData = data;
+  setCommentsAll(comments) {
+    this._commentsData = comments;
   }
 
-  setComments(data) {
-    const index = this._commentsData.findIndex((item) => (item.id === data.id));
+  setComments(comment) {
+    const index = this._commentsData.findIndex((item) => (item.id === comment.id));
 
-    this._commentsData[index] = data;
+    this._commentsData[index] = comment;
   }
 }

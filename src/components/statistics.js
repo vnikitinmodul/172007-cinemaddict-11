@@ -51,7 +51,7 @@ const getTopGenreMarkup = (dataGenres) => (
   </li>`
 );
 
-const getStaticticsMarkup = (data, rating, filter) => (
+const getStaticticsMarkup = (stats, rating, filter) => (
   `<section class="statistic">
     ${rating ? getRankMarkup(rating) : ``}
 
@@ -64,13 +64,13 @@ const getStaticticsMarkup = (data, rating, filter) => (
     <ul class="statistic__text-list">
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">You watched</h4>
-        <p class="statistic__item-text">${data.rating} <span class="statistic__item-description">movies</span></p>
+        <p class="statistic__item-text">${stats.rating} <span class="statistic__item-description">movies</span></p>
       </li>
       <li class="statistic__text-item">
         <h4 class="statistic__item-title">Total duration</h4>
-        <p class="statistic__item-text">${util.getDurationMoment(data.duration)[0]} <span class="statistic__item-description">h</span> ${util.getDurationMoment(data.duration)[1]} <span class="statistic__item-description">m</span></p>
+        <p class="statistic__item-text">${util.getDurationMoment(stats.duration)[0]} <span class="statistic__item-description">h</span> ${util.getDurationMoment(stats.duration)[1]} <span class="statistic__item-description">m</span></p>
       </li>
-      ${data.genres.length ? getTopGenreMarkup(data.genres) : ``}
+      ${stats.genres.length ? getTopGenreMarkup(stats.genres) : ``}
     </ul>
 
     <div class="statistic__chart-wrap">

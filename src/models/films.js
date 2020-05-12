@@ -23,13 +23,13 @@ export default class Films {
     return this._filmsData.filter(filter).length;
   }
 
-  setFilms(data) {
-    this._filmsData = data;
+  setFilms(films) {
+    this._filmsData = films;
     this._callHandlers(this._dataLoadHandlers);
   }
 
-  updateFilm(data) {
-    this._filmsData[this._filmsData.findIndex((item) => (item.id === data.id))] = data;
+  updateFilm(film) {
+    this._filmsData[this._filmsData.findIndex((item) => (item.id === film.id))] = film;
     this._callHandlers(this._dataChangeHandlers);
   }
 

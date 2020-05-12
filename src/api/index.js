@@ -45,10 +45,10 @@ export default class Api {
       .then(FilmsAdapter.parseFilms);
   }
 
-  updateFilm(id, data) {
+  updateFilm(id, film) {
     const param = {
       method: Method.PUT,
-      body: JSON.stringify(data.toRAW()),
+      body: JSON.stringify(film.toRAW()),
       headers: new Headers({'Content-Type': `application/json`})
     };
 
