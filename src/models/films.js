@@ -2,11 +2,12 @@ import {FILTERS} from "../constants.js";
 
 export default class Films {
   constructor() {
-    this._filmsData = null;
+    this._filmsData = [];
     this._defaultFilter = FILTERS[0].HREF;
     this._currentFilter = this._defaultFilter;
     this._filterChangeHandlers = [];
     this._dataChangeHandlers = [];
+    this._dataLoadHandlers = [];
   }
 
   _callHandlers(handlers) {
@@ -23,7 +24,7 @@ export default class Films {
 
   setFilms(data) {
     this._filmsData = data;
-    this._callHandlers(this._dataChangeHandlers);
+    this._callHandlers(this._dataLoadHandlers);
   }
 
   updateFilm(data) {
@@ -54,5 +55,9 @@ export default class Films {
 
   setDataChangeHandler(handler) {
     this._dataChangeHandlers.push(handler);
+  }
+
+  setDataLoadHandler(handler) {
+    this._dataLoadHandlers.push(handler);
   }
 }

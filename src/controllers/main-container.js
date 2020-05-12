@@ -1,6 +1,11 @@
 import * as util from "../utils/common.js";
-import {renderElement} from "../utils/render.js";
+import {
+  renderElement,
+  showTitle,
+  hideTitle,
+} from "../utils/render.js";
 
+import Profile from "../components/profile.js";
 import Button from "../components/button.js";
 import Films from "../components/films.js";
 import Sort from "../components/sort.js";
@@ -8,25 +13,31 @@ import Sort from "../components/sort.js";
 import FilmController from "../controllers/film.js";
 
 import {
+  FILTERS,
   TITLE_MESSAGE,
-  CardsNum,
+  CardsOther,
 } from "../constants.js";
 
+const DEFAULT_SORT = `default`;
+const WATCHED_FILTER_NAME = `History`;
+
 export default class MainController {
-  constructor(container, filmsModel, commentsModel) {
+  constructor(container, filmsModel, commentsModel, api) {
     this._container = container;
     this._filmsLength = 0;
     this._filmsLoadedLength = 0;
     this._filmsModel = filmsModel;
     this._commentsModel = commentsModel;
+    this._api = api;
     this._showMore = null;
-    this._navigation = null;
+    this._profile = null;
     this._sortComponent = new Sort();
-    this._defaultSort = `default`;
+    this._defaultSort = DEFAULT_SORT;
     this._currentSort = this._defaultSort;
     this._filmsMain = [];
     this._filmsOther = [];
     this._filmsListElements = {};
+    this._ratingUpdateFunction = FILTERS.find((item) => (item.NAME === WATCHED_FILTER_NAME)).FUNCTION;
 
     this._handlers = {
       onDataChange: this._onDataChange.bind(this),
@@ -37,6 +48,7 @@ export default class MainController {
     this._onFilterActivate = this._onFilterActivate.bind(this);
     this._dataChangeModelUpdate = this._dataChangeModelUpdate.bind(this);
     this._dataCommentsChangeModelUpdate = this._dataCommentsChangeModelUpdate.bind(this);
+    this._filteredFilmHandler = this._filteredFilmHandler.bind(this);
 
     this._filmsModel.setFilterChangeHandler(this._onFilterActivate);
   }
@@ -48,14 +60,9 @@ export default class MainController {
   }
 
   _renderCardsAll() {
-    const {
-      top,
-      commented,
-    } = this._filmsListElements;
-
     this._renderCardsMain();
-    this._renderCards(top, CardsNum.TOP);
-    this._renderCards(commented, CardsNum.COMMENTED);
+    this._renderCardsOther();
+    this._refreshProfile();
   }
 
   _renderCardsMain(range, sortType = this._currentSort) {
@@ -67,7 +74,7 @@ export default class MainController {
       this._resetCardsMain();
     }
 
-    const [start, num] = range || [0, CardsNum.START];
+    const [start, num] = range || [0, CardsOther.START.NUM];
     const data = this._filmsModel.getFilms().slice().sort(this._sortComponent.getSortType(sortType).fn);
 
     this._filmsLoadedLength += num;
@@ -78,7 +85,7 @@ export default class MainController {
 
     data.slice(start, start + num)
       .forEach((item) => {
-        const film = new FilmController(this._filmsListElements.main, this._handlers);
+        const film = new FilmController(this._filmsListElements.main, this._handlers, this._api);
         film.render(item, this._commentsModel.getComments(item.id));
         this._collectFilmsMain(film);
       });
@@ -94,12 +101,27 @@ export default class MainController {
     this._checkButton();
   }
 
-  _renderCards(container, num) {
-    const filmsDataCopy = this._filmsModel.getFilms().slice();
+  _renderCardsOther() {
+    const {
+      top,
+      commented,
+    } = this._filmsListElements;
 
-    for (let i = 0; i < Math.min(num, this._filmsLength); i++) {
-      const film = new FilmController(container, this._handlers);
-      const currentFilm = util.getRandomFromArray(filmsDataCopy, true);
+    this._filmsOther.forEach((item) => {
+      item.getCard().removeElement(true);
+    });
+
+    this._renderCards(top, CardsOther.TOP);
+    this._renderCards(commented, CardsOther.COMMENTED);
+  }
+
+  _renderCards(container, cardsType) {
+    const filmsDataCopy = this._filmsModel.getFilms().slice().sort(cardsType.SORT);
+
+    for (let i = 0; i < Math.min(cardsType.NUM, this._filmsLength); i++) {
+      const film = new FilmController(container, this._handlers, this._api);
+      const currentFilm = filmsDataCopy[i];
+
       film.render(currentFilm, this._commentsModel.getComments(currentFilm.id));
       this._collectFilmsOther(film);
     }
@@ -112,7 +134,7 @@ export default class MainController {
     const onShowMoreElementClick = () => {
       this._checkButton();
 
-      const filmsRangeMore = [this._filmsLoadedLength, CardsNum.MORE];
+      const filmsRangeMore = [this._filmsLoadedLength, CardsOther.MORE.NUM];
 
       this._renderCardsMain(filmsRangeMore);
     };
@@ -121,7 +143,7 @@ export default class MainController {
   }
 
   _checkMainEmpty() {
-    return !this._getFilmsLength() ? this._showTitle(this._filmsListElements.title, TITLE_MESSAGE.NO_MOVIES) : util.hideElement(this._filmsListElements.title) && false;
+    return !this._getFilmsLength() ? showTitle(TITLE_MESSAGE.NO_MOVIES) : hideTitle() && false;
   }
 
   _collectFilmsMain(item) {
@@ -143,15 +165,10 @@ export default class MainController {
   _checkButton() {
     this._getFilmsLength();
 
-    if (this._filmsLoadedLength + CardsNum.MORE >= this._filmsLength && this._showMore) {
+    if (this._filmsLoadedLength + CardsOther.MORE.NUM >= this._filmsLength && this._showMore) {
       this._showMore.removeElement(true);
       this._showMore = null;
     }
-  }
-
-  _showTitle(element, message) {
-    util.showElement(element);
-    element.textContent = message;
   }
 
   _updateFilmsLength() {
@@ -178,7 +195,7 @@ export default class MainController {
   }
 
   _dataChangeHandler(data, newData, functions) {
-    const id = data.id;
+    const id = newData.id;
     const {updateModel, filmHandler} = functions;
 
     updateModel(newData);
@@ -201,6 +218,11 @@ export default class MainController {
 
   _filteredFilmHandler(filteredFilm, newData) {
     filteredFilm.render(newData);
+    this._refreshProfile();
+  }
+
+  _refreshProfile() {
+    this._profile.updateRating(this._filmsModel.getFilmsNum(this._ratingUpdateFunction));
   }
 
   _filteredFilmCommentsHandler(filteredFilm, newData) {
@@ -235,10 +257,12 @@ export default class MainController {
     this._renderSort();
   }
 
-  render() {
+  render(filters) {
+    this._profile = new Profile();
 
     this._getFilmsLength();
 
+    renderElement(document.querySelector(`.header`), this._profile);
     this._renderSort();
     renderElement(this._container, new Films());
 
@@ -251,5 +275,11 @@ export default class MainController {
     };
 
     this._renderCardsAll();
+
+    this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
+    this._filmsModel.setDataLoadHandler(
+        filters.getComponent()
+          .rerender.bind(filters.getComponent())
+    );
   }
 }

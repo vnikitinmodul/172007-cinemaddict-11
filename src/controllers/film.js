@@ -2,7 +2,10 @@ import cloneDeep from "clone-deep";
 import he from "he";
 
 import * as util from "../utils/common.js";
-import {renderElement} from "../utils/render.js";
+import {
+  renderElement,
+  showError,
+} from "../utils/render.js";
 
 import Card from "../components/card.js";
 import FilmDetails from "../components/film-details.js";
@@ -18,8 +21,9 @@ import {
 
 
 export default class FilmController {
-  constructor(container, handlers) {
+  constructor(container, handlers, api) {
     this._container = container;
+    this._api = api;
     this._bodyElement = document.body;
     this._card = null;
     this._filmInfo = null;
@@ -55,18 +59,22 @@ export default class FilmController {
     return () => {
       this._onViewChange();
 
-      this._renderFilmInfo();
+      this._api.getComments(this._data.id)
+        .then((commentsData) => {
+          this._onCommentsDataChange(this._commentsData, {id: this._data.id, commentsList: commentsData});
+          this._renderFilmInfo();
 
-      this._filmInfo.onEscPress = this._onFilmInfoEscPress();
+          this._filmInfo.onEscPress = this._onFilmInfoEscPress();
 
-      document.addEventListener(`keydown`, this._filmInfo.onEscPress);
-      this._filmInfo.setCloseButtonHandler(this._onFilmInfoCloseElementClick());
-      this._setChangeFilmInfoActionHandlers();
-      this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange);
-      this._filmInfo.setSubmitFormHandler(this._onFilmInfoFormSubmit);
-      this._filmInfo
-        .getCommentsComponent()
-        .setDeleteCommentHandler(this._onCommentDeleteClick);
+          document.addEventListener(`keydown`, this._filmInfo.onEscPress);
+          this._filmInfo.setCloseButtonHandler(this._onFilmInfoCloseElementClick());
+          this._setChangeFilmInfoActionHandlers();
+          this._filmInfo.setChangeEmojiHandler(this._onFilmInfoEmojiChange);
+          this._filmInfo.setSubmitFormHandler(this._onFilmInfoFormSubmit);
+          this._filmInfo
+            .getCommentsComponent()
+            .setDeleteCommentHandler(this._onCommentDeleteClick);
+        });
     };
   }
 
@@ -101,19 +109,27 @@ export default class FilmController {
 
   _onActionClick(type, property) {
     return (evt) => {
-      if (type === `card`) {
-        evt.preventDefault();
-      }
+      evt.preventDefault();
 
       const thisData = this._data;
       const newData = cloneDeep(thisData);
+
+      evt.target.setAttribute(`disabled`, true);
+
       newData[property] = !thisData[property];
       this._data = newData;
-      this._onDataChange(thisData, newData);
+      this._api.updateFilm(this._data.id, newData)
+        .then((serverData) => {
+          this._onDataChange(thisData, serverData);
+          if (type === `filmInfo`) {
+            this._filmInfo.rerender();
+          }
+        })
+        .catch((err) => {
+          evt.target.removeAttribute(`disabled`);
+          showError(err);
+        });
 
-      if (type === `filmInfo`) {
-        this._filmInfo.rerender();
-      }
     };
   }
 

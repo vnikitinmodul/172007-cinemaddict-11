@@ -23,7 +23,7 @@ export default class AbstractComponent {
   }
 
   removeElement(isDOMRemove) {
-    if (isDOMRemove) {
+    if (isDOMRemove && this._element) {
       this.getElement().remove();
     }
     this._element = null;
