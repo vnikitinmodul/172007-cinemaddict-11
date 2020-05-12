@@ -51,7 +51,7 @@ const getTopGenreMarkup = (dataGenres) => (
   </li>`
 );
 
-const getStaticticsMarkup = (stats, rating, filter) => (
+const getStatisticsMarkup = (stats, rating, filter) => (
   `<section class="statistic">
     ${rating ? getRankMarkup(rating) : ``}
 
@@ -80,12 +80,12 @@ const getStaticticsMarkup = (stats, rating, filter) => (
   </section>`
 );
 
-export default class Statictics extends AbstractSmartComponent {
+export default class Statistics extends AbstractSmartComponent {
   constructor(filmsModel) {
     super();
 
     this._filmsModel = filmsModel;
-    this._data = null;
+    this._statsData = null;
     this._rating = null;
     this._statChart = null;
     this._statsFilterChangeHandler = null;
@@ -96,16 +96,16 @@ export default class Statictics extends AbstractSmartComponent {
   _renderChart() {
     const statisticCtx = document.querySelector(`.statistic__chart`);
 
-    statisticCtx.height = StatSize.BAR_HEIGHT * this._data.genres.length;
+    statisticCtx.height = StatSize.BAR_HEIGHT * this._statsData.genres.length;
 
     this._statChart = new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
       type: STATS_TYPE,
       data: {
-        labels: this._data.genres.map((item) => (item.name)),
+        labels: this._statsData.genres.map((item) => (item.name)),
         datasets: [
           {
-            data: this._data.genres.map((item) => (item.num)),
+            data: this._statsData.genres.map((item) => (item.num)),
             backgroundColor: STATS_COLORS.BG_COLOR,
             hoverBackgroundColor: STATS_COLORS.BG_COLOR,
             anchor: STATS_POSITIONS.ANCHOR
@@ -193,17 +193,17 @@ export default class Statictics extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return getStaticticsMarkup(this._data, this._rating, this._currentFilter);
+    return getStatisticsMarkup(this._statsData, this._rating, this._currentFilter);
   }
 
   updateData() {
-    const filmsWatched = this._filmsModel.getFilms(FILTERS.find((item) => (item.NAME === STATS_FILTER_NAME)).FUNCTION);
+    const filmsWatched = this._filmsModel.getData(FILTERS.find((item) => (item.NAME === STATS_FILTER_NAME)).method);
     const filteredFilms = filmsWatched.filter(
         FILTERS_STATISTICS.find(
             (item) => (getFilterName(item.NAME) === this._currentFilter)
-        ).FUNCTION
+        ).method
     );
-    this._data = {
+    this._statsData = {
       rating: filteredFilms.length,
       duration: filteredFilms.reduce((accum, item) => (accum + item.duration), 0),
       genres: this._getGenres(filteredFilms)

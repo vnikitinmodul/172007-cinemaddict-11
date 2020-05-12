@@ -7,7 +7,7 @@ const STATS_CLASS_ACTIVE = `main-navigation__additional--active`;
 
 const getFiltersMarkup = (filter, filmsModel) => (
   `<a href="${filter.HREF}" class="main-navigation__item">${filter.NAME}
-    ${filter.HREF !== filmsModel.getDefaultFilter() ? `<span class="main-navigation__item-count">${filmsModel.getFilmsNum(filter.FUNCTION)}</span>` : ``}
+    ${filter.HREF !== filmsModel.getDefaultFilter() ? `<span class="main-navigation__item-count">${filmsModel.getNum(filter.method)}</span>` : ``}
   </a>`
 );
 

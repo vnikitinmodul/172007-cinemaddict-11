@@ -84,14 +84,13 @@ export default class Card extends AbstractComponent {
     super();
 
     this._controller = controller;
-    this._cardActionsElements = {};
   }
 
   getTemplate() {
     return getCardMarkup(this._controller.getData());
   }
 
-  setClickCardActionHandler(param) {
+  setClickActionHandler(param) {
     const {className, handler} = param;
     this.getElement().querySelector(`.${className}`).addEventListener(`click`, handler);
   }

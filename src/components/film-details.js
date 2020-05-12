@@ -169,10 +169,10 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return getFilmDetailsMarkup(this._controller.getData(), this.getComments());
+    return getFilmDetailsMarkup(this._controller.getData(), this.getData());
   }
 
-  getComments() {
+  getData() {
     return this._controller.getCommentsData().commentsList;
   }
 
@@ -189,7 +189,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     const filmCommentsList = this.getElement().querySelector(`.film-details__comments-list`);
     this._commentsComponent = this._commentsComponent || new FilmComments();
 
-    this._commentsComponent.setComments(this.getComments());
+    this._commentsComponent.setData(this.getData());
 
     renderElement(filmCommentsList, this._commentsComponent);
   }

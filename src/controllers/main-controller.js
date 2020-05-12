@@ -40,7 +40,7 @@ export default class MainController {
     this._filmsMain = [];
     this._filmsOther = [];
     this._filmsListElements = {};
-    this._ratingUpdateFunction = FILTERS.find((item) => (item.NAME === WATCHED_FILTER_NAME)).FUNCTION;
+    this._ratingUpdateFunction = FILTERS.find((item) => (item.NAME === WATCHED_FILTER_NAME)).method;
 
     this._handlers = {
       onDataChange: this._onDataChange.bind(this),
@@ -90,7 +90,7 @@ export default class MainController {
 
     this._checkButton();
 
-    const filmsMainSorted = this._filmsModel.getFilms().slice().sort(this._sortingComponent.getSortType(sortType).fn);
+    const filmsMainSorted = this._filmsModel.getData().slice().sort(this._sortingComponent.getSortType(sortType).fn);
 
     this._filmsLoadedLength = start === null ? num : this._filmsLoadedLength + num;
 
@@ -101,7 +101,7 @@ export default class MainController {
     filmsMainSorted.slice(start, start + num)
       .forEach((item) => {
         const film = new FilmController(this._filmsListElements.main, this._handlers, this._api);
-        film.render(item, this._commentsModel.getComments(item.id));
+        film.render(item, this._commentsModel.getData(item.id));
         this._collectFilmsMain(film);
       });
   }
@@ -130,13 +130,13 @@ export default class MainController {
   }
 
   _renderCards(container, cardsType) {
-    const filmsDataCopy = this._filmsModel.getFilms().slice().sort(cardsType.SORT);
+    const filmsDataCopy = this._filmsModel.getData().slice().sort(cardsType.method);
 
     for (let i = 0; i < Math.min(cardsType.NUM, this._filmsLength); i++) {
       const film = new FilmController(container, this._handlers, this._api);
       const currentFilm = filmsDataCopy[i];
 
-      film.render(currentFilm, this._commentsModel.getComments(currentFilm.id));
+      film.render(currentFilm, this._commentsModel.getData(currentFilm.id));
       this._collectFilmsOther(film);
     }
   }
@@ -186,7 +186,7 @@ export default class MainController {
   }
 
   _updateFilmsLength() {
-    this._filmsLength = this._filmsModel.getFilms().length;
+    this._filmsLength = this._filmsModel.getData().length;
   }
 
   _getFilmsLength() {
@@ -227,7 +227,7 @@ export default class MainController {
   }
 
   _dataCommentsChangeModelUpdate(newCommentsData) {
-    this._commentsModel.setComments(newCommentsData);
+    this._commentsModel.setData(newCommentsData);
   }
 
   _filteredFilmHandler(filteredFilm, newFilmData) {
@@ -240,7 +240,7 @@ export default class MainController {
   }
 
   _refreshProfile() {
-    this._profile.updateRating(this._filmsModel.getFilmsNum(this._ratingUpdateFunction));
+    this._profile.updateRating(this._filmsModel.getNum(this._ratingUpdateFunction));
   }
 
   _filteredFilmCommentsHandler(filteredFilm, newCommentsData) {

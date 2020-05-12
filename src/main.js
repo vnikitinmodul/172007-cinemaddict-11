@@ -40,7 +40,7 @@ showTitle(TITLE_MESSAGE.LOADING);
 
 api.getFilms()
   .then((filmsData) => {
-    models.films.setFilms(filmsData);
+    models.films.setData(filmsData);
     hideTitle();
     renderElement(footerStatisticsElement, new FooterStatistics(filmsData.length));
   })

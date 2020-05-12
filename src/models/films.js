@@ -14,16 +14,16 @@ export default class Films {
     handlers.forEach((handler) => handler());
   }
 
-  getFilms(filter) {
-    filter = filter || FILTERS.find((item) => (item.HREF === this._currentFilter)).FUNCTION;
+  getData(filter) {
+    filter = filter || FILTERS.find((item) => (item.HREF === this._currentFilter)).method;
     return this._filmsData.filter(filter);
   }
 
-  getFilmsNum(filter = this._defaultFilter) {
+  getNum(filter = this._defaultFilter) {
     return this._filmsData.filter(filter).length;
   }
 
-  setFilms(films) {
+  setData(films) {
     this._filmsData = films;
     this._callHandlers(this._dataLoadHandlers);
   }

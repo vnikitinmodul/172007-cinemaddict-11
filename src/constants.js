@@ -1,4 +1,4 @@
-import moment from "moment"
+import moment from "moment";
 
 const POSTERS_PATH = `./`;
 
@@ -23,11 +23,11 @@ const CardsOther = {
   },
   TOP: {
     NUM: 2,
-    SORT: (a, b) => (parseFloat(b.rating) - parseFloat(a.rating)),
+    method: (a, b) => (parseFloat(b.rating) - parseFloat(a.rating)),
   },
   COMMENTED: {
     NUM: 2,
-    SORT: (a, b) => (parseFloat(b.comments.length) - parseFloat(a.comments.length)),
+    method: (a, b) => (parseFloat(b.comments.length) - parseFloat(a.comments.length)),
   },
 };
 
@@ -69,45 +69,45 @@ const FILTERS = [
   {
     HREF: `#all`,
     NAME: `All movies`,
-    FUNCTION: (item) => (item),
+    method: (item) => (item),
   },
   {
     HREF: `#watchlist`,
     NAME: `Watchlist`,
-    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHLIST.PROPERTY]),
+    method: (item) => (item[ACTION_PROPERTIES.WATCHLIST.PROPERTY]),
   },
   {
     HREF: `#history`,
     NAME: `History`,
-    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHED.PROPERTY]),
+    method: (item) => (item[ACTION_PROPERTIES.WATCHED.PROPERTY]),
   },
   {
     HREF: `#favorites`,
     NAME: `Favorites`,
-    FUNCTION: (item) => (item[ACTION_PROPERTIES.FAVORITE.PROPERTY]),
+    method: (item) => (item[ACTION_PROPERTIES.FAVORITE.PROPERTY]),
   },
 ];
 
 const FILTERS_STATISTICS = [
   {
     NAME: `All time`,
-    FUNCTION: (item) => (item),
+    method: (item) => (item),
   },
   {
     NAME: `Today`,
-    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`))),
+    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`))),
   },
   {
     NAME: `Week`,
-    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`isoWeek`))),
+    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`isoWeek`))),
   },
   {
     NAME: `Month`,
-    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`month`))),
+    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`month`))),
   },
   {
     NAME: `Year`,
-    FUNCTION: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`year`))),
+    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`year`))),
   },
 ];
 

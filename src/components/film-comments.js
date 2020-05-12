@@ -46,7 +46,7 @@ export default class FilmComments extends AbstractSmartComponent {
     return getFilmCommentsMarkup(this._comments);
   }
 
-  setComments(comments) {
+  setData(comments) {
     this._comments = comments;
   }
 
