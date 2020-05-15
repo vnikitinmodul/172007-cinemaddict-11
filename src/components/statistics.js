@@ -19,7 +19,7 @@ const STATS_PARAM = {
     ANCHOR: `start`,
     ALIGN: `start`,
   },
-  Size: {
+  SIZE: {
     FONT: 20,
     OFFSET: 40,
     PADDING: 100,
@@ -98,7 +98,7 @@ export default class Statistics extends AbstractSmartComponent {
   _renderChart() {
     const statisticCtx = document.querySelector(`.statistic__chart`);
 
-    statisticCtx.height = STATS_PARAM.Size.BAR_HEIGHT * this._statsData.genres.length;
+    statisticCtx.height = STATS_PARAM.SIZE.BAR_HEIGHT * this._statsData.genres.length;
 
     this._statChart = new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
@@ -118,12 +118,12 @@ export default class Statistics extends AbstractSmartComponent {
         plugins: {
           datalabels: {
             font: {
-              size: STATS_PARAM.Size.FONT
+              size: STATS_PARAM.SIZE.FONT
             },
             color: STATS_PARAM.COLORS.TEXT_COLOR,
             anchor: STATS_PARAM.POSITIONS.ANCHOR,
             align: STATS_PARAM.POSITIONS.ALIGN,
-            offset: STATS_PARAM.Size.OFFSET
+            offset: STATS_PARAM.SIZE.OFFSET
           }
         },
         scales: {
@@ -131,14 +131,14 @@ export default class Statistics extends AbstractSmartComponent {
             {
               ticks: {
                 fontColor: STATS_PARAM.COLORS.TEXT_COLOR,
-                padding: STATS_PARAM.Size.PADDING,
-                fontSize: STATS_PARAM.Size.FONT
+                padding: STATS_PARAM.SIZE.PADDING,
+                fontSize: STATS_PARAM.SIZE.FONT
               },
               gridLines: {
                 display: false,
                 drawBorder: false
               },
-              barThickness: STATS_PARAM.Size.BAR_THICKNESS
+              barThickness: STATS_PARAM.SIZE.BAR_THICKNESS
             }
           ],
           xAxes: [
