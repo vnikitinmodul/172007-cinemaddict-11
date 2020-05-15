@@ -1,24 +1,24 @@
 export default class FilmsAdapter {
-  constructor(data) {
-    this.id = Number(data.id);
-    this.title = data.film_info.title;
-    this.titleOriginal = data.film_info.alternative_title;
-    this.age = data.film_info.age_rating;
-    this.country = data.film_info.release.release_country;
-    this.director = data.film_info.director;
-    this.writers = data.film_info.writers;
-    this.actors = data.film_info.actors;
-    this.poster = data.film_info.poster;
-    this.rating = data.film_info.total_rating;
-    this.date = data.film_info.release.date;
-    this.duration = data.film_info.runtime;
-    this.genres = data.film_info.genre;
-    this.description = data.film_info.description;
-    this.isAddedToWatchlist = data.user_details.watchlist;
-    this.isMarkedAsWatched = data.user_details.already_watched;
-    this.isFavorite = data.user_details.favorite;
-    this.watchingDate = data.user_details.watching_date;
-    this.comments = data.comments;
+  constructor(film) {
+    this.id = Number(film.id);
+    this.title = film.film_info.title;
+    this.titleOriginal = film.film_info.alternative_title;
+    this.age = film.film_info.age_rating;
+    this.country = film.film_info.release.release_country;
+    this.director = film.film_info.director;
+    this.writers = film.film_info.writers;
+    this.actors = film.film_info.actors;
+    this.poster = film.film_info.poster;
+    this.rating = film.film_info.total_rating;
+    this.date = film.film_info.release.date;
+    this.duration = film.film_info.runtime;
+    this.genres = film.film_info.genre;
+    this.description = film.film_info.description;
+    this.isAddedToWatchlist = film.user_details.watchlist;
+    this.isMarkedAsWatched = film.user_details.already_watched;
+    this.isFavorite = film.user_details.favorite;
+    this.watchingDate = new Date(film.user_details.watching_date);
+    this.comments = film.comments;
   }
 
   toRAW() {
@@ -51,11 +51,11 @@ export default class FilmsAdapter {
     };
   }
 
-  static parseFilm(data) {
-    return new FilmsAdapter(data);
+  static parseFilm(film) {
+    return new FilmsAdapter(film);
   }
 
-  static parseFilms(data) {
-    return data.map(FilmsAdapter.parseFilm);
+  static parseFilms(films) {
+    return films.map(FilmsAdapter.parseFilm);
   }
 }

@@ -1,4 +1,5 @@
 import {FILTERS} from "../constants.js";
+import * as util from "../utils/common.js";
 
 export default class Films {
   constructor() {
@@ -14,21 +15,22 @@ export default class Films {
     handlers.forEach((handler) => handler());
   }
 
-  getFilms() {
-    return this._filmsData.filter(FILTERS.find((item) => (item.HREF === this._currentFilter)).FUNCTION);
+  getData(filter) {
+    filter = filter || util.getFilterMethod(FILTERS, (item) => (item.HREF === this._currentFilter));
+    return this._filmsData.filter(filter);
   }
 
-  getFilmsNum(filter = this._defaultFilter) {
+  getNum(filter = this._defaultFilter) {
     return this._filmsData.filter(filter).length;
   }
 
-  setFilms(data) {
-    this._filmsData = data;
+  setData(films) {
+    this._filmsData = films;
     this._callHandlers(this._dataLoadHandlers);
   }
 
-  updateFilm(data) {
-    this._filmsData[this._filmsData.findIndex((item) => (item.id === data.id))] = data;
+  updateFilm(film) {
+    this._filmsData[this._filmsData.findIndex((item) => (item.id === film.id))] = film;
     this._callHandlers(this._dataChangeHandlers);
   }
 
@@ -47,6 +49,10 @@ export default class Films {
 
     this._currentFilter = filter;
     this._callHandlers(this._filterChangeHandlers);
+  }
+
+  clearFilter() {
+    this._currentFilter = null;
   }
 
   setFilterChangeHandler(handler) {

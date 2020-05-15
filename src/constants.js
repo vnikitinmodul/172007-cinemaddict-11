@@ -1,3 +1,7 @@
+import moment from "moment";
+
+import * as util from "./utils/common.js";
+
 const POSTERS_PATH = `./`;
 
 const KEY_CODE = {
@@ -21,11 +25,11 @@ const CardsOther = {
   },
   TOP: {
     NUM: 2,
-    SORT: (a, b) => (parseFloat(b.rating) - parseFloat(a.rating)),
+    method: (a, b) => util.sortNum([a, b], `rating`),
   },
   COMMENTED: {
     NUM: 2,
-    SORT: (a, b) => (parseFloat(b.comments.length) - parseFloat(a.comments.length)),
+    method: (a, b) => util.sortNum([a, b], `comments`, true),
   },
 };
 
@@ -67,22 +71,49 @@ const FILTERS = [
   {
     HREF: `#all`,
     NAME: `All movies`,
-    FUNCTION: (item) => (item),
+    method: (item) => (item),
   },
   {
     HREF: `#watchlist`,
     NAME: `Watchlist`,
-    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHLIST.PROPERTY]),
+    method: (item) => (item[ACTION_PROPERTIES.WATCHLIST.PROPERTY]),
   },
   {
     HREF: `#history`,
     NAME: `History`,
-    FUNCTION: (item) => (item[ACTION_PROPERTIES.WATCHED.PROPERTY]),
+    method: (item) => (item[ACTION_PROPERTIES.WATCHED.PROPERTY]),
   },
   {
     HREF: `#favorites`,
     NAME: `Favorites`,
-    FUNCTION: (item) => (item[ACTION_PROPERTIES.FAVORITE.PROPERTY]),
+    method: (item) => (item[ACTION_PROPERTIES.FAVORITE.PROPERTY]),
+  },
+];
+
+const statsWatchingDateFilter = (item, startOfValue) => (
+  startOfValue ? moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(startOfValue)) : moment(item.watchingDate).isAfter(moment(0, `HH`))
+);
+
+const FILTERS_STATISTICS = [
+  {
+    NAME: `All time`,
+    method: (item) => (item),
+  },
+  {
+    NAME: `Today`,
+    method: (item) => statsWatchingDateFilter(item),
+  },
+  {
+    NAME: `Week`,
+    method: (item) => statsWatchingDateFilter(item, `isoWeek`),
+  },
+  {
+    NAME: `Month`,
+    method: (item) => statsWatchingDateFilter(item, `month`),
+  },
+  {
+    NAME: `Year`,
+    method: (item) => statsWatchingDateFilter(item, `year`),
   },
 ];
 
@@ -97,4 +128,5 @@ export {
   ENCODE_PARAM,
   ACTION_PROPERTIES,
   FILTERS,
+  FILTERS_STATISTICS,
 };

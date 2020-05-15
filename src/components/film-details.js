@@ -14,6 +14,15 @@ const getSelectedEmojiTemplate = (emoji) => {
   return emoji ? `<img src="images/emoji/${emoji}.png" width="55" height="55" alt="emoji-${emoji}">` : ``;
 };
 
+const getGenresMarkup = (genres) => (
+  `<tr class="film-details__row">
+    <td class="film-details__term">Genre${genres.length > 1 ? `s` : ``}</td>
+    <td class="film-details__cell">
+      <span class="film-details__genre">${genres.join(`</span><span class="film-details__genre">`)}</span>
+    </td>
+  </tr>`
+);
+
 const getFilmDetailsMarkup = (filmDetailsData, comments) => {
   const {
     title,
@@ -79,18 +88,13 @@ const getFilmDetailsMarkup = (filmDetailsData, comments) => {
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Runtime</td>
-                <td class="film-details__cell">${util.getDurationMoment(duration)}</td>
+                <td class="film-details__cell">${util.getDurationMoment(duration, true).join(` `)}</td>
               </tr>
               <tr class="film-details__row">
                 <td class="film-details__term">Country</td>
                 <td class="film-details__cell">${country}</td>
               </tr>
-              <tr class="film-details__row">
-                <td class="film-details__term">Genre${genres.length > 1 ? `s` : ``}</td>
-                <td class="film-details__cell">
-                  <span class="film-details__genre">${genres.join(`</span><span class="film-details__genre">`)}</span>
-                </td>
-              </tr>
+              ${genres.length ? getGenresMarkup(genres) : ``}
             </table>
 
             <p class="film-details__film-description">${description}</p>
@@ -165,10 +169,10 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return getFilmDetailsMarkup(this._controller.getData(), this.getComments());
+    return getFilmDetailsMarkup(this._controller.getData(), this.getData());
   }
 
-  getComments() {
+  getData() {
     return this._controller.getCommentsData().commentsList;
   }
 
@@ -185,7 +189,7 @@ export default class FilmDetails extends AbstractSmartComponent {
     const filmCommentsList = this.getElement().querySelector(`.film-details__comments-list`);
     this._commentsComponent = this._commentsComponent || new FilmComments();
 
-    this._commentsComponent.setComments(this.getComments());
+    this._commentsComponent.setData(this.getData());
 
     renderElement(filmCommentsList, this._commentsComponent);
   }
@@ -235,9 +239,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   setChangeEmojiHandler(handler) {
     this._onChangeEmoji = handler;
-    this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((item) => {
-      item.addEventListener(`change`, handler);
-    });
+    util.setInputsChangeHandler(handler, this.getElement(), `.film-details__emoji-item`);
   }
 
   setSubmitFormHandler(handler) {

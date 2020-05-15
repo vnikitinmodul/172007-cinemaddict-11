@@ -25,6 +25,12 @@ const Time = {
   MILLISECONDS_PER_SECOND: 1000,
 };
 
+const RATING_NAMES = [
+  `Novice`,
+  `Fan`,
+  `Movie Buff`,
+];
+
 const getRandomNum = (min, max) => (
   Math.floor(Math.random() * (max - min + 1) + min)
 );
@@ -77,15 +83,33 @@ const hideElement = (element) => {
   element.classList.add(HIDDEN_CLASS);
 };
 
-const getDurationMoment = (duration) => {
+const getDurationMoment = (duration, isUnitShow) => {
   const durationMoment = moment.duration(duration, `minutes`);
 
-  return `${durationMoment.hours() ? `${durationMoment.hours()}h ` : ``}${durationMoment.minutes() ? `${durationMoment.minutes()}m ` : ``}`;
+  return [durationMoment.hours() || !isUnitShow ? `${durationMoment.hours()}${isUnitShow ? `h` : ``}` : ``, durationMoment.minutes() || !isUnitShow ? `${durationMoment.minutes()}${isUnitShow ? `m` : ``}` : ``];
 };
 
 const getRandomBoolean = (chance = 0.5) => (
   Math.floor(Math.random() - chance)
 );
+
+const getRatingName = (rating) => (RATING_NAMES[Math.ceil(rating / 10) - 1]);
+
+const sortNum = (items, property, isLength) => {
+  const [a, b] = isLength ? [items[0][property].length, items[1][property].length] : [items[0][property], items[1][property]];
+  return parseFloat(b) - parseFloat(a);
+};
+
+const setInputsChangeHandler = (handler, container, selector) => {
+  container.querySelectorAll(selector).forEach((item) => {
+    item.addEventListener(`change`, handler);
+  });
+};
+
+const getFilterMethod = (filtersList, findFunction) => {
+  const currentFilter = filtersList.find(findFunction);
+  return currentFilter && currentFilter.method;
+};
 
 export {
   getRandomNum,
@@ -99,4 +123,8 @@ export {
   hideElement,
   getDurationMoment,
   getRandomBoolean,
+  getRatingName,
+  sortNum,
+  setInputsChangeHandler,
+  getFilterMethod,
 };

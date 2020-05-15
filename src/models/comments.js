@@ -7,17 +7,13 @@ export default class Comments {
     handlers.forEach((handler) => handler());
   }
 
-  getComments(id) {
+  getData(id) {
     return this._commentsData.find((item) => (item.id === id));
   }
 
-  setCommentsAll(data) {
-    this._commentsData = data;
-  }
+  setData(comment) {
+    const index = this._commentsData.findIndex((item) => (item.id === comment.id));
 
-  setComments(data) {
-    const index = this._commentsData.findIndex((item) => (item.id === data.id));
-
-    this._commentsData[index] = data;
+    this._commentsData[index] = comment;
   }
 }

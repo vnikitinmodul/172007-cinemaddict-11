@@ -65,8 +65,8 @@ const getCardMarkup = (filmData) => {
     <p class="film-card__rating film-card__rating--${getRatingColor(rating)}">${rating}</p>
     <p class="film-card__info">
       <span class="film-card__year" title="${moment(date).format(`DD MMMM YYYY`)}">${moment(date).format(`YYYY`)}</span>
-      <span class="film-card__duration">${util.getDurationMoment(duration)}</span>
-      <span class="film-card__genre">${genres[0]}</span>
+      <span class="film-card__duration">${util.getDurationMoment(duration, true).join(` `)}</span>
+      <span class="film-card__genre">${genres.length ? genres[0] : ``}</span>
     </p>
     <img src="${POSTERS_PATH + poster}" alt="" class="film-card__poster">
     <p class="film-card__description">${cutText(description)}</p>
@@ -84,14 +84,13 @@ export default class Card extends AbstractComponent {
     super();
 
     this._controller = controller;
-    this._cardActionsElements = {};
   }
 
   getTemplate() {
     return getCardMarkup(this._controller.getData());
   }
 
-  setClickCardActionHandler(param) {
+  setClickActionHandler(param) {
     const {className, handler} = param;
     this.getElement().querySelector(`.${className}`).addEventListener(`click`, handler);
   }

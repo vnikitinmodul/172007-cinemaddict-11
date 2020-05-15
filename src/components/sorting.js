@@ -1,3 +1,4 @@
+import * as util from "../utils/common.js";
 import AbstractComponent from "./abstract.js";
 
 const SORT_CLASSES = {
@@ -18,7 +19,7 @@ const sortType = [
   },
   {
     name: `rating`,
-    fn: (a, b) => (parseFloat(b.rating) - parseFloat(a.rating)),
+    fn: (a, b) => util.sortNum([a, b], `rating`),
   },
 ];
 
@@ -30,7 +31,7 @@ const getSortMarkup = () => (
   </ul>`
 );
 
-export default class Sort extends AbstractComponent {
+export default class Sorting extends AbstractComponent {
   constructor() {
     super();
 

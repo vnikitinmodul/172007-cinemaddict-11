@@ -8,9 +8,9 @@ import {
 import Profile from "../components/profile.js";
 import Button from "../components/button.js";
 import Films from "../components/films.js";
-import Sort from "../components/sort.js";
+import Sorting from "../components/sorting.js";
 
-import FilmController from "../controllers/film.js";
+import FilmController from "../controllers/film-controller.js";
 
 import {
   FILTERS,
@@ -22,22 +22,25 @@ const DEFAULT_SORT = `default`;
 const WATCHED_FILTER_NAME = `History`;
 
 export default class MainController {
-  constructor(container, filmsModel, commentsModel, api) {
+  constructor(container, models, statistics, api) {
     this._container = container;
     this._filmsLength = 0;
     this._filmsLoadedLength = 0;
-    this._filmsModel = filmsModel;
-    this._commentsModel = commentsModel;
+    this._filmsModel = models.films;
+    this._commentsModel = models.comments;
+    this._filmsComponents = null;
+    this._filters = null;
+    this._statistics = statistics;
     this._api = api;
     this._showMore = null;
     this._profile = null;
-    this._sortComponent = new Sort();
+    this._sortingComponent = new Sorting();
     this._defaultSort = DEFAULT_SORT;
     this._currentSort = this._defaultSort;
     this._filmsMain = [];
     this._filmsOther = [];
     this._filmsListElements = {};
-    this._ratingUpdateFunction = FILTERS.find((item) => (item.NAME === WATCHED_FILTER_NAME)).FUNCTION;
+    this._ratingUpdateFunction = util.getFilterMethod(FILTERS, (item) => (item.NAME === WATCHED_FILTER_NAME));
 
     this._handlers = {
       onDataChange: this._onDataChange.bind(this),
@@ -49,14 +52,23 @@ export default class MainController {
     this._dataChangeModelUpdate = this._dataChangeModelUpdate.bind(this);
     this._dataCommentsChangeModelUpdate = this._dataCommentsChangeModelUpdate.bind(this);
     this._filteredFilmHandler = this._filteredFilmHandler.bind(this);
+    this._onStatsClick = this._onStatsClick.bind(this);
+    this._onStatsFilterChange = this._onStatsFilterChange.bind(this);
 
     this._filmsModel.setFilterChangeHandler(this._onFilterActivate);
   }
 
   _renderSort() {
     this._currentSort = this._defaultSort;
-    renderElement(this._container, this._sortComponent);
-    this._sortComponent.setSortHandler(this._onSortClick.bind(this));
+    renderElement(this._container, this._sortingComponent);
+    this._sortingComponent.setSortHandler(this._onSortClick.bind(this));
+  }
+
+  _showMainScreen() {
+    util.hideElement(this._statistics.getElement());
+    util.showElement(this._filmsComponent.getElement());
+    util.showElement(this._sortingComponent.getElement());
+    this._renderSort();
   }
 
   _renderCardsAll() {
@@ -70,35 +82,37 @@ export default class MainController {
       return;
     }
 
+    const [start, num] = range || [0, CardsOther.START.NUM];
+
     if (!range) {
       this._resetCardsMain();
     }
 
-    const [start, num] = range || [0, CardsOther.START.NUM];
-    const data = this._filmsModel.getFilms().slice().sort(this._sortComponent.getSortType(sortType).fn);
+    this._checkButton();
 
-    this._filmsLoadedLength += num;
+    const filmsMainSorted = this._filmsModel.getData().slice().sort(this._sortingComponent.getSortType(sortType).fn);
+
+    this._filmsLoadedLength = start === null ? num : this._filmsLoadedLength + num;
 
     if (!this._showMore && (this._filmsLength > this._filmsLoadedLength)) {
       this._renderButton();
     }
 
-    data.slice(start, start + num)
+    filmsMainSorted.slice(start, start + num)
       .forEach((item) => {
         const film = new FilmController(this._filmsListElements.main, this._handlers, this._api);
-        film.render(item, this._commentsModel.getComments(item.id));
+        film.render(item, this._commentsModel.getData(item.id));
         this._collectFilmsMain(film);
       });
   }
 
-  _rerenderCardsMain(type = this._defaultSort) {
+  _rerenderCardsMain(type = this._defaultSort, range) {
     this._clearCardsMain();
-    this._renderCardsMain(null, type);
+    this._renderCardsMain(range, type);
   }
 
   _resetCardsMain() {
     this._filmsLoadedLength = 0;
-    this._checkButton();
   }
 
   _renderCardsOther() {
@@ -116,13 +130,13 @@ export default class MainController {
   }
 
   _renderCards(container, cardsType) {
-    const filmsDataCopy = this._filmsModel.getFilms().slice().sort(cardsType.SORT);
+    const filmsDataCopy = this._filmsModel.getData().slice().sort(cardsType.method);
 
     for (let i = 0; i < Math.min(cardsType.NUM, this._filmsLength); i++) {
       const film = new FilmController(container, this._handlers, this._api);
       const currentFilm = filmsDataCopy[i];
 
-      film.render(currentFilm, this._commentsModel.getComments(currentFilm.id));
+      film.render(currentFilm, this._commentsModel.getData(currentFilm.id));
       this._collectFilmsOther(film);
     }
   }
@@ -172,7 +186,7 @@ export default class MainController {
   }
 
   _updateFilmsLength() {
-    this._filmsLength = this._filmsModel.getFilms().length;
+    this._filmsLength = this._filmsModel.getData().length;
   }
 
   _getFilmsLength() {
@@ -190,13 +204,13 @@ export default class MainController {
 
     this._currentSort = type;
 
-    this._sortComponent.setActiveMod(type);
+    this._sortingComponent.setActiveMod(type);
     this._rerenderCardsMain(type);
   }
 
-  _dataChangeHandler(data, newData, functions) {
+  _dataChangeHandler(oldData, newData, changeFunctions) {
     const id = newData.id;
-    const {updateModel, filmHandler} = functions;
+    const {updateModel, filmHandler} = changeFunctions;
 
     updateModel(newData);
 
@@ -208,42 +222,46 @@ export default class MainController {
       });
   }
 
-  _dataChangeModelUpdate(newData) {
-    this._filmsModel.updateFilm(newData);
+  _dataChangeModelUpdate(newFilmData) {
+    this._filmsModel.updateFilm(newFilmData);
   }
 
-  _dataCommentsChangeModelUpdate(newData) {
-    this._commentsModel.setComments(newData);
+  _dataCommentsChangeModelUpdate(newCommentsData) {
+    this._commentsModel.setData(newCommentsData);
   }
 
-  _filteredFilmHandler(filteredFilm, newData) {
-    filteredFilm.render(newData);
+  _filteredFilmHandler(filteredFilm, newFilmData) {
+    if (this._filmsModel.getCurrentFilter() === this._filmsModel.getDefaultFilter()) {
+      filteredFilm.render(newFilmData);
+    } else {
+      this._rerenderCardsMain(this._currentSort, [null, this._filmsLoadedLength]);
+    }
     this._refreshProfile();
   }
 
   _refreshProfile() {
-    this._profile.updateRating(this._filmsModel.getFilmsNum(this._ratingUpdateFunction));
+    this._profile.updateRating(this._filmsModel.getNum(this._ratingUpdateFunction));
   }
 
-  _filteredFilmCommentsHandler(filteredFilm, newData) {
-    filteredFilm.setCommentsData(newData);
+  _filteredFilmCommentsHandler(filteredFilm, newCommentsData) {
+    filteredFilm.setCommentsData(newCommentsData);
     filteredFilm.getFilmInfo().rerender();
   }
 
-  _onDataChange(data, newData) {
+  _onDataChange(oldFilmData, newFilmData) {
     const functions = {
       updateModel: this._dataChangeModelUpdate,
       filmHandler: this._filteredFilmHandler,
     };
-    return this._dataChangeHandler(data, newData, functions);
+    return this._dataChangeHandler(oldFilmData, newFilmData, functions);
   }
 
-  _onCommentsDataChange(data, newData) {
+  _onCommentsDataChange(oldCommentsData, newCommentsData) {
     const functions = {
       updateModel: this._dataCommentsChangeModelUpdate,
       filmHandler: this._filteredFilmCommentsHandler,
     };
-    return this._dataChangeHandler(data, newData, functions);
+    return this._dataChangeHandler(oldCommentsData, newCommentsData, functions);
   }
 
   _onViewChange() {
@@ -253,18 +271,34 @@ export default class MainController {
   }
 
   _onFilterActivate() {
+    this._showMainScreen();
     this._rerenderCardsMain();
-    this._renderSort();
+  }
+
+  _onStatsClick() {
+    this._statistics.rerender();
+    util.hideElement(this._filmsComponent.getElement());
+    util.hideElement(this._sortingComponent.getElement());
+    util.showElement(this._statistics.getElement());
+    this._filmsModel.clearFilter();
+    this._filters.getComponent().setStatsActive();
+  }
+
+  _onStatsFilterChange(evt) {
+    this._statistics.activateFilter(evt.target.value);
   }
 
   render(filters) {
     this._profile = new Profile();
-
+    this._filters = filters;
     this._getFilmsLength();
 
     renderElement(document.querySelector(`.header`), this._profile);
-    this._renderSort();
-    renderElement(this._container, new Films());
+    this._filmsComponent = new Films();
+    this._statistics.updateData();
+    renderElement(this._container, this._statistics);
+    this._showMainScreen();
+    renderElement(this._container, this._filmsComponent);
 
     this._filmsListElements = {
       wrapper: document.querySelector(`.films-list`),
@@ -276,10 +310,13 @@ export default class MainController {
 
     this._renderCardsAll();
 
+    this._filters.getComponent().setClickStats(this._onStatsClick);
+    this._statistics.setStatsFilterChangeHandler(this._onStatsFilterChange);
     this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
     this._filmsModel.setDataLoadHandler(
-        filters.getComponent()
-          .rerender.bind(filters.getComponent())
+        this._filters.getComponent()
+          .rerender.bind(this._filters.getComponent())
     );
+    this._filmsModel.setDataLoadHandler(this._filters.getComponent().setFilterActive.bind(this._filters.getComponent()));
   }
 }

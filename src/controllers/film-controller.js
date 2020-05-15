@@ -27,7 +27,7 @@ export default class FilmController {
     this._bodyElement = document.body;
     this._card = null;
     this._filmInfo = null;
-    this._data = null;
+    this._filmData = null;
     this._commentsData = null;
     this._onDataChange = handlers.onDataChange;
     this._onViewChange = handlers.onViewChange;
@@ -39,7 +39,7 @@ export default class FilmController {
 
   _setClickCardActionHandlers() {
     Object.keys(ACTION_PROPERTIES).forEach((key) => {
-      this._card.setClickCardActionHandler({
+      this._card.setClickActionHandler({
         className: `film-card__controls-item--${ACTION_PROPERTIES[key].MODIFIER}`,
         handler: this._onActionClick(`card`, ACTION_PROPERTIES[key].PROPERTY)
       });
@@ -59,9 +59,9 @@ export default class FilmController {
     return () => {
       this._onViewChange();
 
-      this._api.getComments(this._data.id)
+      this._api.getComments(this._filmData.id)
         .then((commentsData) => {
-          this._onCommentsDataChange(this._commentsData, {id: this._data.id, commentsList: commentsData});
+          this._onCommentsDataChange(this._commentsData, {id: this._filmData.id, commentsList: commentsData});
           this._renderFilmInfo();
 
           this._filmInfo.onEscPress = this._onFilmInfoEscPress();
@@ -111,14 +111,15 @@ export default class FilmController {
     return (evt) => {
       evt.preventDefault();
 
-      const thisData = this._data;
+      const thisData = this._filmData;
       const newData = cloneDeep(thisData);
 
       evt.target.setAttribute(`disabled`, true);
 
       newData[property] = !thisData[property];
-      this._data = newData;
-      this._api.updateFilm(this._data.id, newData)
+      newData.watchingDate = new Date();
+      this._filmData = newData;
+      this._api.updateFilm(this._filmData.id, newData)
         .then((serverData) => {
           this._onDataChange(thisData, serverData);
           if (type === `filmInfo`) {
@@ -134,9 +135,9 @@ export default class FilmController {
   }
 
   _onFilmInfoEmojiChange(evt) {
-    const newFilmInfoData = cloneDeep(this._data);
+    const newFilmInfoData = cloneDeep(this._filmData);
     newFilmInfoData.selectedEmoji = evt.target.getAttribute(`value`);
-    this._data = newFilmInfoData;
+    this._filmData = newFilmInfoData;
     this._filmInfo.rerender();
   }
 
@@ -158,7 +159,7 @@ export default class FilmController {
 
       newCommentsData.commentsList.push(newComment);
       this._onCommentsDataChange(thisCommentsData, newCommentsData);
-      this._onDataChange(this._data, this._data);
+      this._onDataChange(this._filmData, this._filmData);
     }
   }
 
@@ -170,7 +171,7 @@ export default class FilmController {
     const commentId = evt.target.getAttribute(`data-id`);
     newCommentsData.commentsList.splice(newCommentsData.commentsList.findIndex((item) => (item.commentId === Number(commentId))), 1);
     this._onCommentsDataChange(thisCommentsData, newCommentsData);
-    this._onDataChange(this._data, this._data);
+    this._onDataChange(this._filmData, this._filmData);
   }
 
   closeFilmInfo() {
@@ -179,12 +180,12 @@ export default class FilmController {
     document.removeEventListener(`keydown`, this._filmInfo.onEscPress);
   }
 
-  setCommentsData(data) {
-    this._commentsData = data;
+  setCommentsData(comments) {
+    this._commentsData = comments;
   }
 
   getData() {
-    return this._data;
+    return this._filmData;
   }
 
   getCommentsData() {
@@ -199,8 +200,8 @@ export default class FilmController {
     return this._filmInfo;
   }
 
-  render(data, commentsData) {
-    this._data = data || this._data;
+  render(film, commentsData) {
+    this._filmData = film || this._filmData;
     this._commentsData = commentsData || this._commentsData;
 
     if (!this._card) {

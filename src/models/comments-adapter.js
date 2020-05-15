@@ -1,17 +1,17 @@
 export default class CommentsAdapter {
-  constructor(data) {
-    this.commentId = Number(data.id);
-    this.emoji = data.emotion;
-    this.author = data.author;
-    this.date = data.date;
-    this.text = data.comment;
+  constructor(comment) {
+    this.commentId = Number(comment.id);
+    this.emoji = comment.emotion;
+    this.author = comment.author;
+    this.date = comment.date;
+    this.text = comment.comment;
   }
 
-  static parseComment(data) {
-    return new CommentsAdapter(data);
+  static parseComment(comment) {
+    return new CommentsAdapter(comment);
   }
 
-  static parseComments(data) {
-    return data.map(CommentsAdapter.parseComment);
+  static parseComments(comments) {
+    return comments.map(CommentsAdapter.parseComment);
   }
 }
