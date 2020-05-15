@@ -23,7 +23,7 @@ export default class Api {
 
   _checkStatus(response) {
     if (response.status >= ValidStatusCode.MIN && response.status < ValidStatusCode.MAX) {
-      return response.json();
+      return response;
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);
     }
@@ -42,6 +42,7 @@ export default class Api {
     };
 
     return this._load(`${this._urlBase}${this._queryFilms}`, param)
+      .then((response) => response.json())
       .then(FilmsAdapter.parseFilms);
   }
 
@@ -53,6 +54,7 @@ export default class Api {
     };
 
     return this._load(`${this._urlBase}${this._queryFilms}/${id}`, param)
+      .then((response) => response.json())
       .then(FilmsAdapter.parseFilm);
   }
 
@@ -62,6 +64,28 @@ export default class Api {
     };
 
     return this._load(`${this._urlBase}${this._queryComments}/${id}`, param)
+      .then((response) => response.json())
       .then(CommentsAdapter.parseComments);
+  }
+
+  postComment(id, comment) {
+    const param = {
+      method: Method.POST,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': `application/json`})
+    };
+
+    return this._load(`${this._urlBase}${this._queryComments}/${id}`, param)
+      .then((response) => response.json())
+      .then(CommentsAdapter.parseComments);
+  }
+
+  deleteComment(id) {
+    const param = {
+      method: Method.DELETE,
+      headers: new Headers()
+    };
+
+    return this._load(`${this._urlBase}${this._queryComments}/${id}`, param);
   }
 }

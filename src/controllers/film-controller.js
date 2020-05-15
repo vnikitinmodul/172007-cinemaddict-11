@@ -151,27 +151,36 @@ export default class FilmController {
       const newCommentsData = cloneDeep(thisCommentsData);
 
       const newComment = {
-        emoji,
-        author: util.getRandomFromArray(COMMENT_AUTHORS),
-        date: new Date(),
-        text: he.encode(text, ENCODE_PARAM),
+        "emotion": emoji,
+        "date": new Date(),
+        "comment": he.encode(text, ENCODE_PARAM),
       };
 
-      newCommentsData.commentsList.push(newComment);
-      this._onCommentsDataChange(thisCommentsData, newCommentsData);
-      this._onDataChange(this._filmData, this._filmData);
+      this._api.postComment(this._filmData.id, newComment)
+        .then((newFilmInfoData) => {
+          newCommentsData.commentsList.push(newComment);
+          this._onCommentsDataChange(thisCommentsData, newCommentsData);
+          this._onDataChange(this._filmData, this._filmData);
+        });
     }
   }
 
   _onCommentDeleteClick(evt) {
     evt.preventDefault();
 
-    const thisCommentsData = this._commentsData;
-    const newCommentsData = cloneDeep(thisCommentsData);
     const commentId = evt.target.getAttribute(`data-id`);
-    newCommentsData.commentsList.splice(newCommentsData.commentsList.findIndex((item) => (item.commentId === Number(commentId))), 1);
-    this._onCommentsDataChange(thisCommentsData, newCommentsData);
-    this._onDataChange(this._filmData, this._filmData);
+
+    this._api.deleteComment(commentId)
+      .then(() => {
+        const thisCommentsData = this._commentsData;
+        const newCommentsData = cloneDeep(thisCommentsData);
+        const newFilmInfoData = cloneDeep(this._filmData);
+        const commentIndex = newCommentsData.commentsList.findIndex((item) => (item.commentId === Number(commentId)));
+        newCommentsData.commentsList.splice(commentIndex, 1);
+        newFilmInfoData.comments.splice(commentIndex, 1);
+        this._onCommentsDataChange(thisCommentsData, newCommentsData);
+        this._onDataChange(this._filmData, newFilmInfoData);
+      });
   }
 
   closeFilmInfo() {
