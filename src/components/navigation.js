@@ -2,8 +2,10 @@ import AbstractSmartComponent from "./abstract-smart.js";
 
 import {FILTERS} from "../constants.js";
 
-const FILTER_CLASS_ACTIVE = `main-navigation__item--active`;
-const STATS_CLASS_ACTIVE = `main-navigation__additional--active`;
+const CLASS_ACTIVE = {
+  FILTER: `main-navigation__item--active`,
+  STATS: `main-navigation__additional--active`,
+};
 
 const getFiltersMarkup = (filter, filmsModel) => (
   `<a href="${filter.HREF}" class="main-navigation__item">${filter.NAME}
@@ -47,19 +49,19 @@ export default class Navigation extends AbstractSmartComponent {
 
   _clearFilterActive() {
     this._getFilterElements().forEach((item) => {
-      item.classList.remove(FILTER_CLASS_ACTIVE);
+      item.classList.remove(CLASS_ACTIVE.FILTER);
     });
   }
 
   setFilterActive(filter = this._filmsModel.getCurrentFilter()) {
     this._clearFilterActive();
-    this._getStatsElement().classList.remove(STATS_CLASS_ACTIVE);
-    [...this._getFilterElements()].find((item) => (item.getAttribute(`href`) === filter)).classList.add(FILTER_CLASS_ACTIVE);
+    this._getStatsElement().classList.remove(CLASS_ACTIVE.STATS);
+    [...this._getFilterElements()].find((item) => (item.getAttribute(`href`) === filter)).classList.add(CLASS_ACTIVE.FILTER);
   }
 
   setStatsActive() {
     this._clearFilterActive();
-    this._getStatsElement().classList.add(STATS_CLASS_ACTIVE);
+    this._getStatsElement().classList.add(CLASS_ACTIVE.STATS);
   }
 
   setClickFilterHandler(handler) {

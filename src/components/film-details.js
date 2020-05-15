@@ -239,9 +239,7 @@ export default class FilmDetails extends AbstractSmartComponent {
 
   setChangeEmojiHandler(handler) {
     this._onChangeEmoji = handler;
-    this.getElement().querySelectorAll(`.film-details__emoji-item`).forEach((item) => {
-      item.addEventListener(`change`, handler);
-    });
+    util.setInputsChangeHandler(handler, this.getElement(), `.film-details__emoji-item`);
   }
 
   setSubmitFormHandler(handler) {

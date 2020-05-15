@@ -2,8 +2,8 @@ import FilmsAdapter from "../models/films-adapter.js";
 import CommentsAdapter from "../models/comments-adapter.js";
 
 const ValidStatusCode = {
-  MIN: 200,
-  MAX: 300,
+  SUCCESS: 200,
+  REDIRECTION: 300,
 };
 
 const Method = {
@@ -22,7 +22,7 @@ export default class Api {
   }
 
   _checkStatus(response) {
-    if (response.status >= ValidStatusCode.MIN && response.status < ValidStatusCode.MAX) {
+    if (response.status >= ValidStatusCode.SUCCESS && response.status < ValidStatusCode.REDIRECTION) {
       return response.json();
     } else {
       throw new Error(`${response.status}: ${response.statusText}`);

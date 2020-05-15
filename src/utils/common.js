@@ -95,6 +95,22 @@ const getRandomBoolean = (chance = 0.5) => (
 
 const getRatingName = (rating) => (RATING_NAMES[Math.ceil(rating / 10) - 1]);
 
+const sortNum = (items, property, isLength) => {
+  const [a, b] = isLength ? [items[0][property].length, items[1][property].length] : [items[0][property], items[1][property]];
+  return parseFloat(b) - parseFloat(a);
+};
+
+const setInputsChangeHandler = (handler, container, selector) => {
+  container.querySelectorAll(selector).forEach((item) => {
+    item.addEventListener(`change`, handler);
+  });
+};
+
+const getFilterMethod = (filtersList, findFunction) => {
+  const currentFilter = filtersList.find(findFunction);
+  return currentFilter && currentFilter.method;
+};
+
 export {
   getRandomNum,
   getRandomFromArray,
@@ -108,4 +124,7 @@ export {
   getDurationMoment,
   getRandomBoolean,
   getRatingName,
+  sortNum,
+  setInputsChangeHandler,
+  getFilterMethod,
 };

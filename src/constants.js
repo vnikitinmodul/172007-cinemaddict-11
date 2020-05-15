@@ -1,5 +1,7 @@
 import moment from "moment";
 
+import * as util from "./utils/common.js";
+
 const POSTERS_PATH = `./`;
 
 const KEY_CODE = {
@@ -23,11 +25,11 @@ const CardsOther = {
   },
   TOP: {
     NUM: 2,
-    method: (a, b) => (parseFloat(b.rating) - parseFloat(a.rating)),
+    method: (a, b) => util.sortNum([a, b], `rating`),
   },
   COMMENTED: {
     NUM: 2,
-    method: (a, b) => (parseFloat(b.comments.length) - parseFloat(a.comments.length)),
+    method: (a, b) => util.sortNum([a, b], `comments`, true),
   },
 };
 
@@ -88,6 +90,10 @@ const FILTERS = [
   },
 ];
 
+const statsWatchingDateFilter = (item, startOfValue) => (
+  startOfValue ? moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(startOfValue)) : moment(item.watchingDate).isAfter(moment(0, `HH`))
+);
+
 const FILTERS_STATISTICS = [
   {
     NAME: `All time`,
@@ -95,19 +101,19 @@ const FILTERS_STATISTICS = [
   },
   {
     NAME: `Today`,
-    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`))),
+    method: (item) => statsWatchingDateFilter(item),
   },
   {
     NAME: `Week`,
-    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`isoWeek`))),
+    method: (item) => statsWatchingDateFilter(item, `isoWeek`),
   },
   {
     NAME: `Month`,
-    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`month`))),
+    method: (item) => statsWatchingDateFilter(item, `month`),
   },
   {
     NAME: `Year`,
-    method: (item) => (moment(item.watchingDate).isAfter(moment(0, `HH`).startOf(`year`))),
+    method: (item) => statsWatchingDateFilter(item, `year`),
   },
 ];
 
