@@ -8,22 +8,24 @@ import {
   FILTERS_STATISTICS,
 } from "../constants.js";
 
-const STATS_FILTER_NAME = `History`;
-const STATS_TYPE = `horizontalBar`;
-const STATS_COLORS = {
-  BG_COLOR: `#ffe800`,
-  TEXT_COLOR: `#ffffff`,
-};
-const STATS_POSITIONS = {
-  ANCHOR: `start`,
-  ALIGN: `start`,
-};
-const StatSize = {
-  FONT: 20,
-  OFFSET: 40,
-  PADDING: 100,
-  BAR_THICKNESS: 24,
-  BAR_HEIGHT: 50,
+const STATS_PARAM = {
+  FILTER_NAME: `History`,
+  TYPE: `horizontalBar`,
+  COLORS: {
+    BG_COLOR: `#ffe800`,
+    TEXT_COLOR: `#ffffff`,
+  },
+  POSITIONS: {
+    ANCHOR: `start`,
+    ALIGN: `start`,
+  },
+  SIZE: {
+    FONT: 20,
+    OFFSET: 40,
+    PADDING: 100,
+    BAR_THICKNESS: 24,
+    BAR_HEIGHT: 50,
+  },
 };
 
 const getFilterName = (name) => name.toLowerCase().replace(` `, `-`);
@@ -96,19 +98,19 @@ export default class Statistics extends AbstractSmartComponent {
   _renderChart() {
     const statisticCtx = document.querySelector(`.statistic__chart`);
 
-    statisticCtx.height = StatSize.BAR_HEIGHT * this._statsData.genres.length;
+    statisticCtx.height = STATS_PARAM.SIZE.BAR_HEIGHT * this._statsData.genres.length;
 
     this._statChart = new Chart(statisticCtx, {
       plugins: [ChartDataLabels],
-      type: STATS_TYPE,
+      type: STATS_PARAM.TYPE,
       data: {
         labels: this._statsData.genres.map((item) => (item.name)),
         datasets: [
           {
             data: this._statsData.genres.map((item) => (item.num)),
-            backgroundColor: STATS_COLORS.BG_COLOR,
-            hoverBackgroundColor: STATS_COLORS.BG_COLOR,
-            anchor: STATS_POSITIONS.ANCHOR
+            backgroundColor: STATS_PARAM.COLORS.BG_COLOR,
+            hoverBackgroundColor: STATS_PARAM.COLORS.BG_COLOR,
+            anchor: STATS_PARAM.POSITIONS.ANCHOR
           }
         ]
       },
@@ -116,27 +118,27 @@ export default class Statistics extends AbstractSmartComponent {
         plugins: {
           datalabels: {
             font: {
-              size: StatSize.FONT
+              size: STATS_PARAM.SIZE.FONT
             },
-            color: STATS_COLORS.TEXT_COLOR,
-            anchor: STATS_POSITIONS.ANCHOR,
-            align: STATS_POSITIONS.ALIGN,
-            offset: StatSize.OFFSET
+            color: STATS_PARAM.COLORS.TEXT_COLOR,
+            anchor: STATS_PARAM.POSITIONS.ANCHOR,
+            align: STATS_PARAM.POSITIONS.ALIGN,
+            offset: STATS_PARAM.SIZE.OFFSET
           }
         },
         scales: {
           yAxes: [
             {
               ticks: {
-                fontColor: STATS_COLORS.TEXT_COLOR,
-                padding: StatSize.PADDING,
-                fontSize: StatSize.FONT
+                fontColor: STATS_PARAM.COLORS.TEXT_COLOR,
+                padding: STATS_PARAM.SIZE.PADDING,
+                fontSize: STATS_PARAM.SIZE.FONT
               },
               gridLines: {
                 display: false,
                 drawBorder: false
               },
-              barThickness: StatSize.BAR_THICKNESS
+              barThickness: STATS_PARAM.SIZE.BAR_THICKNESS
             }
           ],
           xAxes: [
@@ -162,24 +164,28 @@ export default class Statistics extends AbstractSmartComponent {
     });
   }
 
+  _getFilmGenres(accum) {
+    return (genre) => {
+      const currentGenre = accum.find((item) => (item.name === genre));
+      if (currentGenre) {
+        ++currentGenre.num;
+      } else {
+        accum.push({
+          name: genre,
+          num: 1,
+        });
+      }
+    };
+  }
+
   _getGenres(films) {
     return films.reduce(
         (accum, film) => {
           film.genres.forEach(
-              (genre) => {
-                const currentGenre = accum.find((item) => (item.name === genre));
-                if (currentGenre) {
-                  ++currentGenre.num;
-                } else {
-                  accum.push({
-                    name: genre,
-                    num: 1,
-                  });
-                }
-              }
+              this._getFilmGenres(accum)
           );
           return accum;
-        }, []).sort((a, b) => (parseFloat(b.num) - parseFloat(a.num)));
+        }, []).sort((a, b) => util.sortNum([a, b], `num`));
   }
 
   recoveryListeners() {
@@ -197,12 +203,11 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   updateData() {
-    const filmsWatched = this._filmsModel.getData(FILTERS.find((item) => (item.NAME === STATS_FILTER_NAME)).method);
-    const filteredFilms = filmsWatched.filter(
-        FILTERS_STATISTICS.find(
-            (item) => (getFilterName(item.NAME) === this._currentFilter)
-        ).method
-    );
+    const findFilter = (item) => (item.NAME === STATS_PARAM.FILTER_NAME);
+    const findStatsFilter = (item) => (getFilterName(item.NAME) === this._currentFilter);
+
+    const filmsWatched = this._filmsModel.getData(util.getFilterMethod(FILTERS, findFilter));
+    const filteredFilms = filmsWatched.filter(util.getFilterMethod(FILTERS_STATISTICS, findStatsFilter));
     this._statsData = {
       rating: filteredFilms.length,
       duration: filteredFilms.reduce((accum, item) => (accum + item.duration), 0),
@@ -223,8 +228,6 @@ export default class Statistics extends AbstractSmartComponent {
 
   setStatsFilterChangeHandler(handler) {
     this._statsFilterChangeHandler = handler;
-    this.getElement().querySelectorAll(`.statistic__filters-input`).forEach((item) => {
-      item.addEventListener(`change`, handler);
-    });
+    util.setInputsChangeHandler(handler, this.getElement(), `.statistic__filters-input`);
   }
 }

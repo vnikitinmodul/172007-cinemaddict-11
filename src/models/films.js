@@ -1,4 +1,5 @@
 import {FILTERS} from "../constants.js";
+import * as util from "../utils/common.js";
 
 export default class Films {
   constructor() {
@@ -15,7 +16,7 @@ export default class Films {
   }
 
   getData(filter) {
-    filter = filter || FILTERS.find((item) => (item.HREF === this._currentFilter)).method;
+    filter = filter || util.getFilterMethod(FILTERS, (item) => (item.HREF === this._currentFilter));
     return this._filmsData.filter(filter);
   }
 

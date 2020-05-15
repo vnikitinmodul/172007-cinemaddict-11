@@ -40,7 +40,7 @@ export default class MainController {
     this._filmsMain = [];
     this._filmsOther = [];
     this._filmsListElements = {};
-    this._ratingUpdateFunction = FILTERS.find((item) => (item.NAME === WATCHED_FILTER_NAME)).method;
+    this._ratingUpdateFunction = util.getFilterMethod(FILTERS, (item) => (item.NAME === WATCHED_FILTER_NAME));
 
     this._handlers = {
       onDataChange: this._onDataChange.bind(this),
