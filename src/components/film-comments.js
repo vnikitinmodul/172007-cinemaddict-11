@@ -10,7 +10,7 @@ const getCommentMarkup = (item) => {
     commentId,
   } = item;
 
-  return `<li class="film-details__comment">
+  return `<li class="film-details__comment" data-id="${commentId}">
     <span class="film-details__comment-emoji">
       <img src="./images/emoji/${emoji}.png" width="55" height="55" alt="emoji-smile">
     </span>

@@ -1,7 +1,6 @@
 import cloneDeep from "clone-deep";
 import he from "he";
 
-import * as util from "../utils/common.js";
 import {
   renderElement,
   showError,
@@ -14,11 +13,19 @@ import {
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
   ACTION_PROPERTIES,
-  COMMENT_AUTHORS,
   COMMENT_EMOJIES,
   ENCODE_PARAM,
 } from "../constants.js";
 
+const BUTTON_TEXT = {
+  DEFAULT: `Delete`,
+  DELETING: `Deleting...`,
+};
+const ERROR_CLASS = {
+  SHAKE: `shake`,
+  BORDER: `film-details__comment-input--error`,
+};
+const SHAKE_DURATION = 600;
 
 export default class FilmController {
   constructor(container, handlers, api) {
@@ -141,26 +148,38 @@ export default class FilmController {
     this._filmInfo.rerender();
   }
 
+  _getRAWComment(text, emojiElement) {
+    return {
+      "emotion": emojiElement ? emojiElement.value : COMMENT_EMOJIES[0],
+      "date": new Date(),
+      "comment": he.encode(text, ENCODE_PARAM),
+    };
+  }
+
   _onFilmInfoFormSubmit(evt) {
-    if (evt.code === `Enter` && evt.ctrlKey) {
-      const text = this.getFilmInfo().getElement().querySelector(`.film-details__comment-input`).value;
+    const textElement = this.getFilmInfo().getElement().querySelector(`.film-details__comment-input`);
+    const text = textElement.value;
+
+    if ((evt.code === KEY_CODE.ENTER || evt.metaKey) && evt.ctrlKey && text.length) {
       const emojiElement = this.getFilmInfo().getElement().querySelector(`.film-details__emoji-item:checked`);
-      const emoji = emojiElement ? emojiElement.value : COMMENT_EMOJIES[0];
+      const formElement = this._filmInfo.getElement().querySelector(`.film-details__inner`);
+      const newComment = this._getRAWComment(text, emojiElement);
 
-      const thisCommentsData = this._commentsData;
-      const newCommentsData = cloneDeep(thisCommentsData);
-
-      const newComment = {
-        "emotion": emoji,
-        "date": new Date(),
-        "comment": he.encode(text, ENCODE_PARAM),
-      };
+      textElement.classList.remove(ERROR_CLASS.BORDER);
+      textElement.setAttribute(`disabled`, true);
 
       this._api.postComment(this._filmData.id, newComment)
-        .then((newFilmInfoData) => {
-          newCommentsData.commentsList.push(newComment);
-          this._onCommentsDataChange(thisCommentsData, newCommentsData);
-          this._onDataChange(this._filmData, this._filmData);
+        .then((allFilmData) => {
+          this._onCommentsDataChange(this._commentsData, {
+            id: this._filmData.id,
+            commentsList: allFilmData.comments,
+          });
+          this._onDataChange(this._filmData, allFilmData.filmInfo);
+        })
+        .catch(() => {
+          formElement.classList.add(ERROR_CLASS.SHAKE);
+          textElement.classList.add(ERROR_CLASS.BORDER);
+          this._catchCommentsError(formElement, textElement);
         });
     }
   }
@@ -169,18 +188,33 @@ export default class FilmController {
     evt.preventDefault();
 
     const commentId = evt.target.getAttribute(`data-id`);
+    const commentElement = this._filmInfo.getElement().querySelector(`.film-details__comment[data-id="${commentId}"]`);
+
+    evt.target.setAttribute(`disabled`, true);
+    evt.target.innerText = BUTTON_TEXT.DELETING;
 
     this._api.deleteComment(commentId)
       .then(() => {
-        const thisCommentsData = this._commentsData;
-        const newCommentsData = cloneDeep(thisCommentsData);
+        const newCommentsData = cloneDeep(this._commentsData);
         const newFilmInfoData = cloneDeep(this._filmData);
         const commentIndex = newCommentsData.commentsList.findIndex((item) => (item.commentId === Number(commentId)));
         newCommentsData.commentsList.splice(commentIndex, 1);
         newFilmInfoData.comments.splice(commentIndex, 1);
-        this._onCommentsDataChange(thisCommentsData, newCommentsData);
+        this._onCommentsDataChange(this._commentsData, newCommentsData);
         this._onDataChange(this._filmData, newFilmInfoData);
+      })
+      .catch(() => {
+        evt.target.innerText = BUTTON_TEXT.DEFAULT;
+        this._catchCommentsError(commentElement, evt.target);
       });
+  }
+
+  _catchCommentsError(shakeElement, disabledElement) {
+    shakeElement.classList.add(ERROR_CLASS.SHAKE);
+    setTimeout(() => {
+      disabledElement.removeAttribute(`disabled`);
+      shakeElement.classList.remove(ERROR_CLASS.SHAKE);
+    }, SHAKE_DURATION);
   }
 
   closeFilmInfo() {

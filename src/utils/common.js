@@ -2,29 +2,6 @@ import moment from "moment";
 
 const HIDDEN_CLASS = `visually-hidden`;
 
-const MONTH_NAMES = [
-  `January`,
-  `February`,
-  `March`,
-  `April`,
-  `May`,
-  `June`,
-  `July`,
-  `August`,
-  `September`,
-  `October`,
-  `November`,
-  `December`
-];
-
-const Time = {
-  DAYS_PER_YEAR: 365,
-  HOURS_PER_DAY: 24,
-  MINUTES_PER_HOUR: 60,
-  SECONDS_PER_MINUTE: 60,
-  MILLISECONDS_PER_SECOND: 1000,
-};
-
 const RATING_NAMES = [
   `Novice`,
   `Fan`,
@@ -49,14 +26,6 @@ const getSomeFromArray = (array, min = 1, max = array.length) => {
   }
 
   return result;
-};
-
-const getRandomDate = (yearsAgo = 1) => {
-  return new Date(new Date() - new Date(getRandomNum(0, Object.values(Time).reduce((acc, item) => (acc * item), yearsAgo))));
-};
-
-const getMonthName = (num) => {
-  return MONTH_NAMES[num];
 };
 
 const addZeroBefore = (value) => {
@@ -115,8 +84,6 @@ export {
   getRandomNum,
   getRandomFromArray,
   getSomeFromArray,
-  getRandomDate,
-  getMonthName,
   addZeroBefore,
   generateArrayData,
   showElement,
