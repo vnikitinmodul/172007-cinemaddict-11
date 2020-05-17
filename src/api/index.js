@@ -77,8 +77,8 @@ export default class Api {
     return this._load(`${this._urlBase}${this._queryComments}/${id}`, param, true)
       .then((response) => (
         {
-          filmInfo: FilmsAdapter.parseFilm(response.movie),
-          comments: CommentsAdapter.parseComments(response.comments),
+          filmInfo: FilmsAdapter.parseFilm(response && response.movie),
+          comments: CommentsAdapter.parseComments(response && response.comments),
         }
       ));
   }

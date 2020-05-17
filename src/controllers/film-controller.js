@@ -159,8 +159,9 @@ export default class FilmController {
   _onFilmInfoFormSubmit(evt) {
     const textElement = this.getFilmInfo().getElement().querySelector(`.film-details__comment-input`);
     const text = textElement.value;
+    const isSubmitFilmInfoForm = (evt.code === KEY_CODE.ENTER || evt.metaKey) && evt.ctrlKey && text.length;
 
-    if ((evt.code === KEY_CODE.ENTER || evt.metaKey) && evt.ctrlKey && text.length) {
+    if (isSubmitFilmInfoForm) {
       const emojiElement = this.getFilmInfo().getElement().querySelector(`.film-details__emoji-item:checked`);
       const formElement = this._filmInfo.getElement().querySelector(`.film-details__inner`);
       const newComment = this._getRAWComment(text, emojiElement);
@@ -170,11 +171,12 @@ export default class FilmController {
 
       this._api.postComment(this._filmData.id, newComment)
         .then((allFilmData) => {
+          const {comments, filmInfo} = allFilmData;
           this._onCommentsDataChange(this._commentsData, {
             id: this._filmData.id,
-            commentsList: allFilmData.comments,
+            commentsList: comments,
           });
-          this._onDataChange(this._filmData, allFilmData.filmInfo);
+          this._onDataChange(this._filmData, filmInfo);
         })
         .catch(() => {
           formElement.classList.add(ERROR_CLASS.SHAKE);
@@ -194,19 +196,21 @@ export default class FilmController {
     evt.target.innerText = BUTTON_TEXT.DELETING;
 
     this._api.deleteComment(commentId)
-      .then(() => {
-        const newCommentsData = cloneDeep(this._commentsData);
-        const newFilmInfoData = cloneDeep(this._filmData);
-        const commentIndex = newCommentsData.commentsList.findIndex((item) => (item.commentId === Number(commentId)));
-        newCommentsData.commentsList.splice(commentIndex, 1);
-        newFilmInfoData.comments.splice(commentIndex, 1);
-        this._onCommentsDataChange(this._commentsData, newCommentsData);
-        this._onDataChange(this._filmData, newFilmInfoData);
-      })
+      .then(this._onDeleteCommentSuccess(commentId))
       .catch(() => {
         evt.target.innerText = BUTTON_TEXT.DEFAULT;
         this._catchCommentsError(commentElement, evt.target);
       });
+  }
+
+  _onDeleteCommentSuccess(commentId) {
+    const newCommentsData = cloneDeep(this._commentsData);
+    const newFilmInfoData = cloneDeep(this._filmData);
+    const commentIndex = newCommentsData.commentsList.findIndex((item) => (item.commentId === Number(commentId)));
+    newCommentsData.commentsList.splice(commentIndex, 1);
+    newFilmInfoData.comments.splice(commentIndex, 1);
+    this._onCommentsDataChange(this._commentsData, newCommentsData);
+    this._onDataChange(this._filmData, newFilmInfoData);
   }
 
   _catchCommentsError(shakeElement, disabledElement) {
