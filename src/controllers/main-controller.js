@@ -130,7 +130,7 @@ export default class MainController {
   }
 
   _renderCards(container, cardsType) {
-    const filmsDataCopy = this._filmsModel.getData().slice().sort(cardsType.method);
+    const filmsDataCopy = this._filmsModel.getData(FILTERS[0].method).slice().sort(cardsType.method);
 
     for (let i = 0; i < Math.min(cardsType.NUM, this._filmsLength); i++) {
       const film = new FilmController(container, this._handlers, this._api);
@@ -236,6 +236,7 @@ export default class MainController {
     } else {
       this._rerenderCardsMain(this._currentSort, [null, this._filmsLoadedLength]);
     }
+    this._renderCardsOther();
     this._refreshProfile();
   }
 
@@ -288,6 +289,27 @@ export default class MainController {
     this._statistics.activateFilter(evt.target.value);
   }
 
+  _setFilmsListElements() {
+    this._filmsListElements = {
+      wrapper: document.querySelector(`.films-list`),
+      main: document.querySelector(`#filmsList`),
+      top: document.querySelector(`#filmsListTop`),
+      commented: document.querySelector(`#filmsListCommented`),
+      title: document.querySelector(`.films-list__title`),
+    };
+  }
+
+  _setMainHandlers() {
+    this._filters.getComponent().setClickStats(this._onStatsClick);
+    this._statistics.setStatsFilterChangeHandler(this._onStatsFilterChange);
+    this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
+    this._filmsModel.setDataLoadHandler(
+        this._filters.getComponent()
+          .rerender.bind(this._filters.getComponent())
+    );
+    this._filmsModel.setDataLoadHandler(this._filters.getComponent().setFilterActive.bind(this._filters.getComponent()));
+  }
+
   render(filters) {
     this._profile = new Profile();
     this._filters = filters;
@@ -300,23 +322,8 @@ export default class MainController {
     this._showMainScreen();
     renderElement(this._container, this._filmsComponent);
 
-    this._filmsListElements = {
-      wrapper: document.querySelector(`.films-list`),
-      main: document.querySelector(`#filmsList`),
-      top: document.querySelector(`#filmsListTop`),
-      commented: document.querySelector(`#filmsListCommented`),
-      title: document.querySelector(`.films-list__title`),
-    };
-
+    this._setFilmsListElements();
     this._renderCardsAll();
-
-    this._filters.getComponent().setClickStats(this._onStatsClick);
-    this._statistics.setStatsFilterChangeHandler(this._onStatsFilterChange);
-    this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
-    this._filmsModel.setDataLoadHandler(
-        this._filters.getComponent()
-          .rerender.bind(this._filters.getComponent())
-    );
-    this._filmsModel.setDataLoadHandler(this._filters.getComponent().setFilterActive.bind(this._filters.getComponent()));
+    this._setMainHandlers();
   }
 }

@@ -21,19 +21,21 @@ export default class Api {
     this._queryComments = `/comments`;
   }
 
-  _checkStatus(response) {
-    if (response.status >= ValidStatusCode.SUCCESS && response.status < ValidStatusCode.REDIRECTION) {
-      return response.json();
-    } else {
-      throw new Error(`${response.status}: ${response.statusText}`);
-    }
+  _checkStatus(isJson) {
+    return (response) => {
+      if (response.status >= ValidStatusCode.SUCCESS && response.status < ValidStatusCode.REDIRECTION) {
+        return isJson ? response.json() : response;
+      } else {
+        throw new Error(`${response.status}: ${response.statusText}`);
+      }
+    };
   }
 
-  _load(url, param) {
+  _load(url, param, isJson) {
     param.headers.append(`Authorization`, this._authorization);
 
     return fetch(url, param)
-      .then(this._checkStatus);
+      .then(this._checkStatus(isJson));
   }
 
   getFilms() {
@@ -41,7 +43,7 @@ export default class Api {
       headers: new Headers()
     };
 
-    return this._load(`${this._urlBase}${this._queryFilms}`, param)
+    return this._load(`${this._urlBase}${this._queryFilms}`, param, true)
       .then(FilmsAdapter.parseFilms);
   }
 
@@ -52,7 +54,7 @@ export default class Api {
       headers: new Headers({'Content-Type': `application/json`})
     };
 
-    return this._load(`${this._urlBase}${this._queryFilms}/${id}`, param)
+    return this._load(`${this._urlBase}${this._queryFilms}/${id}`, param, true)
       .then(FilmsAdapter.parseFilm);
   }
 
@@ -61,7 +63,33 @@ export default class Api {
       headers: new Headers()
     };
 
-    return this._load(`${this._urlBase}${this._queryComments}/${id}`, param)
+    return this._load(`${this._urlBase}${this._queryComments}/${id}`, param, true)
       .then(CommentsAdapter.parseComments);
+  }
+
+  postComment(id, comment) {
+    const param = {
+      method: Method.POST,
+      body: JSON.stringify(comment),
+      headers: new Headers({'Content-Type': `application/json`})
+    };
+
+    return this._load(`${this._urlBase}${this._queryComments}/${id}`, param, true)
+      .then((response) => {
+        const {movie, comments} = response;
+        return {
+          filmInfo: FilmsAdapter.parseFilm(movie),
+          comments: CommentsAdapter.parseComments(comments),
+        };
+      });
+  }
+
+  deleteComment(id) {
+    const param = {
+      method: Method.DELETE,
+      headers: new Headers()
+    };
+
+    return this._load(`${this._urlBase}${this._queryComments}/${id}`, param);
   }
 }

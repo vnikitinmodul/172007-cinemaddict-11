@@ -33,13 +33,6 @@ const CardsOther = {
   },
 };
 
-const COMMENT_AUTHORS = [
-  `John Doe`,
-  `Tim Macoveev`,
-  `John Smith`,
-  `Judy Doe`,
-];
-
 const COMMENT_EMOJIES = [
   `smile`,
   `sleeping`,
@@ -123,7 +116,6 @@ export {
   BODY_HIDE_OVERFLOW_CLASS,
   TITLE_MESSAGE,
   CardsOther,
-  COMMENT_AUTHORS,
   COMMENT_EMOJIES,
   ENCODE_PARAM,
   ACTION_PROPERTIES,
