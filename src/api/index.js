@@ -75,12 +75,13 @@ export default class Api {
     };
 
     return this._load(`${this._urlBase}${this._queryComments}/${id}`, param, true)
-      .then((response) => (
-        {
-          filmInfo: FilmsAdapter.parseFilm(response && response.movie),
-          comments: CommentsAdapter.parseComments(response && response.comments),
-        }
-      ));
+      .then((response) => {
+        const {movie, comments} = response;
+        return {
+          filmInfo: FilmsAdapter.parseFilm(movie),
+          comments: CommentsAdapter.parseComments(comments),
+        };
+      });
   }
 
   deleteComment(id) {
