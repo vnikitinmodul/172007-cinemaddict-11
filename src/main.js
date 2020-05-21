@@ -45,3 +45,12 @@ api.getFilms()
     renderElement(footerStatisticsElement, new FooterStatistics(filmsData.length));
   })
   .catch((err) => showError(err));
+
+window.addEventListener(`load`, () => {
+  navigator.serviceWorker.register(`/sw.js`)
+    .then(() => {
+      navigator.serviceWorker.ready.then((worker) => {
+        worker.sync.register(`syncdata`);
+      });
+    }).catch((err) => showError(err));
+});
