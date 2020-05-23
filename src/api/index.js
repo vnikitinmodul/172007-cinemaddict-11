@@ -19,6 +19,7 @@ export default class Api {
     this._urlBase = `https://11.ecmascript.pages.academy/cinemaddict`;
     this._queryFilms = `/movies`;
     this._queryComments = `/comments`;
+    this._queryFilmsSync = `/movies/sync`;
   }
 
   _checkStatus(isJson) {
@@ -36,6 +37,16 @@ export default class Api {
 
     return fetch(url, param)
       .then(this._checkStatus(isJson));
+  }
+
+  sync(data) {
+    const param = {
+      method: Method.POST,
+      body: JSON.stringify(data),
+      headers: new Headers({"Content-Type": `application/json`})
+    };
+
+    return this._load(`${this._urlBase}${this._queryFilmsSync}`, param, true);
   }
 
   getFilms() {

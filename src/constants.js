@@ -16,6 +16,10 @@ const TITLE_MESSAGE = {
   LOADING: `Loading...`,
 };
 
+const ERROR_MESSAGE = {
+  SYNC_FAILED: `Sync data failed`,
+}
+
 const CardsOther = {
   START: {
     NUM: 5,
