@@ -48,6 +48,7 @@ export default class FilmsAdapter {
       },
       "comments": this.comments,
       "id": this.id.toString(),
+      "isFilmUpdated": this.isFilmUpdated,
     };
   }
 
@@ -57,5 +58,9 @@ export default class FilmsAdapter {
 
   static parseFilms(films) {
     return films.map(FilmsAdapter.parseFilm);
+  }
+
+  static clone(film) {
+    return new FilmsAdapter(film.toRAW());
   }
 }
