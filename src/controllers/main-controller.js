@@ -132,8 +132,15 @@ export default class MainController {
   _renderCards(container, cardsType) {
     const filmsDataCopy = this._filmsModel.getData(FILTERS[0].method).slice().sort(cardsType.method);
 
+    if (filmsDataCopy[0] && cardsType.checkLoser(filmsDataCopy[0])) {
+      util.hideElement(container);
+      return;
+    } else {
+      util.showElement(container);
+    }
+
     for (let i = 0; i < Math.min(cardsType.NUM, this._filmsLength); i++) {
-      const film = new FilmController(container, this._handlers, this._api);
+      const film = new FilmController(container.querySelector(`.films-list__container`), this._handlers, this._api);
       const currentFilm = filmsDataCopy[i];
 
       film.render(currentFilm, this._commentsModel.getData(currentFilm.id));

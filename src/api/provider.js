@@ -88,8 +88,8 @@ export default class Provider {
     return this._api.getComments(id);
   }
 
-  postComment(comment) {
-    return this._api.postComment(comment);
+  postComment(id, comment) {
+    return this._api.postComment(id, comment);
   }
 
   deleteComment(id) {

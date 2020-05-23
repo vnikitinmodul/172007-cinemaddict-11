@@ -30,10 +30,12 @@ const CardsOther = {
   TOP: {
     NUM: 2,
     method: (a, b) => util.sortNum([a, b], `rating`),
+    checkLoser: (item) => !item.rating,
   },
   COMMENTED: {
     NUM: 2,
     method: (a, b) => util.sortNum([a, b], `comments`, true),
+    checkLoser: (item) => !item.comments.length,
   },
 };
 

@@ -7,14 +7,14 @@ const getFilmsMarkup = () => (
       <div id="filmsList" class="films-list__container"></div>
     </section>
 
-    <section class="films-list--extra">
+    <section id="filmsListTop" class="films-list--extra">
       <h2 class="films-list__title">Top rated</h2>
-      <div id="filmsListTop" class="films-list__container"></div>
+      <div class="films-list__container"></div>
     </section>
 
-    <section class="films-list--extra">
+    <section id="filmsListCommented" class="films-list--extra">
       <h2 class="films-list__title">Most commented</h2>
-      <div id="filmsListCommented" class="films-list__container"></div>
+      <div class="films-list__container"></div>
     </section>
   </section>`
 );

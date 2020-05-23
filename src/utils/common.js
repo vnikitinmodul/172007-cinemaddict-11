@@ -66,7 +66,7 @@ const getRatingName = (rating) => (RATING_NAMES[Math.ceil(rating / 10) - 1]);
 
 const sortNum = (items, property, isLength) => {
   const [a, b] = isLength ? [items[0][property].length, items[1][property].length] : [items[0][property], items[1][property]];
-  return parseFloat(b) - parseFloat(a);
+  return b === a ? getRandomNum(-1, 1) : parseFloat(b) - parseFloat(a);
 };
 
 const setInputsChangeHandler = (handler, container, selector) => {
