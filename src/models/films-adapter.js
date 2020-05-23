@@ -48,6 +48,7 @@ export default class FilmsAdapter {
       },
       "comments": this.comments,
       "id": this.id.toString(),
+      "isFilmUpdated": this.isFilmUpdated,
     };
   }
 

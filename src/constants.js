@@ -18,7 +18,7 @@ const TITLE_MESSAGE = {
 
 const ERROR_MESSAGE = {
   SYNC_FAILED: `Sync data failed`,
-}
+};
 
 const CardsOther = {
   START: {
@@ -119,6 +119,7 @@ export {
   KEY_CODE,
   BODY_HIDE_OVERFLOW_CLASS,
   TITLE_MESSAGE,
+  ERROR_MESSAGE,
   CardsOther,
   COMMENT_EMOJIES,
   ENCODE_PARAM,

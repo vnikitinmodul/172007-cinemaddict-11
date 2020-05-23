@@ -5,36 +5,41 @@ import {showError} from "../utils/render.js";
 
 import {ERROR_MESSAGE} from "../constants.js";
 
-const isOnline = () => {
-  return window.navigator.onLine;
-};
-
-const getSyncedTasks = (items) => {
-  return items.filter(({success}) => success)
-    .map(({payload}) => payload.task);
-};
-
-const createStoreStructure = (items) => {
-  return items.reduce((acc, current) => {
-    const accClone = cloneDeep(acc);
-    accClone[current.id] = current;
-    return accClone;
-  }, {});
-};
-
 export default class Provider {
   constructor(api, store) {
     this._api = api;
     this._store = store;
+    this._isSyncRequired = false;
+  }
+
+  _isOnline() {
+    return window.navigator.onLine;
+  }
+
+  _getUpdatedFilms(items) {
+    return items.filter((item) => item.isFilmUpdated);
+  }
+
+  _createStoreStructure(items) {
+    return Object.assign(this._store.getStorage(), items.reduce((acc, current) => {
+      const accClone = cloneDeep(acc);
+      accClone[current.id] = current;
+      return accClone;
+    }, {}));
+  }
+
+  checkSyncRequired() {
+    return this._isSyncRequired;
   }
 
   sync() {
-    if (isOnline()) {
+    if (this._isOnline()) {
       const storeFilms = Object.values(this._store.getStorage());
+      this._isSyncRequired = false;
 
-      return this._api.sync(storeFilms)
+      return this._api.sync(this._getUpdatedFilms(storeFilms))
         .then((response) => {
-          const newStorage = createStoreStructure(getSyncedTasks(response.updated));
+          const newStorage = this._createStoreStructure(response.updated);
 
           this._store.setStorage(newStorage);
         });
@@ -44,10 +49,10 @@ export default class Provider {
   }
 
   getFilms() {
-    if (isOnline()) {
+    if (this._isOnline()) {
       return this._api.getFilms()
         .then((films) => {
-          const items = createStoreStructure(films.map((task) => task.toRAW()));
+          const items = this._createStoreStructure(films.map((film) => film.toRAW()));
 
           this._store.setStorage(items);
 
@@ -55,23 +60,25 @@ export default class Provider {
         });
     }
 
-    const storeFilms = Object.values(this._store.getFilmsData());
+    const storeFilms = Object.values(this._store.getStorage());
 
     return Promise.resolve(FilmsAdapter.parseFilms(storeFilms));
   }
 
   updateFilm(id, film) {
-    if (isOnline()) {
+    if (this._isOnline()) {
       return this._api.updateFilm(id, film)
-        .then((newFilm) => {
-          this._store.setItem(newFilm.id, newFilm.toRAW());
+        .then((filmUpdated) => {
+          this._store.setItem(filmUpdated.id, filmUpdated.toRAW());
 
-          return newFilm;
+          return filmUpdated;
         });
     }
 
+    this._isSyncRequired = true;
     const localFilm = FilmsAdapter.clone(Object.assign(film, {id}));
 
+    localFilm.isFilmUpdated = true;
     this._store.setItem(id, localFilm.toRAW());
 
     return Promise.resolve(localFilm);

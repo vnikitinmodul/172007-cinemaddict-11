@@ -12,6 +12,16 @@ self.addEventListener(`install`, (evt) => {
             `/bundle.js`,
             `/css/main.css`,
             `/css/normalize.css`,
+            `/images/emoji/angry.png`,
+            `/images/emoji/puke.png`,
+            `/images/emoji/sleeping.png`,
+            `/images/emoji/smile.png`,
+            `/images/icons/icon-favorite.svg`,
+            `/images/icons/icon-favorite-active.svg`,
+            `/images/icons/icon-watched.svg`,
+            `/images/icons/icon-watched-active.svg`,
+            `/images/icons/icon-watchlist.svg`,
+            `/images/icons/icon-watchlist-active.svg`,
           ]);
         })
   );

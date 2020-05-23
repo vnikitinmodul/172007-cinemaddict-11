@@ -30,23 +30,4 @@ export default class Store {
         JSON.stringify(store)
     );
   }
-
-  removeItem(key) {
-    const store = this.getStorage();
-
-    delete store[key];
-
-    this._storage.setItem(
-        this._key,
-        JSON.stringify(store)
-    );
-  }
-
-  setCommentsData(commentsData) {
-    this._commentsData = commentsData;
-  }
-
-  removeData() {
-    this._storage.removeItem(this._key);
-  }
 }

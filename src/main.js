@@ -45,7 +45,7 @@ mainContainer.render(filters);
 
 showTitle(TITLE_MESSAGE.LOADING);
 
-api.getFilms()
+apiWithProvider.getFilms()
   .then((filmsData) => {
     models.films.setData(filmsData);
     hideTitle();
@@ -65,7 +65,9 @@ window.addEventListener(`load`, () => {
 window.addEventListener(`online`, () => {
   document.title = document.title.replace(` [offline]`, ``);
 
-  apiWithProvider.sync();
+  if (apiWithProvider.checkSyncRequired()) {
+    apiWithProvider.sync();
+  }
 });
 
 window.addEventListener(`offline`, () => {

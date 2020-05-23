@@ -196,7 +196,7 @@ export default class FilmController {
     evt.target.innerText = BUTTON_TEXT.DELETING;
 
     this._api.deleteComment(commentId)
-      .then(this._onDeleteCommentSuccess(commentId))
+      .then(() => this._onDeleteCommentSuccess(commentId))
       .catch(() => {
         evt.target.innerText = BUTTON_TEXT.DEFAULT;
         this._catchCommentsError(commentElement, evt.target);
