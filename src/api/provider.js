@@ -12,7 +12,7 @@ export default class Provider {
     this._isSyncRequired = false;
   }
 
-  _isOnline() {
+  get _isOnLine() {
     return window.navigator.onLine;
   }
 
@@ -28,12 +28,12 @@ export default class Provider {
     }, {}));
   }
 
-  checkSyncRequired() {
+  get isSyncRequired() {
     return this._isSyncRequired;
   }
 
   sync() {
-    if (this._isOnline()) {
+    if (this._isOnLine) {
       const storeFilms = Object.values(this._store.getStorage());
       this._isSyncRequired = false;
 
@@ -49,7 +49,7 @@ export default class Provider {
   }
 
   getFilms() {
-    if (this._isOnline()) {
+    if (this._isOnLine) {
       return this._api.getFilms()
         .then((films) => {
           const items = this._createStoreStructure(films.map((film) => film.toRAW()));
@@ -66,7 +66,7 @@ export default class Provider {
   }
 
   updateFilm(id, film) {
-    if (this._isOnline()) {
+    if (this._isOnLine) {
       return this._api.updateFilm(id, film)
         .then((filmUpdated) => {
           this._store.setItem(filmUpdated.id, filmUpdated.toRAW());
