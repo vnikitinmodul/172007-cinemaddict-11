@@ -1,10 +1,10 @@
-const CACHE_PREFIX = `cinemaddict-cache`;
-const CACHE_VER = `v1`;
-const CACHE_NAME = `${CACHE_PREFIX}-${CACHE_VER}`;
+const PREFIX = `cinemaddict-cache`;
+const VER = `v1`;
+const NAME = `${PREFIX}-${VER}`;
 
 self.addEventListener(`install`, (evt) => {
   evt.waitUntil(
-      caches.open(CACHE_NAME)
+      caches.open(NAME)
         .then((cache) => {
           return cache.addAll([
             `/`,
@@ -30,18 +30,7 @@ self.addEventListener(`install`, (evt) => {
 self.addEventListener(`activate`, (evt) => {
   evt.waitUntil(
       caches.keys()
-        .then(
-            (keys) => Promise.all(
-                keys.map(
-                    (key) => {
-                      if (key.startsWith(CACHE_PREFIX) && key !== CACHE_NAME) {
-                        return caches.delete(key);
-                      }
-                      return null;
-                    })
-                  .filter((key) => key !== null)
-            )
-        )
+        .then(activateCache)
   );
 });
 
@@ -56,6 +45,19 @@ self.addEventListener(`fetch`, (evt) => {
   );
 });
 
+const activateCache = (keys) => {
+  Promise.all(
+      keys.map(
+          (key) => {
+            if (key.startsWith(PREFIX) && key !== NAME) {
+              return caches.delete(key);
+            }
+            return null;
+          })
+        .filter((key) => key !== null)
+  );
+};
+
 const onResponseFetch = (request) => (
   fetch(request)
     .then((response) => {
@@ -65,7 +67,7 @@ const onResponseFetch = (request) => (
 
       const clonedResponse = response.clone();
 
-      caches.open(CACHE_NAME)
+      caches.open(NAME)
         .then((cache) => cache.put(request, clonedResponse));
       return response;
     })

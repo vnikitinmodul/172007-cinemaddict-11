@@ -12,28 +12,16 @@ export default class Provider {
     this._isSyncRequired = false;
   }
 
-  _isOnline() {
+  get _isOnLine() {
     return window.navigator.onLine;
   }
 
-  _getUpdatedFilms(items) {
-    return items.filter((item) => item.isFilmUpdated);
-  }
-
-  _createStoreStructure(items) {
-    return Object.assign(this._store.getStorage(), items.reduce((acc, current) => {
-      const accClone = cloneDeep(acc);
-      accClone[current.id] = current;
-      return accClone;
-    }, {}));
-  }
-
-  checkSyncRequired() {
+  get isSyncRequired() {
     return this._isSyncRequired;
   }
 
   sync() {
-    if (this._isOnline()) {
+    if (this._isOnLine) {
       const storeFilms = Object.values(this._store.getStorage());
       this._isSyncRequired = false;
 
@@ -49,7 +37,7 @@ export default class Provider {
   }
 
   getFilms() {
-    if (this._isOnline()) {
+    if (this._isOnLine) {
       return this._api.getFilms()
         .then((films) => {
           const items = this._createStoreStructure(films.map((film) => film.toRAW()));
@@ -66,7 +54,7 @@ export default class Provider {
   }
 
   updateFilm(id, film) {
-    if (this._isOnline()) {
+    if (this._isOnLine) {
       return this._api.updateFilm(id, film)
         .then((filmUpdated) => {
           this._store.setItem(filmUpdated.id, filmUpdated.toRAW());
@@ -85,14 +73,35 @@ export default class Provider {
   }
 
   getComments(id) {
-    return this._api.getComments(id);
+    if (this._isOnLine) {
+      return this._api.getComments(id);
+    }
+    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
   }
 
-  postComment(comment) {
-    return this._api.postComment(comment);
+  postComment(id, comment) {
+    if (this._isOnLine) {
+      return this._api.postComment(id, comment);
+    }
+    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
   }
 
   deleteComment(id) {
-    return this._api.deleteComment(id);
+    if (this._isOnLine) {
+      return this._api.deleteComment(id);
+    }
+    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
+  }
+
+  _getUpdatedFilms(items) {
+    return items.filter((item) => item.isFilmUpdated);
+  }
+
+  _createStoreStructure(items) {
+    return Object.assign(this._store.getStorage(), items.reduce((acc, current) => {
+      const accClone = cloneDeep(acc);
+      accClone[current.id] = current;
+      return accClone;
+    }, {}));
   }
 }

@@ -11,10 +11,6 @@ export default class Films {
     this._dataLoadHandlers = [];
   }
 
-  _callHandlers(handlers) {
-    handlers.forEach((handler) => handler());
-  }
-
   getData(filter) {
     filter = filter || util.getFilterMethod(FILTERS, (item) => (item.HREF === this._currentFilter));
     return this._filmsData.filter(filter);
@@ -65,5 +61,9 @@ export default class Films {
 
   setDataLoadHandler(handler) {
     this._dataLoadHandlers.push(handler);
+  }
+
+  _callHandlers(handlers) {
+    handlers.forEach((handler) => handler());
   }
 }

@@ -1,7 +1,5 @@
 import moment from "moment";
 
-const HIDDEN_CLASS = `visually-hidden`;
-
 const RATING_NAMES = [
   `Novice`,
   `Fan`,
@@ -44,14 +42,6 @@ const generateArrayData = (num, generator, iterator) => {
   }, []);
 };
 
-const showElement = (element) => {
-  element.classList.remove(HIDDEN_CLASS);
-};
-
-const hideElement = (element) => {
-  element.classList.add(HIDDEN_CLASS);
-};
-
 const getDurationMoment = (duration, isUnitShow) => {
   const durationMoment = moment.duration(duration, `minutes`);
 
@@ -66,7 +56,7 @@ const getRatingName = (rating) => (RATING_NAMES[Math.ceil(rating / 10) - 1]);
 
 const sortNum = (items, property, isLength) => {
   const [a, b] = isLength ? [items[0][property].length, items[1][property].length] : [items[0][property], items[1][property]];
-  return parseFloat(b) - parseFloat(a);
+  return b === a ? getRandomNum(-1, 1) : parseFloat(b) - parseFloat(a);
 };
 
 const setInputsChangeHandler = (handler, container, selector) => {
@@ -86,8 +76,6 @@ export {
   getSomeFromArray,
   addZeroBefore,
   generateArrayData,
-  showElement,
-  hideElement,
   getDurationMoment,
   getRandomBoolean,
   getRatingName,

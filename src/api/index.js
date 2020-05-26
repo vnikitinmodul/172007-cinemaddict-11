@@ -22,23 +22,6 @@ export default class Api {
     this._queryFilmsSync = `/movies/sync`;
   }
 
-  _checkStatus(isJson) {
-    return (response) => {
-      if (response.status >= ValidStatusCode.SUCCESS && response.status < ValidStatusCode.REDIRECTION) {
-        return isJson ? response.json() : response;
-      } else {
-        throw new Error(`${response.status}: ${response.statusText}`);
-      }
-    };
-  }
-
-  _load(url, param, isJson) {
-    param.headers.append(`Authorization`, this._authorization);
-
-    return fetch(url, param)
-      .then(this._checkStatus(isJson));
-  }
-
   sync(data) {
     const param = {
       method: Method.POST,
@@ -102,5 +85,22 @@ export default class Api {
     };
 
     return this._load(`${this._urlBase}${this._queryComments}/${id}`, param);
+  }
+
+  _checkStatus(isJson) {
+    return (response) => {
+      if (response.status >= ValidStatusCode.SUCCESS && response.status < ValidStatusCode.REDIRECTION) {
+        return isJson ? response.json() : response;
+      } else {
+        throw new Error(`${response.status}: ${response.statusText}`);
+      }
+    };
+  }
+
+  _load(url, param, isJson) {
+    param.headers.append(`Authorization`, this._authorization);
+
+    return fetch(url, param)
+      .then(this._checkStatus(isJson));
   }
 }

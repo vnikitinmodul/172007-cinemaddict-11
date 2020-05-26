@@ -38,14 +38,6 @@ export default class Sorting extends AbstractComponent {
     this._sortType = sortType;
   }
 
-  _clearActiveMod() {
-    this.getElement()
-      .querySelectorAll(`.${classActive}`)
-      .forEach((item) => {
-        item.classList.remove(classActive);
-      });
-  }
-
   getTemplate() {
     return getSortMarkup();
   }
@@ -67,5 +59,13 @@ export default class Sorting extends AbstractComponent {
     this.getElement()
       .querySelector(`.${SORT_CLASSES.ELEMENT}[data-sort=${type}]`)
       .classList.add(classActive);
+  }
+
+  _clearActiveMod() {
+    this.getElement()
+      .querySelectorAll(`.${classActive}`)
+      .forEach((item) => {
+        item.classList.remove(classActive);
+      });
   }
 }

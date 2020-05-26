@@ -35,22 +35,13 @@ export default class Navigation extends AbstractSmartComponent {
     this._statsClickHandler = null;
   }
 
-  _getFilterElements() {
-    this._filterElements = this.getElement().querySelectorAll(`.main-navigation__item`);
-
-    return this._filterElements;
+  getTemplate() {
+    return getNavigationMarkup(this._filmsModel);
   }
 
-  _getStatsElement() {
-    this._statsElement = this._element.querySelector(`.main-navigation__additional`);
-
-    return this._statsElement;
-  }
-
-  _clearFilterActive() {
-    this._getFilterElements().forEach((item) => {
-      item.classList.remove(CLASS_ACTIVE.FILTER);
-    });
+  recoveryListeners() {
+    this.setClickFilterHandler(this._filterChangeHandler);
+    this.setClickStats(this._statsClickHandler);
   }
 
   setFilterActive(filter = this._filmsModel.getCurrentFilter()) {
@@ -76,12 +67,21 @@ export default class Navigation extends AbstractSmartComponent {
     this._getStatsElement().addEventListener(`click`, handler);
   }
 
-  getTemplate() {
-    return getNavigationMarkup(this._filmsModel);
+  _getFilterElements() {
+    this._filterElements = this.getElement().querySelectorAll(`.main-navigation__item`);
+
+    return this._filterElements;
   }
 
-  recoveryListeners() {
-    this.setClickFilterHandler(this._filterChangeHandler);
-    this.setClickStats(this._statsClickHandler);
+  _getStatsElement() {
+    this._statsElement = this._element.querySelector(`.main-navigation__additional`);
+
+    return this._statsElement;
+  }
+
+  _clearFilterActive() {
+    this._getFilterElements().forEach((item) => {
+      item.classList.remove(CLASS_ACTIVE.FILTER);
+    });
   }
 }
