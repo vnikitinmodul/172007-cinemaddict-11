@@ -3,10 +3,6 @@ export default class Comments {
     this._commentsData = [];
   }
 
-  _callHandlers(handlers) {
-    handlers.forEach((handler) => handler());
-  }
-
   getData(id) {
     return this._commentsData.find((item) => (item.id === id));
   }
@@ -15,5 +11,9 @@ export default class Comments {
     const index = this._commentsData.findIndex((item) => (item.id === comment.id));
 
     this._commentsData[index] = comment;
+  }
+
+  _callHandlers(handlers) {
+    handlers.forEach((handler) => handler());
   }
 }

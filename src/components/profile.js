@@ -15,6 +15,12 @@ export default class Profile extends AbstractSmartComponent {
     this._rating = null;
   }
 
+  recoveryListeners() {}
+
+  getTemplate() {
+    return this._rating ? getProfileMarkup(this._rating) : ``;
+  }
+
   updateRating(rating) {
     this._rating = rating;
     if (this._rating) {
@@ -22,11 +28,5 @@ export default class Profile extends AbstractSmartComponent {
     } else {
       this.removeElement(true);
     }
-  }
-
-  recoveryListeners() {}
-
-  getTemplate() {
-    return this._rating ? getProfileMarkup(this._rating) : ``;
   }
 }

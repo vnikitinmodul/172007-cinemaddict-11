@@ -44,6 +44,47 @@ export default class FilmController {
     this._onFilmInfoFormSubmit = this._onFilmInfoFormSubmit.bind(this);
   }
 
+  closeFilmInfo() {
+    this._removeFilmInfo();
+
+    document.removeEventListener(`keydown`, this._filmInfo.onEscPress);
+  }
+
+  setCommentsData(comments) {
+    this._commentsData = comments;
+  }
+
+  getData() {
+    return this._filmData;
+  }
+
+  getCommentsData() {
+    return this._commentsData;
+  }
+
+  getCard() {
+    return this._card;
+  }
+
+  getFilmInfo() {
+    return this._filmInfo;
+  }
+
+  render(film, commentsData) {
+    this._filmData = film || this._filmData;
+    this._commentsData = commentsData || this._commentsData;
+
+    if (!this._card) {
+      this._card = new Card(this);
+      this._filmInfo = new FilmDetails(this);
+    }
+
+    renderElement(this._container, this._card);
+
+    this._setClickCardActionHandlers();
+    this._card.setClickHandler(this._showFilmInfo(this._filmInfo));
+  }
+
   _setClickCardActionHandlers() {
     Object.keys(ACTION_PROPERTIES).forEach((key) => {
       this._card.setClickActionHandler({
@@ -100,6 +141,22 @@ export default class FilmController {
     this._updateBodyClassList(BODY_HIDE_OVERFLOW_CLASS, `remove`);
   }
 
+  _getRAWComment(text, emojiElement) {
+    return {
+      "emotion": emojiElement ? emojiElement.value : COMMENT_EMOJIES[0],
+      "date": new Date(),
+      "comment": he.encode(text, ENCODE_PARAM),
+    };
+  }
+
+  _catchCommentsError(shakeElement, disabledElement) {
+    shakeElement.classList.add(ERROR_CLASS.SHAKE);
+    setTimeout(() => {
+      disabledElement.removeAttribute(`disabled`);
+      shakeElement.classList.remove(ERROR_CLASS.SHAKE);
+    }, SHAKE_DURATION);
+  }
+
   _onFilmInfoCloseElementClick() {
     return () => {
       this.closeFilmInfo();
@@ -146,14 +203,6 @@ export default class FilmController {
     newFilmInfoData.selectedEmoji = evt.target.getAttribute(`value`);
     this._filmData = newFilmInfoData;
     this._filmInfo.rerender();
-  }
-
-  _getRAWComment(text, emojiElement) {
-    return {
-      "emotion": emojiElement ? emojiElement.value : COMMENT_EMOJIES[0],
-      "date": new Date(),
-      "comment": he.encode(text, ENCODE_PARAM),
-    };
   }
 
   _onFilmInfoFormSubmit(evt) {
@@ -211,54 +260,5 @@ export default class FilmController {
     newFilmInfoData.comments.splice(commentIndex, 1);
     this._onCommentsDataChange(this._commentsData, newCommentsData);
     this._onDataChange(this._filmData, newFilmInfoData);
-  }
-
-  _catchCommentsError(shakeElement, disabledElement) {
-    shakeElement.classList.add(ERROR_CLASS.SHAKE);
-    setTimeout(() => {
-      disabledElement.removeAttribute(`disabled`);
-      shakeElement.classList.remove(ERROR_CLASS.SHAKE);
-    }, SHAKE_DURATION);
-  }
-
-  closeFilmInfo() {
-    this._removeFilmInfo();
-
-    document.removeEventListener(`keydown`, this._filmInfo.onEscPress);
-  }
-
-  setCommentsData(comments) {
-    this._commentsData = comments;
-  }
-
-  getData() {
-    return this._filmData;
-  }
-
-  getCommentsData() {
-    return this._commentsData;
-  }
-
-  getCard() {
-    return this._card;
-  }
-
-  getFilmInfo() {
-    return this._filmInfo;
-  }
-
-  render(film, commentsData) {
-    this._filmData = film || this._filmData;
-    this._commentsData = commentsData || this._commentsData;
-
-    if (!this._card) {
-      this._card = new Card(this);
-      this._filmInfo = new FilmDetails(this);
-    }
-
-    renderElement(this._container, this._card);
-
-    this._setClickCardActionHandlers();
-    this._card.setClickHandler(this._showFilmInfo(this._filmInfo));
   }
 }

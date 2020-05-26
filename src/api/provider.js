@@ -16,18 +16,6 @@ export default class Provider {
     return window.navigator.onLine;
   }
 
-  _getUpdatedFilms(items) {
-    return items.filter((item) => item.isFilmUpdated);
-  }
-
-  _createStoreStructure(items) {
-    return Object.assign(this._store.getStorage(), items.reduce((acc, current) => {
-      const accClone = cloneDeep(acc);
-      accClone[current.id] = current;
-      return accClone;
-    }, {}));
-  }
-
   get isSyncRequired() {
     return this._isSyncRequired;
   }
@@ -85,14 +73,35 @@ export default class Provider {
   }
 
   getComments(id) {
-    return this._api.getComments(id);
+    if (this._isOnLine) {
+      return this._api.getComments(id);
+    }
+    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
   }
 
   postComment(id, comment) {
-    return this._api.postComment(id, comment);
+    if (this._isOnLine) {
+      return this._api.postComment(id, comment);
+    }
+    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
   }
 
   deleteComment(id) {
-    return this._api.deleteComment(id);
+    if (this._isOnLine) {
+      return this._api.deleteComment(id);
+    }
+    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
+  }
+
+  _getUpdatedFilms(items) {
+    return items.filter((item) => item.isFilmUpdated);
+  }
+
+  _createStoreStructure(items) {
+    return Object.assign(this._store.getStorage(), items.reduce((acc, current) => {
+      const accClone = cloneDeep(acc);
+      accClone[current.id] = current;
+      return accClone;
+    }, {}));
   }
 }

@@ -9,18 +9,6 @@ export default class FiltersController {
     this._component = null;
   }
 
-  _onFilterActivate(evt) {
-    const targetHref = evt.currentTarget.getAttribute(`href`);
-
-    this._component.setFilterActive(targetHref);
-    this._model.activateFilter(targetHref);
-  }
-
-  _onDataChange() {
-    this._component.rerender();
-    this._component.setFilterActive();
-  }
-
   getComponent() {
     return this._component;
   }
@@ -32,5 +20,17 @@ export default class FiltersController {
 
     this._component.setClickFilterHandler(this._onFilterActivate.bind(this));
     this._model.setDataChangeHandler(this._onDataChange.bind(this));
+  }
+
+  _onFilterActivate(evt) {
+    const targetHref = evt.currentTarget.getAttribute(`href`);
+
+    this._component.setFilterActive(targetHref);
+    this._model.activateFilter(targetHref);
+  }
+
+  _onDataChange() {
+    this._component.rerender();
+    this._component.setFilterActive();
   }
 }

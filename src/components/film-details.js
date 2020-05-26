@@ -168,8 +168,34 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._commentsComponent = null;
   }
 
+  get onEscPress() {
+    return this._onEscPress;
+  }
+
+  set onEscPress(handler) {
+    this._onEscPress = handler;
+  }
+
+  rerender() {
+    super.rerender();
+
+    if (this._commentsComponent) {
+      this._commentsComponent.removeElement();
+    }
+
+    this.renderComments();
+    this._commentsComponent.recoveryListeners();
+  }
+
   getTemplate() {
     return getFilmDetailsMarkup(this._controller.getData(), this.getData());
+  }
+
+  recoveryListeners() {
+    this.setCloseButtonHandler(this._onCloseClick);
+    this._filmInfoActionHandlers.forEach(this.setChangeFilmInfoActionHandler.bind(this));
+    this.setChangeEmojiHandler(this._onChangeEmoji);
+    this.setSubmitFormHandler(this._onSubmitForm);
   }
 
   getData() {
@@ -192,32 +218,6 @@ export default class FilmDetails extends AbstractSmartComponent {
     this._commentsComponent.setData(this.getData());
 
     renderElement(filmCommentsList, this._commentsComponent);
-  }
-
-  rerender() {
-    super.rerender();
-
-    if (this._commentsComponent) {
-      this._commentsComponent.removeElement();
-    }
-
-    this.renderComments();
-    this._commentsComponent.recoveryListeners();
-  }
-
-  set onEscPress(handler) {
-    this._onEscPress = handler;
-  }
-
-  get onEscPress() {
-    return this._onEscPress;
-  }
-
-  recoveryListeners() {
-    this.setCloseButtonHandler(this._onCloseClick);
-    this._filmInfoActionHandlers.forEach(this.setChangeFilmInfoActionHandler.bind(this));
-    this.setChangeEmojiHandler(this._onChangeEmoji);
-    this.setSubmitFormHandler(this._onSubmitForm);
   }
 
   setCloseButtonHandler(handler) {

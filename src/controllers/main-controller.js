@@ -1,6 +1,8 @@
 import * as util from "../utils/common.js";
 import {
   renderElement,
+  showElement,
+  hideElement,
   showTitle,
   hideTitle,
 } from "../utils/render.js";
@@ -58,6 +60,23 @@ export default class MainController {
     this._filmsModel.setFilterChangeHandler(this._onFilterActivate);
   }
 
+  render(filters) {
+    this._profile = new Profile();
+    this._filters = filters;
+    this._getFilmsLength();
+
+    renderElement(document.querySelector(`.header`), this._profile);
+    this._filmsComponent = new Films();
+    this._statistics.updateData();
+    renderElement(this._container, this._statistics);
+    this._showMainScreen();
+    renderElement(this._container, this._filmsComponent);
+
+    this._setFilmsListElements();
+    this._renderCardsAll();
+    this._setMainHandlers();
+  }
+
   _renderSort() {
     this._currentSort = this._defaultSort;
     renderElement(this._container, this._sortingComponent);
@@ -65,9 +84,9 @@ export default class MainController {
   }
 
   _showMainScreen() {
-    util.hideElement(this._statistics.getElement());
-    util.showElement(this._filmsComponent.getElement());
-    util.showElement(this._sortingComponent.getElement());
+    hideElement(this._statistics.getElement());
+    showElement(this._filmsComponent.getElement());
+    showElement(this._sortingComponent.getElement());
     this._renderSort();
   }
 
@@ -133,10 +152,10 @@ export default class MainController {
     const filmsDataCopy = this._filmsModel.getData(FILTERS[0].method).slice().sort(cardsType.method);
 
     if (filmsDataCopy[0] && cardsType.checkLoser(filmsDataCopy[0])) {
-      util.hideElement(container);
+      hideElement(container);
       return;
     } else {
-      util.showElement(container);
+      showElement(container);
     }
 
     for (let i = 0; i < Math.min(cardsType.NUM, this._filmsLength); i++) {
@@ -202,19 +221,6 @@ export default class MainController {
     return this._filmsLength;
   }
 
-  _onSortClick(evt) {
-    evt.preventDefault();
-    const type = evt.target.getAttribute(`data-sort`);
-    if (type === this._currentSort) {
-      return;
-    }
-
-    this._currentSort = type;
-
-    this._sortingComponent.setActiveMod(type);
-    this._rerenderCardsMain(type);
-  }
-
   _dataChangeHandler(oldData, newData, changeFunctions) {
     const id = newData.id;
     const {updateModel, filmHandler} = changeFunctions;
@@ -256,6 +262,40 @@ export default class MainController {
     filteredFilm.getFilmInfo().rerender();
   }
 
+  _setFilmsListElements() {
+    this._filmsListElements = {
+      wrapper: document.querySelector(`.films-list`),
+      main: document.querySelector(`#filmsList`),
+      top: document.querySelector(`#filmsListTop`),
+      commented: document.querySelector(`#filmsListCommented`),
+      title: document.querySelector(`.films-list__title`),
+    };
+  }
+
+  _setMainHandlers() {
+    this._filters.getComponent().setClickStats(this._onStatsClick);
+    this._statistics.setStatsFilterChangeHandler(this._onStatsFilterChange);
+    this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
+    this._filmsModel.setDataLoadHandler(
+        this._filters.getComponent()
+          .rerender.bind(this._filters.getComponent())
+    );
+    this._filmsModel.setDataLoadHandler(this._filters.getComponent().setFilterActive.bind(this._filters.getComponent()));
+  }
+
+  _onSortClick(evt) {
+    evt.preventDefault();
+    const type = evt.target.getAttribute(`data-sort`);
+    if (type === this._currentSort) {
+      return;
+    }
+
+    this._currentSort = type;
+
+    this._sortingComponent.setActiveMod(type);
+    this._rerenderCardsMain(type);
+  }
+
   _onDataChange(oldFilmData, newFilmData) {
     const functions = {
       updateModel: this._dataChangeModelUpdate,
@@ -285,52 +325,14 @@ export default class MainController {
 
   _onStatsClick() {
     this._statistics.rerender();
-    util.hideElement(this._filmsComponent.getElement());
-    util.hideElement(this._sortingComponent.getElement());
-    util.showElement(this._statistics.getElement());
+    hideElement(this._filmsComponent.getElement());
+    hideElement(this._sortingComponent.getElement());
+    showElement(this._statistics.getElement());
     this._filmsModel.clearFilter();
     this._filters.getComponent().setStatsActive();
   }
 
   _onStatsFilterChange(evt) {
     this._statistics.activateFilter(evt.target.value);
-  }
-
-  _setFilmsListElements() {
-    this._filmsListElements = {
-      wrapper: document.querySelector(`.films-list`),
-      main: document.querySelector(`#filmsList`),
-      top: document.querySelector(`#filmsListTop`),
-      commented: document.querySelector(`#filmsListCommented`),
-      title: document.querySelector(`.films-list__title`),
-    };
-  }
-
-  _setMainHandlers() {
-    this._filters.getComponent().setClickStats(this._onStatsClick);
-    this._statistics.setStatsFilterChangeHandler(this._onStatsFilterChange);
-    this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
-    this._filmsModel.setDataLoadHandler(
-        this._filters.getComponent()
-          .rerender.bind(this._filters.getComponent())
-    );
-    this._filmsModel.setDataLoadHandler(this._filters.getComponent().setFilterActive.bind(this._filters.getComponent()));
-  }
-
-  render(filters) {
-    this._profile = new Profile();
-    this._filters = filters;
-    this._getFilmsLength();
-
-    renderElement(document.querySelector(`.header`), this._profile);
-    this._filmsComponent = new Films();
-    this._statistics.updateData();
-    renderElement(this._container, this._statistics);
-    this._showMainScreen();
-    renderElement(this._container, this._filmsComponent);
-
-    this._setFilmsListElements();
-    this._renderCardsAll();
-    this._setMainHandlers();
   }
 }

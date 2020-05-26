@@ -46,12 +46,12 @@ export default class FilmComments extends AbstractSmartComponent {
     return getFilmCommentsMarkup(this._comments);
   }
 
-  setData(comments) {
-    this._comments = comments;
-  }
-
   recoveryListeners() {
     this.setDeleteCommentHandler(this._onClickDeleteComment);
+  }
+
+  setData(comments) {
+    this._comments = comments;
   }
 
   setDeleteCommentHandler(handler) {

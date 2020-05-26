@@ -10,6 +10,14 @@ export default class AbstractComponent {
     this._container = null;
   }
 
+  get container() {
+    return this._container;
+  }
+
+  set container(container) {
+    this._container = container;
+  }
+
   getTemplate() {
     throw new Error(`Abstract method not implemented: getTemplate`);
   }
@@ -27,14 +35,6 @@ export default class AbstractComponent {
       this.getElement().remove();
     }
     this._element = null;
-  }
-
-  set container(container) {
-    this._container = container;
-  }
-
-  get container() {
-    return this._container;
   }
 
   removeContainer() {

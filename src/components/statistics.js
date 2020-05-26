@@ -95,6 +95,49 @@ export default class Statistics extends AbstractSmartComponent {
     this._currentFilter = this._defaultFilter;
   }
 
+  rerender() {
+    this.updateData();
+    super.rerender();
+    this._renderChart();
+  }
+
+  recoveryListeners() {
+    this.setStatsFilterChangeHandler(this._statsFilterChangeHandler);
+  }
+
+  getTemplate() {
+    return getStatisticsMarkup(this._statsData, this._rating, this._currentFilter);
+  }
+
+  updateData() {
+    const findFilter = (item) => (item.NAME === STATS_PARAM.FILTER_NAME);
+    const findStatsFilter = (item) => (getFilterName(item.NAME) === this._currentFilter);
+
+    const filmsWatched = this._filmsModel.getData(util.getFilterMethod(FILTERS, findFilter));
+    const filteredFilms = filmsWatched.filter(util.getFilterMethod(FILTERS_STATISTICS, findStatsFilter));
+    this._statsData = {
+      rating: filteredFilms.length,
+      duration: filteredFilms.reduce((accum, item) => (accum + item.duration), 0),
+      genres: this._getGenres(filteredFilms)
+    };
+    this._rating = filmsWatched.length;
+  }
+
+  activateFilter(filter) {
+    if (this._currentFilter === filter) {
+      return;
+    }
+
+    this._currentFilter = filter;
+    this.updateData();
+    this.rerender();
+  }
+
+  setStatsFilterChangeHandler(handler) {
+    this._statsFilterChangeHandler = handler;
+    util.setInputsChangeHandler(handler, this.getElement(), `.statistic__filters-input`);
+  }
+
   _renderChart() {
     const statisticCtx = document.querySelector(`.statistic__chart`);
 
@@ -186,48 +229,5 @@ export default class Statistics extends AbstractSmartComponent {
           );
           return accum;
         }, []).sort((a, b) => util.sortNum([a, b], `num`));
-  }
-
-  recoveryListeners() {
-    this.setStatsFilterChangeHandler(this._statsFilterChangeHandler);
-  }
-
-  rerender() {
-    this.updateData();
-    super.rerender();
-    this._renderChart();
-  }
-
-  getTemplate() {
-    return getStatisticsMarkup(this._statsData, this._rating, this._currentFilter);
-  }
-
-  updateData() {
-    const findFilter = (item) => (item.NAME === STATS_PARAM.FILTER_NAME);
-    const findStatsFilter = (item) => (getFilterName(item.NAME) === this._currentFilter);
-
-    const filmsWatched = this._filmsModel.getData(util.getFilterMethod(FILTERS, findFilter));
-    const filteredFilms = filmsWatched.filter(util.getFilterMethod(FILTERS_STATISTICS, findStatsFilter));
-    this._statsData = {
-      rating: filteredFilms.length,
-      duration: filteredFilms.reduce((accum, item) => (accum + item.duration), 0),
-      genres: this._getGenres(filteredFilms)
-    };
-    this._rating = filmsWatched.length;
-  }
-
-  activateFilter(filter) {
-    if (this._currentFilter === filter) {
-      return;
-    }
-
-    this._currentFilter = filter;
-    this.updateData();
-    this.rerender();
-  }
-
-  setStatsFilterChangeHandler(handler) {
-    this._statsFilterChangeHandler = handler;
-    util.setInputsChangeHandler(handler, this.getElement(), `.statistic__filters-input`);
   }
 }
