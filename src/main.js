@@ -55,11 +55,7 @@ apiWithProvider.getFilms()
 
 window.addEventListener(`load`, () => {
   navigator.serviceWorker.register(`/sw.js`)
-    .then(() => {
-      navigator.serviceWorker.ready.then((worker) => {
-        worker.sync.register(`syncdata`);
-      });
-    }).catch((err) => showError(err));
+    .catch((err) => showError(err));
 });
 
 window.addEventListener(`online`, () => {
