@@ -25,11 +25,6 @@ const getCommentMarkup = (item) => {
   </li>`;
 };
 
-const getFilmCommentsMarkup = (commentsData) => (
-  commentsData
-    .map(getCommentMarkup).join(``)
-);
-
 export default class FilmComments extends AbstractSmartComponent {
   constructor() {
     super();
@@ -43,7 +38,7 @@ export default class FilmComments extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return getFilmCommentsMarkup(this._comments);
+    return this._getFilmCommentsMarkup(this._comments);
   }
 
   recoveryListeners() {
@@ -60,5 +55,10 @@ export default class FilmComments extends AbstractSmartComponent {
     this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((item) => {
       item.addEventListener(`click`, handler);
     });
+  }
+
+  _getFilmCommentsMarkup(commentsData) {
+    return commentsData
+      .map(getCommentMarkup).join(``);
   }
 }

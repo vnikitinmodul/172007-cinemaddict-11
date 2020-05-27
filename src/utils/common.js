@@ -10,47 +10,11 @@ const getRandomNum = (min, max) => (
   Math.floor(Math.random() * (max - min + 1) + min)
 );
 
-const getRandomFromArray = (array, removeSelected) => (
-  removeSelected ? array.splice(getRandomNum(0, array.length - 1), 1)[0] : array[getRandomNum(0, array.length - 1)]
-);
-
-const getSomeFromArray = (array, min = 1, max = array.length) => {
-  let result = [];
-  let tempArray = array.slice();
-
-  for (let i = 0; i < getRandomNum(min, max); i++) {
-    const itemPos = getRandomNum(min, tempArray.length - 1);
-    result.push(tempArray.splice(itemPos, 1));
-  }
-
-  return result;
-};
-
-const addZeroBefore = (value) => {
-  return value < 10 ? `0${value}` : value;
-};
-
-const generateArrayData = (num, generator, iterator) => {
-  return [...Array(num).keys()].reduce((accumulator, item, i) => {
-    accumulator.push(generator());
-
-    if (iterator) {
-      accumulator[i][iterator] = i;
-    }
-
-    return accumulator;
-  }, []);
-};
-
 const getDurationMoment = (duration, isUnitShow) => {
   const durationMoment = moment.duration(duration, `minutes`);
 
   return [durationMoment.hours() || !isUnitShow ? `${durationMoment.hours()}${isUnitShow ? `h` : ``}` : ``, durationMoment.minutes() || !isUnitShow ? `${durationMoment.minutes()}${isUnitShow ? `m` : ``}` : ``];
 };
-
-const getRandomBoolean = (chance = 0.5) => (
-  Math.floor(Math.random() - chance)
-);
 
 const getRatingName = (rating) => (RATING_NAMES[Math.ceil(rating / 10) - 1]);
 
@@ -72,12 +36,7 @@ const getFilterMethod = (filtersList, findFunction) => {
 
 export {
   getRandomNum,
-  getRandomFromArray,
-  getSomeFromArray,
-  addZeroBefore,
-  generateArrayData,
   getDurationMoment,
-  getRandomBoolean,
   getRatingName,
   sortNum,
   setInputsChangeHandler,

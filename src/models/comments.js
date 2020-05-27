@@ -12,8 +12,4 @@ export default class Comments {
 
     this._commentsData[index] = comment;
   }
-
-  _callHandlers(handlers) {
-    handlers.forEach((handler) => handler());
-  }
 }
