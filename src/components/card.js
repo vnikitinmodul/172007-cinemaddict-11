@@ -29,8 +29,6 @@ const RATING_VALUES = {
 
 const CARD_CONTROL_ACTIVE_CLASS = `film-card__controls-item--active`;
 
-const getShowDetailsElements = (card) => card.getElement().querySelectorAll(CARD_SHOW_DETAILS.join(`, `));
-
 const cutText = (text, maxLength = 140, symbol = `…`) => (
   text.length > maxLength ? `${text.slice(0, maxLength - 1)}${symbol}` : text
 );
@@ -96,8 +94,12 @@ export default class Card extends AbstractComponent {
   }
 
   setClickHandler(handler) {
-    getShowDetailsElements(this).forEach((item) => {
+    this._getShowDetailsElements(this).forEach((item) => {
       item.addEventListener(`click`, handler);
     });
+  }
+
+  _getShowDetailsElements(card) {
+    return card.getElement().querySelectorAll(CARD_SHOW_DETAILS.join(`, `));
   }
 }
