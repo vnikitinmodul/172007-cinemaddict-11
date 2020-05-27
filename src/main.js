@@ -17,7 +17,7 @@ import Comments from "./models/comments.js";
 import FooterStatistics from "./components/footer-statistics.js";
 import Statistics from "./components/statistics.js";
 
-import {TITLE_MESSAGE} from "./constants.js";
+import {TitleMessage} from "./constants.js";
 
 const AUTHORIZATION = `Basic 98ae48tb8*Rv9w4tQ#`;
 const PREFIX = `cinemaddict-localstorage`;
@@ -43,7 +43,7 @@ const filters = new FiltersController(mainElement, models.films);
 filters.render();
 mainContainer.render(filters);
 
-showTitle(TITLE_MESSAGE.LOADING);
+showTitle(TitleMessage.LOADING);
 
 apiWithProvider.getFilms()
   .then((filmsData) => {

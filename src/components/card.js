@@ -38,9 +38,8 @@ const getRatingColor = (rating) => {
     return RATING_VALUES.POOR.NAME;
   } else if (rating < RATING_VALUES.AVERAGE.NUM) {
     return RATING_VALUES.AVERAGE.NAME;
-  } else {
-    return RATING_VALUES.GOOD.NAME;
   }
+  return RATING_VALUES.GOOD.NAME;
 };
 
 const getCardMarkup = (filmData) => {

@@ -4,19 +4,19 @@ import * as util from "./utils/common.js";
 
 const POSTERS_PATH = `./`;
 
-const KEY_CODE = {
+const KeyCode = {
   ESC: `Escape`,
   ENTER: `Enter`
 };
 
 const BODY_HIDE_OVERFLOW_CLASS = `hide-overflow`;
 
-const TITLE_MESSAGE = {
+const TitleMessage = {
   NO_MOVIES: `There are no movies in our database`,
   LOADING: `Loading...`,
 };
 
-const ERROR_MESSAGE = {
+const ErrorMessage = {
   SYNC_FAILED: `Sync data failed`,
   OFFLINE_LOGIC: `offline logic is not implemented`,
 };
@@ -47,12 +47,12 @@ const COMMENT_EMOJIES = [
   `angry`,
 ];
 
-const ENCODE_PARAM = {
+const EncodeParam = {
   encodeEverything: true,
   strict: true,
 };
 
-const ACTION_PROPERTIES = {
+const ActionProperty = {
   WATCHLIST: {
     MODIFIER: `add-to-watchlist`,
     PROPERTY: `isAddedToWatchlist`,
@@ -76,17 +76,17 @@ const FILTERS = [
   {
     HREF: `#watchlist`,
     NAME: `Watchlist`,
-    method: (item) => (item[ACTION_PROPERTIES.WATCHLIST.PROPERTY]),
+    method: (item) => (item[ActionProperty.WATCHLIST.PROPERTY]),
   },
   {
     HREF: `#history`,
     NAME: `History`,
-    method: (item) => (item[ACTION_PROPERTIES.WATCHED.PROPERTY]),
+    method: (item) => (item[ActionProperty.WATCHED.PROPERTY]),
   },
   {
     HREF: `#favorites`,
     NAME: `Favorites`,
-    method: (item) => (item[ACTION_PROPERTIES.FAVORITE.PROPERTY]),
+    method: (item) => (item[ActionProperty.FAVORITE.PROPERTY]),
   },
 ];
 
@@ -119,14 +119,14 @@ const FILTERS_STATISTICS = [
 
 export {
   POSTERS_PATH,
-  KEY_CODE,
+  KeyCode,
   BODY_HIDE_OVERFLOW_CLASS,
-  TITLE_MESSAGE,
-  ERROR_MESSAGE,
+  TitleMessage,
+  ErrorMessage,
   CardsOther,
   COMMENT_EMOJIES,
-  ENCODE_PARAM,
-  ACTION_PROPERTIES,
+  EncodeParam,
+  ActionProperty,
   FILTERS,
   FILTERS_STATISTICS,
 };

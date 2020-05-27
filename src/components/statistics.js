@@ -90,7 +90,7 @@ export default class Statistics extends AbstractSmartComponent {
     this._statsData = null;
     this._rating = null;
     this._statChart = null;
-    this._statsFilterChangeHandler = null;
+    this._filterChangeHandler = null;
     this._defaultFilter = getFilterName(FILTERS_STATISTICS[0].NAME);
     this._currentFilter = this._defaultFilter;
   }
@@ -102,7 +102,7 @@ export default class Statistics extends AbstractSmartComponent {
   }
 
   recoveryListeners() {
-    this.setStatsFilterChangeHandler(this._statsFilterChangeHandler);
+    this.setFilterChangeHandler(this._filterChangeHandler);
   }
 
   getTemplate() {
@@ -133,8 +133,8 @@ export default class Statistics extends AbstractSmartComponent {
     this.rerender();
   }
 
-  setStatsFilterChangeHandler(handler) {
-    this._statsFilterChangeHandler = handler;
+  setFilterChangeHandler(handler) {
+    this._filterChangeHandler = handler;
     util.setInputsChangeHandler(handler, this.getElement(), `.statistic__filters-input`);
   }
 

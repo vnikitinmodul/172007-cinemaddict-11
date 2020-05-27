@@ -30,7 +30,7 @@ export default class FilmComments extends AbstractSmartComponent {
     super();
 
     this._comments = [];
-    this._onClickDeleteComment = null;
+    this._onClickDelete = null;
   }
 
   getElement() {
@@ -38,26 +38,26 @@ export default class FilmComments extends AbstractSmartComponent {
   }
 
   getTemplate() {
-    return this._getFilmCommentsMarkup(this._comments);
+    return this._getMarkup(this._comments);
   }
 
   recoveryListeners() {
-    this.setDeleteCommentHandler(this._onClickDeleteComment);
+    this.setDeleteHandler(this._onClickDelete);
   }
 
   setData(comments) {
     this._comments = comments;
   }
 
-  setDeleteCommentHandler(handler) {
-    this._onClickDeleteComment = handler;
+  setDeleteHandler(handler) {
+    this._onClickDelete = handler;
 
     this.getElement().querySelectorAll(`.film-details__comment-delete`).forEach((item) => {
       item.addEventListener(`click`, handler);
     });
   }
 
-  _getFilmCommentsMarkup(commentsData) {
+  _getMarkup(commentsData) {
     return commentsData
       .map(getCommentMarkup).join(``);
   }

@@ -91,9 +91,9 @@ export default class Api {
     return (response) => {
       if (response.status >= ValidStatusCode.SUCCESS && response.status < ValidStatusCode.REDIRECTION) {
         return isJson ? response.json() : response;
-      } else {
-        throw new Error(`${response.status}: ${response.statusText}`);
       }
+
+      throw new Error(`${response.status}: ${response.statusText}`);
     };
   }
 

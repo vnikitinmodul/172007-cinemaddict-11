@@ -10,11 +10,11 @@ import Card from "../components/card.js";
 import FilmDetails from "../components/film-details.js";
 
 import {
-  KEY_CODE,
+  KeyCode,
   BODY_HIDE_OVERFLOW_CLASS,
-  ACTION_PROPERTIES,
+  ActionProperty,
   COMMENT_EMOJIES,
-  ENCODE_PARAM,
+  EncodeParam,
 } from "../constants.js";
 
 const BUTTON_TEXT = {
@@ -86,19 +86,19 @@ export default class FilmController {
   }
 
   _setClickCardActionHandlers() {
-    Object.keys(ACTION_PROPERTIES).forEach((key) => {
+    Object.keys(ActionProperty).forEach((key) => {
       this._card.setClickActionHandler({
-        className: `film-card__controls-item--${ACTION_PROPERTIES[key].MODIFIER}`,
-        handler: this._onActionClick(`card`, ACTION_PROPERTIES[key].PROPERTY)
+        className: `film-card__controls-item--${ActionProperty[key].MODIFIER}`,
+        handler: this._onActionClick(`card`, ActionProperty[key].PROPERTY)
       });
     });
   }
 
   _setChangeFilmInfoActionHandlers() {
-    Object.keys(ACTION_PROPERTIES).forEach((key) => {
+    Object.keys(ActionProperty).forEach((key) => {
       this._filmInfo.setChangeFilmInfoActionHandler({
         id: key.toLowerCase(),
-        handler: this._onActionClick(`filmInfo`, ACTION_PROPERTIES[key].PROPERTY)
+        handler: this._onActionClick(`filmInfo`, ActionProperty[key].PROPERTY)
       });
     });
   }
@@ -121,7 +121,7 @@ export default class FilmController {
           this._filmInfo.setSubmitFormHandler(this._onFilmInfoFormSubmit);
           this._filmInfo
             .getCommentsComponent()
-            .setDeleteCommentHandler(this._onCommentDeleteClick);
+            .setDeleteHandler(this._onCommentDeleteClick);
         });
     };
   }
@@ -145,7 +145,7 @@ export default class FilmController {
     return {
       "emotion": emojiElement ? emojiElement.value : COMMENT_EMOJIES[0],
       "date": new Date(),
-      "comment": he.encode(text, ENCODE_PARAM),
+      "comment": he.encode(text, EncodeParam),
     };
   }
 
@@ -165,7 +165,7 @@ export default class FilmController {
 
   _onFilmInfoEscPress() {
     return (evt) => {
-      if (evt.key === KEY_CODE.ESC) {
+      if (evt.key === KeyCode.ESC) {
         this.closeFilmInfo();
       }
     };
@@ -208,7 +208,7 @@ export default class FilmController {
   _onFilmInfoFormSubmit(evt) {
     const textElement = this.getFilmInfo().getElement().querySelector(`.film-details__comment-input`);
     const text = textElement.value;
-    const isSubmitFilmInfoForm = (evt.code === KEY_CODE.ENTER || evt.metaKey) && evt.ctrlKey && text.length;
+    const isSubmitFilmInfoForm = (evt.code === KeyCode.ENTER || evt.metaKey) && evt.ctrlKey && text.length;
 
     if (isSubmitFilmInfoForm) {
       const emojiElement = this.getFilmInfo().getElement().querySelector(`.film-details__emoji-item:checked`);

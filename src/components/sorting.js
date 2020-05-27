@@ -8,7 +8,7 @@ const SORT_CLASSES = {
 
 const classActive = `${SORT_CLASSES.ELEMENT}${SORT_CLASSES.ACTIVE_MOD}`;
 
-const sortType = [
+const sortTypes = [
   {
     name: `default`,
     fn: () => {},
@@ -25,7 +25,7 @@ const sortType = [
 
 const getSortMarkup = () => (
   `<ul class="sort">
-    ${sortType.map((item, i) => (
+    ${sortTypes.map((item, i) => (
     `<li><a href="#" class="${SORT_CLASSES.ELEMENT}${ i === 0 ? ` ${classActive}` : ``}" data-sort="${item.name}">Sort by ${item.name}</a></li>`
   )).join(``)}
   </ul>`
@@ -35,14 +35,14 @@ export default class Sorting extends AbstractComponent {
   constructor() {
     super();
 
-    this._sortType = sortType;
+    this._sortTypes = sortTypes;
   }
 
   getTemplate() {
     return getSortMarkup();
   }
 
-  setSortHandler(handler) {
+  setHandler(handler) {
     this.getElement()
       .querySelectorAll(`.${SORT_CLASSES.ELEMENT}`)
       .forEach((item) => {
@@ -50,8 +50,8 @@ export default class Sorting extends AbstractComponent {
       });
   }
 
-  getSortType(type) {
-    return this._sortType.find((item) => (item.name === type));
+  getType(type) {
+    return this._sortTypes.find((item) => (item.name === type));
   }
 
   setActiveMod(type) {

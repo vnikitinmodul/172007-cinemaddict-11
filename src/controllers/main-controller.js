@@ -16,7 +16,7 @@ import FilmController from "../controllers/film-controller.js";
 
 import {
   FILTERS,
-  TITLE_MESSAGE,
+  TitleMessage,
   CardsOther,
 } from "../constants.js";
 
@@ -80,7 +80,7 @@ export default class MainController {
   _renderSort() {
     this._currentSort = this._defaultSort;
     renderElement(this._container, this._sortingComponent);
-    this._sortingComponent.setSortHandler(this._onSortClick.bind(this));
+    this._sortingComponent.setHandler(this._onSortClick.bind(this));
   }
 
   _showMainScreen() {
@@ -109,7 +109,7 @@ export default class MainController {
 
     this._checkButton();
 
-    const filmsMainSorted = this._filmsModel.getData().slice().sort(this._sortingComponent.getSortType(sortType).fn);
+    const filmsMainSorted = this._filmsModel.getData().slice().sort(this._sortingComponent.getType(sortType).fn);
 
     this._filmsLoadedLength = start === null ? num : this._filmsLoadedLength + num;
 
@@ -183,7 +183,7 @@ export default class MainController {
   }
 
   _checkMainEmpty() {
-    return !this._getFilmsLength() ? showTitle(TITLE_MESSAGE.NO_MOVIES) : hideTitle() && false;
+    return !this._getFilmsLength() ? showTitle(TitleMessage.NO_MOVIES) : hideTitle() && false;
   }
 
   _collectFilmsMain(item) {
@@ -274,7 +274,7 @@ export default class MainController {
 
   _setMainHandlers() {
     this._filters.getComponent().setClickStats(this._onStatsClick);
-    this._statistics.setStatsFilterChangeHandler(this._onStatsFilterChange);
+    this._statistics.setFilterChangeHandler(this._onStatsFilterChange);
     this._filmsModel.setDataLoadHandler(this._renderCardsAll.bind(this));
     this._filmsModel.setDataLoadHandler(
         this._filters.getComponent()

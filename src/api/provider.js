@@ -3,7 +3,7 @@ import FilmsAdapter from "../models/films-adapter";
 
 import {showError} from "../utils/render.js";
 
-import {ERROR_MESSAGE} from "../constants.js";
+import {ErrorMessage} from "../constants.js";
 
 export default class Provider {
   constructor(api, store) {
@@ -33,7 +33,7 @@ export default class Provider {
         });
     }
 
-    return Promise.reject(showError(ERROR_MESSAGE.SYNC_FAILED));
+    return Promise.reject(showError(ErrorMessage.SYNC_FAILED));
   }
 
   getFilms() {
@@ -76,21 +76,21 @@ export default class Provider {
     if (this._isOnLine) {
       return this._api.getComments(id);
     }
-    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
+    return Promise.reject(ErrorMessage.OFFLINE_LOGIC);
   }
 
   postComment(id, comment) {
     if (this._isOnLine) {
       return this._api.postComment(id, comment);
     }
-    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
+    return Promise.reject(ErrorMessage.OFFLINE_LOGIC);
   }
 
   deleteComment(id) {
     if (this._isOnLine) {
       return this._api.deleteComment(id);
     }
-    return Promise.reject(ERROR_MESSAGE.OFFLINE_LOGIC);
+    return Promise.reject(ErrorMessage.OFFLINE_LOGIC);
   }
 
   _getUpdatedFilms(items) {

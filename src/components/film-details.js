@@ -1,7 +1,7 @@
 import moment from "moment";
 import {
   POSTERS_PATH,
-  ACTION_PROPERTIES,
+  ActionProperty,
 } from "../constants.js";
 import * as util from "../utils/common.js";
 import {renderElement} from "../utils/render.js";
@@ -226,7 +226,7 @@ export default class FilmDetails extends AbstractSmartComponent {
   }
 
   setChangeFilmInfoActionHandler(param) {
-    const maxLength = Object.keys(ACTION_PROPERTIES).length;
+    const maxLength = Object.keys(ActionProperty).length;
     const {id, handler} = param;
 
     if (this._filmInfoActionHandlers.length === maxLength) {
